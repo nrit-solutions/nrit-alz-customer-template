@@ -18,3 +18,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   pinned tag and supplies the customer-specific names and tags.
 - Consumer workflows `plan.yml` and `apply.yml` calling the pinned
   `nrit-azure-pipelines` reusable workflows.
+- `live/platform/connectivity/sub-connectivity/.../caf-connectivity-hub/`: the
+  Virtual WAN hub. Its `terragrunt.stack.hcl` wraps the catalog
+  `caf-connectivity-vwan` stack at `v0.2.0` and deploys into the connectivity
+  subscription. The `plan` and `apply` workflows gained a `connectivity` job
+  (apply runs after the foundation).
+- `root.hcl` now reads the backend subscription from `AZURE_SUBSCRIPTION_ID`
+  (the shared state account's subscription) rather than the per-folder deploy
+  subscription, so cross-subscription deployments share the one backend.

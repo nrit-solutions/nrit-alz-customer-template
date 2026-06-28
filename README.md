@@ -11,11 +11,13 @@ remain under NRIT control; template instances are jointly managed.
 
 ## Status
 
-The foundation is wired end to end. `live/root.hcl` and `live/tenant.hcl` are
-in place, the `caf-platform-foundation` stack under `live/tenant/_global/`
-consumes the pinned catalog stack, and the `plan` and `apply` workflows call
-the pinned pipelines reusable workflows. The connectivity and landing-zone
-folders are still scaffold; they are wired in later phases. See `ONBOARDING.md`.
+The foundation and connectivity are wired end to end. `live/root.hcl` and
+`live/tenant.hcl` are in place, the `caf-platform-foundation` stack under
+`live/tenant/_global/` and the `caf-connectivity-vwan` hub under
+`live/platform/connectivity/` consume the pinned catalog stacks, and the `plan`
+and `apply` workflows call the pinned pipelines reusable workflows. The
+landing-zone and workload folders are still scaffold; they are wired in later
+phases. See `ONBOARDING.md`.
 
 ## Layout
 
@@ -39,7 +41,7 @@ nrit-azure-customer-template/
     │       └── caf-platform-foundation/ # MG hierarchy + policy + management resources
     ├── platform/                        # Platform MG
     │   ├── connectivity/                #   Connectivity MG
-    │   │   └── sub-connectivity/        #     subscription
+    │   │   └── sub-connectivity/        #     subscription (vWAN hub + firewall)
     │   │       └── westeurope/caf-connectivity-hub/
     │   ├── identity/                    #   Identity MG (no subscription in v1)
     │   ├── management/                  #   Management MG

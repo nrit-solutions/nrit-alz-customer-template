@@ -41,19 +41,30 @@ injects at run time, so CI needs no edits for them. The placeholders in
 `live/tenant.hcl` and `live/**/subscription.hcl` are only used for local runs;
 replace them, or export the variables, if you plan against the tenant locally.
 
-The one value you must set is the customer name, which goes into resource names
-and tags:
+The values you must set:
 
 - `live/tenant/_global/caf-platform-foundation/terragrunt.stack.hcl`: set
   `customer_name` (short, lowercase) in the `locals` block. Set
   `subscription_placement` if you are placing subscriptions into management
   groups in this first apply.
+- `live/platform/connectivity/.../caf-connectivity-hub/terragrunt.stack.hcl`:
+  set `customer_name` to match.
+- `live/platform/connectivity/.../caf-connectivity-hub/subscription.hcl`: set
+  the connectivity subscription id (the hub deploys there, a different
+  subscription from the foundation's management subscription).
 
 Region defaults to `westeurope`; change `live/**/region.hcl` only if the
 customer specifies otherwise.
 
 The backend names are never edited here. They come from the `BACKEND_*` Action
-variables the bootstrap set.
+variables the bootstrap set. All subscriptions share that one state account
+(in the bootstrap subscription), accessed by Entra ID; each folder's
+`subscription.hcl` is only the deploy target, not the state location.
+
+The connectivity hub ships as the minimal validated config (firewall on, DDoS
+and private DNS off). To have the foundation policy assignments reference a live
+DDoS plan and private DNS, turn those on in the connectivity stack and set
+`connectivity_subscription_id` plus the DDoS/DNS names in the foundation stack.
 
 ## Step 3: Pin catalog and pipelines versions
 

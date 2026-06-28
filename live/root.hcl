@@ -41,9 +41,14 @@ remote_state {
     storage_account_name = get_env("BACKEND_AZURE_STORAGE_ACCOUNT_NAME", "placeholdersa")
     container_name       = get_env("BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME", "tfstate")
     key                  = "${path_relative_to_include()}/terraform.tfstate"
-    subscription_id      = local.subscription_id
-    tenant_id            = local.tenant_id
-    use_azuread_auth     = true
+    # The state account lives in the bootstrap (state) subscription, which is
+    # AZURE_SUBSCRIPTION_ID. A unit's deploy subscription can differ from it
+    # (connectivity, for example, deploys to its own subscription but shares
+    # this one backend), so the backend subscription is read separately from
+    # the per-folder subscription.hcl. Access is by Entra ID, no account keys.
+    subscription_id  = get_env("AZURE_SUBSCRIPTION_ID", local.subscription_id)
+    tenant_id        = local.tenant_id
+    use_azuread_auth = true
   }
 }
 
