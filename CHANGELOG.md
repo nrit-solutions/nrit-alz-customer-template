@@ -26,3 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `root.hcl` now reads the backend subscription from `AZURE_SUBSCRIPTION_ID`
   (the shared state account's subscription) rather than the per-folder deploy
   subscription, so cross-subscription deployments share the one backend.
+- The `plan` and `apply` workflows pin the pipelines reusable workflows at
+  `v0.1.1` and pass `catalog_app_id` plus the `catalog_app_private_key` secret,
+  so the runner can clone the private catalog. ONBOARDING documents granting the
+  pipelines and catalog repositories org-level Actions access.

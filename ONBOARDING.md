@@ -74,14 +74,29 @@ each reusable workflow in `.github/workflows/`. The workflow ref must match the
 tag the bootstrap pinned the federated credential to (its `pipelines_ref`,
 default `v0.1.0`), or OIDC login fails.
 
-## Step 4: First plan
+## Step 4: Grant cross-repository Actions access
 
-The plan and apply workflows fetch the catalog stack at its pinned tag. The
-catalog repository is private, so the runner needs read access to it: either
-make the catalog readable to the customer org's Actions, or supply the runner a
-token (a GitHub App installation token or a read-only PAT) configured as a git
-credential for `github.com/nrit-solutions`. Without it `terragrunt stack
-generate` cannot clone the catalog.
+The customer repository calls reusable workflows in the private
+`nrit-azure-pipelines` repository and fetches stacks from the private
+`nrit-terragrunt-catalog` repository. Both are private, so the org must allow
+the customer repository's workflows to reach them. On each of those two
+repositories set Actions access to the organisation (Settings, Actions,
+General, "Access", or once with the API):
+
+```sh
+gh api -X PUT repos/nrit-solutions/nrit-azure-pipelines/actions/permissions/access -f access_level=organization
+gh api -X PUT repos/nrit-solutions/nrit-terragrunt-catalog/actions/permissions/access -f access_level=organization
+```
+
+Without the pipelines grant the workflow run fails immediately with no jobs
+(the reusable workflow cannot be resolved). Without the catalog grant the run
+starts but `terragrunt stack generate` cannot clone the catalog. The catalog
+grant alone is not always enough: `terragrunt` shells out to `git`, which needs
+a credential for `github.com/nrit-solutions`. If the fetch still fails, supply
+the runner a token (a GitHub App installation token or a read-only PAT)
+configured as a git credential.
+
+## Step 5: First plan
 
 Open a pull request with a trivial change (for example, a comment in
 `live/tenant.hcl`) to trigger the plan workflow. Review the output posted on the
