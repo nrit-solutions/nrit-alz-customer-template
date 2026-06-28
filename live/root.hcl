@@ -41,7 +41,7 @@ remote_state {
     storage_account_name = get_env("BACKEND_AZURE_STORAGE_ACCOUNT_NAME", "placeholdersa")
     container_name       = get_env("BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME", "tfstate")
     key                  = "${path_relative_to_include()}/terraform.tfstate"
-    # The state account lives in the bootstrap (state) subscription, which is
+    # The state account lives in the management subscription, which is
     # AZURE_SUBSCRIPTION_ID. A unit's deploy subscription can differ from it
     # (connectivity, for example, deploys to its own subscription but shares
     # this one backend), so the backend subscription is read separately from

@@ -23,7 +23,7 @@ Terraform bootstrap in the pipelines repository
 generation or state script.
 
 1. Copy `bootstrap/customers/_example.tfvars` to `bootstrap/customers/<customer>.tfvars`
-   and fill in the tenant, bootstrap subscription, repository name, approvers,
+   and fill in the tenant, management subscription, repository name, approvers,
    and `network_posture` (`self_hosted_private` for production).
 2. Authenticate to the customer tenant and export the PAT, then
    `terraform apply -var-file=customers/<customer>.tfvars`.
@@ -58,8 +58,9 @@ customer specifies otherwise.
 
 The backend names are never edited here. They come from the `BACKEND_*` Action
 variables the bootstrap set. All subscriptions share that one state account
-(in the bootstrap subscription), accessed by Entra ID; each folder's
-`subscription.hcl` is only the deploy target, not the state location.
+(in the management subscription, where the bootstrap puts the state, runners,
+and identities), accessed by Entra ID; each folder's `subscription.hcl` is only
+the deploy target, not the state location.
 
 The connectivity hub ships as the minimal validated config (firewall on, DDoS
 and private DNS off). To have the foundation policy assignments reference a live

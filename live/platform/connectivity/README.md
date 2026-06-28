@@ -9,7 +9,7 @@ The hub is wired to the catalog `caf-connectivity-vwan` stack: a single-region
 Virtual WAN with Azure Firewall, deployed into the connectivity subscription.
 It deploys to a different subscription from the foundation, so its
 `subscription.hcl` sets the connectivity subscription id explicitly; state still
-goes to the shared backend (the bootstrap subscription) over Entra ID.
+goes to the shared backend (in the management subscription) over Entra ID.
 
 The committed default is the minimal validated hub (firewall on, DDoS and
 private DNS off). Turn DDoS, private DNS, gateways, and bastion on in the
