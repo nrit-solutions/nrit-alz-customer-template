@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   foundation:
-    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-apply.yml@v0.1.1
+    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-apply.yml@v0.1.2
     with:
       working_directory: live/tenant/_global/caf-platform-foundation
       runs_on: ${{ vars.RUNNER_LABEL }}
@@ -37,7 +37,7 @@ jobs:
   # in the connectivity subscription.
   connectivity:
     needs: foundation
-    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-apply.yml@v0.1.1
+    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-apply.yml@v0.1.2
     with:
       working_directory: live/platform/connectivity/sub-connectivity/westeurope/caf-connectivity-hub
       runs_on: ${{ vars.RUNNER_LABEL }}
