@@ -1,0 +1,28 @@
+# plan
+#
+# Runs on every pull request that touches live/. Calls the reusable plan
+# workflow in nrit-azure-pipelines, which logs in to the customer tenant with
+# OIDC (the plan identity, Reader), plans the foundation stack, and posts the
+# plan as a comment on the pull request.
+#
+# The reusable workflow is pinned to the same tag the bootstrap pinned the
+# federated credential to. Do not change the @ref or the working_directory
+# without re-running the bootstrap: the OIDC subject embeds both.
+
+name: plan
+
+on:
+  pull_request:
+    paths: ["live/**"]
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs:
+  foundation:
+    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-plan.yml@v0.1.0
+    with:
+      working_directory: live/tenant/_global/caf-platform-foundation
+      runs_on: ${{ vars.RUNNER_LABEL }}

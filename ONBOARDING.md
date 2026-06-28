@@ -35,26 +35,45 @@ gated `plan` and `apply` environments.
 
 ## Step 2: Replace placeholders
 
-In the generated repository, edit:
+The tenant and subscription ids come from the `AZURE_TENANT_ID` and
+`AZURE_SUBSCRIPTION_ID` Action variables the bootstrap set, which the pipeline
+injects at run time, so CI needs no edits for them. The placeholders in
+`live/tenant.hcl` and `live/**/subscription.hcl` are only used for local runs;
+replace them, or export the variables, if you plan against the tenant locally.
 
-- `tenant.hcl` (at the `live/` root): tenant ID, root management group ID,
-  customer name
-- Each `live/**/subscription.hcl`: subscription ID and name
-- Each `live/**/region.hcl`: typically left as `westeurope` unless the customer
-  specifies otherwise
+The one value you must set is the customer name, which goes into resource names
+and tags:
 
-The backend names are not edited here. They come from the `BACKEND_*` Action
-variables the bootstrap set, which the pipeline injects at run time.
+- `live/tenant/_global/caf-platform-foundation/terragrunt.stack.hcl`: set
+  `customer_name` (short, lowercase) in the `locals` block. Set
+  `subscription_placement` if you are placing subscriptions into management
+  groups in this first apply.
+
+Region defaults to `westeurope`; change `live/**/region.hcl` only if the
+customer specifies otherwise.
+
+The backend names are never edited here. They come from the `BACKEND_*` Action
+variables the bootstrap set.
 
 ## Step 3: Pin catalog and pipelines versions
 
-Update the `?ref=` parameters in each `terragrunt.stack.hcl` and the `@v<major>`
-parameters in each workflow.
+Update `catalog_ref` in each `terragrunt.stack.hcl` and the `@v<version>` ref on
+each reusable workflow in `.github/workflows/`. The workflow ref must match the
+tag the bootstrap pinned the federated credential to (its `pipelines_ref`,
+default `v0.1.0`), or OIDC login fails.
 
 ## Step 4: First plan
 
+The plan and apply workflows fetch the catalog stack at its pinned tag. The
+catalog repository is private, so the runner needs read access to it: either
+make the catalog readable to the customer org's Actions, or supply the runner a
+token (a GitHub App installation token or a read-only PAT) configured as a git
+credential for `github.com/nrit-solutions`. Without it `terragrunt stack
+generate` cannot clone the catalog.
+
 Open a pull request with a trivial change (for example, a comment in
-`tenant.hcl`) to trigger the plan workflow. Review the output posted on the PR.
+`live/tenant.hcl`) to trigger the plan workflow. Review the output posted on the
+PR.
 
 ## Step 5: First apply
 

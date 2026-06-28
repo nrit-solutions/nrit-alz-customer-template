@@ -5,6 +5,7 @@
 
 # Terragrunt
 **/.terragrunt-cache/
+**/.terragrunt-stack/
 
 # ALZ provider cache
 .alzlib/

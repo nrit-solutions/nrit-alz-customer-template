@@ -11,8 +11,11 @@ remain under NRIT control; template instances are jointly managed.
 
 ## Status
 
-Scaffold only. Folder structure and tooling are in place. No `root.hcl`,
-`*.hcl` configuration, or workflows have been written yet.
+The foundation is wired end to end. `live/root.hcl` and `live/tenant.hcl` are
+in place, the `caf-platform-foundation` stack under `live/tenant/_global/`
+consumes the pinned catalog stack, and the `plan` and `apply` workflows call
+the pinned pipelines reusable workflows. The connectivity and landing-zone
+folders are still scaffold; they are wired in later phases. See `ONBOARDING.md`.
 
 ## Layout
 
@@ -29,19 +32,18 @@ nrit-azure-customer-template/
 ├── .github/                             # consumer workflows (call the pipelines repo)
 ├── docs/                                # onboarding checklist, runbook, upgrade guide
 └── live/
-    ├── root.hcl                         # generates provider.tf and backend.tf
-    ├── tenant/                          # tenant root config + foundation stack
-    │   ├── tenant.hcl
+    ├── root.hcl                         # generates backend.tf; exposes shared locals
+    ├── tenant.hcl                       # tenant id + root MG id (must sit at live/ root)
+    ├── tenant/                          # tenant-scope deployments
     │   └── _global/
-    │       └── caf-platform-foundation/ # builds the MG hierarchy + root policies
+    │       └── caf-platform-foundation/ # MG hierarchy + policy + management resources
     ├── platform/                        # Platform MG
     │   ├── connectivity/                #   Connectivity MG
     │   │   └── sub-connectivity/        #     subscription
     │   │       └── westeurope/caf-connectivity-hub/
     │   ├── identity/                    #   Identity MG (no subscription in v1)
     │   ├── management/                  #   Management MG
-    │   │   └── sub-management/
-    │   │       └── westeurope/log-analytics-central/
+    │   │   └── sub-management/          #     LAW etc. come from the foundation
     │   └── security/                    #   Security MG (no subscription in v1)
     ├── landingzones/                    # Landing Zones MG
     │   ├── corp/                        #   Corp MG
