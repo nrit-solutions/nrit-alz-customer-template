@@ -1,11 +1,17 @@
 # apply
 #
-# Runs when a pull request that touched live/ is merged to main. Calls the
-# reusable apply workflow in nrit-azure-pipelines, which logs in to the customer
-# tenant with OIDC (the apply identity, Owner) and applies the foundation stack.
+# Auto-applies routine, lower-scope workloads when a pull request that touched
+# live/platform/ is merged to main. Calls the reusable apply workflow in
+# nrit-azure-pipelines, which logs in to the customer tenant with OIDC (the
+# apply identity, Owner) and applies the targeted stack.
 #
-# The apply waits on the apply environment's required reviewers before it runs.
-# Approve the deployment on the run's page to release it.
+# The foundation (the management group hierarchy at tenant-root scope) is NOT
+# applied here. It is deliberately manual: see apply-foundation.yml. The path
+# filter below is scoped to live/platform/** so a change to the foundation under
+# live/tenant/** never triggers an auto-apply.
+#
+# The apply waits on the apply environment's gate before it runs. Approve the
+# deployment on the run's page to release it.
 #
 # The reusable workflow is pinned to the same tag the bootstrap pinned the
 # federated credential to. Do not change the @ref or the working_directory
@@ -16,27 +22,17 @@ name: apply
 on:
   push:
     branches: [main]
-    paths: ["live/**"]
+    paths: ["live/platform/**"]
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  foundation:
-    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-apply.yml@v0.1.3
-    with:
-      working_directory: live/tenant/_global/caf-platform-foundation
-      runs_on: ${{ vars.RUNNER_LABEL }}
-      catalog_app_client_id: ${{ vars.CATALOG_APP_CLIENT_ID }}
-    secrets:
-      catalog_app_private_key: ${{ secrets.CATALOG_APP_PRIVATE_KEY }}
-
-  # Connectivity applies after the foundation, so the management group hierarchy
-  # and the apply identity's role assignments are in place before resources land
-  # in the connectivity subscription.
+  # The foundation must already be applied (apply-foundation.yml) so the
+  # management group hierarchy and the apply identity's role assignments are in
+  # place before resources land in the connectivity subscription.
   connectivity:
-    needs: foundation
     uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-apply.yml@v0.1.3
     with:
       working_directory: live/platform/connectivity/sub-connectivity/westeurope/caf-connectivity-hub

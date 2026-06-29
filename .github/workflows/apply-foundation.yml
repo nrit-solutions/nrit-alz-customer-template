@@ -1,0 +1,39 @@
+# apply-foundation
+#
+# Applies the platform foundation: the CAF management group hierarchy and policy
+# at tenant-root scope, plus the management subscription resources. This is the
+# highest blast radius operation in the repository, so it is manual only.
+#
+# It never runs on a push. Trigger it deliberately from the Actions tab (Run
+# workflow) or with `gh workflow run apply-foundation.yml` once the plan on the
+# pull request has been reviewed and merged. A push to main, whether from a
+# merged pull request or an admin direct push, can never auto-apply the
+# foundation: that is the safeguard against applying the ALZ hierarchy at the
+# tenant root of a tenant that already has one.
+#
+# Routine, lower-scope workloads (connectivity and landing zones) auto-apply on
+# push to main through apply.yml. Only the foundation is gated behind a manual
+# dispatch.
+#
+# The reusable workflow is pinned to the same tag the bootstrap pinned the
+# federated credential to. Do not change the @ref or the working_directory
+# without re-running the bootstrap: the OIDC subject embeds both.
+
+name: apply-foundation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  foundation:
+    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-apply.yml@v0.1.3
+    with:
+      working_directory: live/tenant/_global/caf-platform-foundation
+      runs_on: ${{ vars.RUNNER_LABEL }}
+      catalog_app_client_id: ${{ vars.CATALOG_APP_CLIENT_ID }}
+    secrets:
+      catalog_app_private_key: ${{ secrets.CATALOG_APP_PRIVATE_KEY }}

@@ -30,3 +30,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `v0.1.1` and pass `catalog_app_id` plus the `catalog_app_private_key` secret,
   so the runner can clone the private catalog. ONBOARDING documents granting the
   pipelines and catalog repositories org-level Actions access.
+
+### Changed
+
+- The foundation no longer auto-applies on push to main. It moved to a new
+  manual `apply-foundation.yml` (`workflow_dispatch` only), so applying the ALZ
+  management group hierarchy at tenant-root scope is always a deliberate action.
+  `apply.yml` now triggers only on `live/platform/**` and applies the
+  lower-scope connectivity workload; a change under `live/tenant/**` can no
+  longer trigger an auto-apply. The OIDC contract is unchanged: both workflows
+  still call `terragrunt-apply.yml@v0.1.3` through the `apply` environment.

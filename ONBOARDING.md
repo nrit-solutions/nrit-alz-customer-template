@@ -102,10 +102,20 @@ Open a pull request with a trivial change (for example, a comment in
 `live/tenant.hcl`) to trigger the plan workflow. Review the output posted on the
 PR.
 
-## Step 5: First apply
+## Step 6: First apply
 
-After review and approval by the approver team, merge the PR. The apply workflow
-runs and provisions the foundation stack.
+The foundation is applied deliberately, not on merge. It creates the management
+group hierarchy at tenant-root scope, the highest blast radius operation in the
+repository, so a push to main never applies it. After the plan on the PR is
+reviewed and the PR is merged, trigger the foundation by hand: open the Actions
+tab, select `apply-foundation`, Run workflow on `main` (or
+`gh workflow run apply-foundation.yml`). Approve the deployment on the run's page
+to release it.
 
 Expect the first apply to take sixty to ninety minutes due to policy
 propagation.
+
+Once the foundation is in place, routine lower-scope workloads apply
+automatically: merging a PR that touches `live/platform/**` (for example the
+connectivity hub) runs the `apply` workflow on the push to main. The foundation,
+under `live/tenant/**`, is excluded from that auto-apply by design.
