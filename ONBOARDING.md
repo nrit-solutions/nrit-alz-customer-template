@@ -72,7 +72,7 @@ DDoS plan and private DNS, turn those on in the connectivity stack and set
 Update `catalog_ref` in each `terragrunt.stack.hcl` and the `@v<version>` ref on
 each reusable workflow in `.github/workflows/`. The workflow ref must match the
 tag the bootstrap pinned the federated credential to (its `pipelines_ref`,
-default `v0.1.0`), or OIDC login fails.
+default `v0.1.5`), or OIDC login fails.
 
 ## Step 4: Grant cross-repository Actions access
 

@@ -33,6 +33,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The consumer workflows pin the pipelines reusable workflows at `v0.1.5`
+  (clean, readable plan and apply output), up from `v0.1.3`. The bootstrap's
+  `pipelines_ref` default matches, so a new customer pins the same tag.
 - The foundation no longer auto-applies on push to main. It moved to a new
   manual `apply-foundation.yml` (`workflow_dispatch` only), so applying the ALZ
   management group hierarchy at tenant-root scope is always a deliberate action.
