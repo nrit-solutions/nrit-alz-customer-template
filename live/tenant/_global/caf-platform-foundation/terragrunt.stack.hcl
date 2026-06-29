@@ -14,7 +14,7 @@
 
 locals {
   catalog_url = "git::https://github.com/nrit-solutions/nrit-terragrunt-catalog.git"
-  catalog_ref = "v0.1.0"
+  catalog_ref = "v0.3.2"
 
   # Customer short name and region tag, used in resource names and tags. Set
   # these during onboarding (see ONBOARDING.md, step 2). Keep customer_name

@@ -33,6 +33,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The consumer stacks pin the catalog at `v0.3.2`, up from foundation `v0.1.0`
+  and connectivity `v0.2.0`. `v0.3.2` sets `resource_provider_registrations =
+  none` in the catalog units, so the least-privilege Reader plan identity no
+  longer fails `terraform init` by trying to register resource providers on a
+  fresh deploy subscription. ONBOARDING step 5 registers the required providers
+  out of band.
 - The consumer workflows pin the pipelines reusable workflows at `v0.1.5`
   (clean, readable plan and apply output), up from `v0.1.3`. The bootstrap's
   `pipelines_ref` default matches, so a new customer pins the same tag.

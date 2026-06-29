@@ -96,13 +96,30 @@ a credential for `github.com/nrit-solutions`. If the fetch still fails, supply
 the runner a token (a GitHub App installation token or a read-only PAT)
 configured as a git credential.
 
-## Step 5: First plan
+## Step 5: Register resource providers
+
+The deploy identities run least privilege: the plan identity is Reader and cannot
+register Azure resource providers, so the catalog units set
+`resource_provider_registrations = "none"`. Register the providers each deploy
+subscription needs before the first run, using an account with rights on the
+subscription. The connectivity subscription needs at least `Microsoft.Network`:
+
+```sh
+az provider register --namespace Microsoft.Network --subscription <connectivity-sub-id>
+```
+
+Register any further providers a workload uses (for example `Microsoft.Web` or
+`Microsoft.Sql`) on its landing zone subscription the same way. Without this the
+first plan fails at `terraform init` with an authorization error on
+`Microsoft.X/register/action`.
+
+## Step 6: First plan
 
 Open a pull request with a trivial change (for example, a comment in
 `live/tenant.hcl`) to trigger the plan workflow. Review the output posted on the
 PR.
 
-## Step 6: First apply
+## Step 7: First apply
 
 The foundation is applied deliberately, not on merge. It creates the management
 group hierarchy at tenant-root scope, the highest blast radius operation in the
