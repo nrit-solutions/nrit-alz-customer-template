@@ -33,6 +33,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The connectivity hub and foundation management resource names now follow the
+  ALZ accelerator convention: short region geo-code, no sequence number, no
+  customer prefix (`rg-vwan-hub-weu`, `vwan-hub-weu`, `vhub-hub-weu`,
+  `fw-hub-weu`, `fwp-hub-weu`; `rg-management-weu`, `law-management-weu`,
+  `uami-management-ama-weu`). The connectivity stack passes explicit names to the
+  module so it skips its default `<type>-hub-<location>-001` pattern;
+  `customer_name` is now used only in tags.
 - The consumer stacks pin the catalog at `v0.3.2`, up from foundation `v0.1.0`
   and connectivity `v0.2.0`. `v0.3.2` sets `resource_provider_registrations =
   none` in the catalog units, so the least-privilege Reader plan identity no

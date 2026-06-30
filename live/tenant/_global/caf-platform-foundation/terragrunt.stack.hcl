@@ -16,10 +16,9 @@ locals {
   catalog_url = "git::https://github.com/nrit-solutions/nrit-terragrunt-catalog.git"
   catalog_ref = "v0.3.2"
 
-  # Customer short name and region tag, used in resource names and tags. Set
-  # these during onboarding (see ONBOARDING.md, step 2). Keep customer_name
-  # short and lowercase: it goes into resource names with length and character
-  # limits.
+  # Region short code, used in the management resource names (no customer prefix,
+  # matching the ALZ accelerator convention). customer_name is used only in tags.
+  # Set both during onboarding (see ONBOARDING.md, step 2).
   customer_name  = "customer"
   location_short = "weu"
   environment    = "prod"
@@ -39,9 +38,9 @@ stack "caf_platform_foundation" {
     # Management resource names. The same names are passed to both catalog units
     # (the management unit creates them; the landing-zones unit computes its
     # policy default values from them), so set them once here.
-    management_resource_group_name            = "rg-management-${local.customer_name}-${local.location_short}"
-    log_analytics_workspace_name              = "law-management-${local.customer_name}-${local.location_short}"
-    ama_user_assigned_managed_identity_name   = "uami-ama-${local.customer_name}-${local.location_short}"
+    management_resource_group_name            = "rg-management-${local.location_short}"
+    log_analytics_workspace_name              = "law-management-${local.location_short}"
+    ama_user_assigned_managed_identity_name   = "uami-management-ama-${local.location_short}"
     log_analytics_workspace_retention_in_days = 30
 
     # ALZ hierarchy and policy come from the public ALZ Library at this ref.
