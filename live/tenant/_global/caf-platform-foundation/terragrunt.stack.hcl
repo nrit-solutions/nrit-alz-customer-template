@@ -14,7 +14,7 @@
 
 locals {
   catalog_url = "git::https://github.com/nrit-solutions/nrit-terragrunt-catalog.git"
-  catalog_ref = "v0.3.2"
+  catalog_ref = "v0.4.1"
 
   # Region short code, used in the management resource names (no customer prefix,
   # matching the ALZ accelerator convention). customer_name is used only in tags.
@@ -46,6 +46,14 @@ stack "caf_platform_foundation" {
     # ALZ hierarchy and policy come from the public ALZ Library at this ref.
     architecture_name = "alz"
     alz_library_ref   = "2026.04.2"
+
+    # Azure Monitor Baseline Alerts (AMBA). On by default. REQUIRED: replace the
+    # placeholder with a real address during onboarding (see ONBOARDING.md, step
+    # 2); all AMBA alerts route to this action group. The names follow the
+    # region-suffixed convention.
+    amba_action_group_email                  = "alerts@example.com"
+    amba_resource_group_name                 = "rg-amba-${local.location_short}"
+    amba_user_assigned_managed_identity_name = "uami-amba-${local.location_short}"
 
     # Place subscriptions into management groups. Empty by default so the first
     # apply never moves live subscriptions. Fill in during onboarding, for

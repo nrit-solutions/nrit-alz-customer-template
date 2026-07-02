@@ -44,9 +44,11 @@ replace them, or export the variables, if you plan against the tenant locally.
 The values you must set:
 
 - `live/tenant/_global/caf-platform-foundation/terragrunt.stack.hcl`: set
-  `customer_name` (short, lowercase) in the `locals` block. Set
-  `subscription_placement` if you are placing subscriptions into management
-  groups in this first apply.
+  `customer_name` (short, lowercase) in the `locals` block. Replace the
+  `amba_action_group_email` placeholder (`alerts@example.com`) with a real
+  monitored inbox: Azure Monitor Baseline Alerts is on by default and every AMBA
+  alert routes to this address. Set `subscription_placement` if you are placing
+  subscriptions into management groups in this first apply.
 - `live/platform/connectivity/.../caf-connectivity-hub/terragrunt.stack.hcl`:
   set `customer_name` to match.
 - `live/platform/connectivity/.../caf-connectivity-hub/subscription.hcl`: set
@@ -102,16 +104,20 @@ The deploy identities run least privilege: the plan identity is Reader and canno
 register Azure resource providers, so the catalog units set
 `resource_provider_registrations = "none"`. Register the providers each deploy
 subscription needs before the first run, using an account with rights on the
-subscription. The connectivity subscription needs at least `Microsoft.Network`:
+subscription. Every deploy subscription needs `Microsoft.PolicyInsights` for the
+AMBA policy remediation (step 8); the connectivity subscription also needs at
+least `Microsoft.Network`:
 
 ```sh
+az provider register --namespace Microsoft.PolicyInsights --subscription <sub-id>
 az provider register --namespace Microsoft.Network --subscription <connectivity-sub-id>
 ```
 
 Register any further providers a workload uses (for example `Microsoft.Web` or
-`Microsoft.Sql`) on its landing zone subscription the same way. Without this the
-first plan fails at `terraform init` with an authorization error on
-`Microsoft.X/register/action`.
+`Microsoft.Sql`) on its landing zone subscription the same way. Without the
+provider the first plan fails at `terraform init` with an authorization error on
+`Microsoft.X/register/action`; without `Microsoft.PolicyInsights` the AMBA
+remediation fails with `SubscriptionNotRegistered`.
 
 ## Step 6: First plan
 
@@ -136,3 +142,32 @@ Once the foundation is in place, routine lower-scope workloads apply
 automatically: merging a PR that touches `live/platform/**` (for example the
 connectivity hub) runs the `apply` workflow on the push to main. The foundation,
 under `live/tenant/**`, is excluded from that auto-apply by design.
+
+## Step 8: Remediate the AMBA policies
+
+The foundation apply assigns the AMBA policies and creates the AMBA identity, but
+it does not deploy the alerts or the action group. Those are created by the
+policies' `DeployIfNotExists` effect, which does not run automatically for scopes
+that already exist, so remediation must be triggered once after the apply (and
+again as batches of new resources are added, until it is automated).
+
+The action group is the first target: until it exists, alerts have nowhere to
+route. Remediate `Deploy-AMBA-Notification` first, then the rest. The simplest
+route is the portal: Policy, Assignments, select each `Deploy-AMBA-*`, Create
+remediation task. Three things to know if you script it with the CLI instead:
+
+- Remediation runs at subscription scope, not management-group scope
+  (`ReEvaluateCompliance` is rejected at MG scope). Set the subscription context
+  and pass the MG-level assignment id.
+- The AMBA assignments are initiatives, so remediation needs a
+  `--definition-reference-id` for the specific policy in the initiative (for the
+  action group, the `ALZ_AlertProcessing_Rule` reference in `Notification-Assets`).
+- Non-compliance is attributed to the highest assignment in the tree (the
+  intermediate root `alz`), so remediate that assignment, not the per-MG ones.
+
+Confirm success: the action group `ag-AMBA-management-ALZ-001` appears in
+`rg-amba-<region>` in the management subscription, with the onboarding email as
+its receiver. Per-resource alerts deploy as the matching resources are created.
+
+Automating this (a scheduled remediation job or a pipeline step) is the intended
+end state; until then it is a manual post-apply step.

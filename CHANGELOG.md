@@ -33,6 +33,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Enable the Azure Monitor Baseline Alerts (AMBA) platform baseline by pinning
+  the catalog at `v0.4.1`. The foundation stack now sets `amba_action_group_email`
+  (a required onboarding value, placeholder `alerts@example.com`) and the AMBA
+  resource names. ONBOARDING gains the email in step 2, the
+  `Microsoft.PolicyInsights` registration in step 5, and a post-apply remediation
+  step (step 8); AMBA policies are assigned by the apply but the alerts and action
+  group deploy only via remediation.
 - The connectivity hub and foundation management resource names now follow the
   ALZ accelerator convention: short region geo-code, no sequence number, no
   customer prefix (`rg-vwan-hub-weu`, `vwan-hub-weu`, `vhub-hub-weu`,
