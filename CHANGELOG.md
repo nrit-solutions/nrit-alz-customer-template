@@ -11,13 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Scheduled drift detection: `.github/workflows/drift.yml`. Daily (and on
   demand) a `discover` job lists every stack and a matrix checks each against the
-  tenant with the pinned `terragrunt-drift.yml@v0.4.0`. Drift opens or refreshes
+  tenant with the pinned `terragrunt-drift.yml@v0.4.2`. Drift opens or refreshes
   a GitHub Issue per stack; a clean stack closes its issue. The check is read
   only (the plan Reader identity through the `plan` environment). The foundation
   matrix entry sets `manual_apply: true` so a diff there is flagged as a possible
   pending apply rather than tenant drift. Drift detection needs the bootstrap's
   drift federated credential: re-run the bootstrap for a customer created before
-  `nrit-azure-pipelines` v0.4.0.
+  `nrit-azure-pipelines` v0.4.2.
 
 ### Changed
 
