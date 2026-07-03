@@ -15,7 +15,7 @@
 
 locals {
   catalog_url = "git::https://github.com/nrit-solutions/nrit-terragrunt-catalog.git"
-  catalog_ref = "v0.3.2"
+  catalog_ref = "v0.4.2"
 
   # Region short code, used in the connectivity resource names (no customer prefix
   # and no sequence number, matching the ALZ accelerator convention).

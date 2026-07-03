@@ -74,7 +74,10 @@ DDoS plan and private DNS, turn those on in the connectivity stack and set
 Update `catalog_ref` in each `terragrunt.stack.hcl` and the `@v<version>` ref on
 each reusable workflow in `.github/workflows/`. The workflow ref must match the
 tag the bootstrap pinned the federated credential to (its `pipelines_ref`,
-default `v0.1.5`), or OIDC login fails.
+default `v0.4.0`), or OIDC login fails. `drift.yml` is the exception: it pins
+`terragrunt-drift.yml` at the separate `drift_workflow_ref` (default `v0.4.0`),
+because the drift credential was added after the plan and apply pin. Keep the two
+in step.
 
 ## Step 4: Grant cross-repository Actions access
 
@@ -171,3 +174,24 @@ its receiver. Per-resource alerts deploy as the matching resources are created.
 
 Automating this (a scheduled remediation job or a pipeline step) is the intended
 end state; until then it is a manual post-apply step.
+
+## Step 9: Drift detection (automatic)
+
+Nothing to do; it is on by default. `.github/workflows/drift.yml` runs daily
+(and can be dispatched from the Actions tab) and checks every stack against the
+tenant with the plan (Reader) identity. A stack that no longer matches its
+committed configuration opens a GitHub Issue labelled `drift`, refreshed on each
+run and closed automatically when the stack comes back clean. Triage those issues
+as they appear: either reconcile the tenant by applying, or update the
+configuration to match an intended out-of-band change.
+
+Two things to know:
+
+- The foundation is applied by hand (`apply-foundation`), so a foundation drift
+  issue may be a merged but not yet applied change rather than a tenant change.
+  The issue says so. Check whether the latest foundation commit has been applied
+  before treating it as drift.
+- Drift detection needs the bootstrap's drift federated credential. It exists for
+  any customer bootstrapped with `nrit-azure-pipelines` v0.4.0 or later. For an
+  earlier customer, re-run the bootstrap once (step 1); it adds only the new
+  credential.

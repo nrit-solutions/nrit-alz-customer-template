@@ -9,6 +9,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Scheduled drift detection: `.github/workflows/drift.yml`. Daily (and on
+  demand) a `discover` job lists every stack and a matrix checks each against the
+  tenant with the pinned `terragrunt-drift.yml@v0.4.0`. Drift opens or refreshes
+  a GitHub Issue per stack; a clean stack closes its issue. The check is read
+  only (the plan Reader identity through the `plan` environment). The foundation
+  matrix entry sets `manual_apply: true` so a diff there is flagged as a possible
+  pending apply rather than tenant drift. Drift detection needs the bootstrap's
+  drift federated credential: re-run the bootstrap for a customer created before
+  `nrit-azure-pipelines` v0.4.0.
+
+### Changed
+
+- Pin the reusable plan, apply, and drift workflows at `nrit-azure-pipelines`
+  `v0.4.0` (was `v0.1.5` / `v0.3.0`). Plan, apply, and drift now render
+  structured, per-unit attributed output from `terraform show -json` (which unit
+  changed which resource) instead of scraping plan text; apply applies the saved
+  plan files. Re-run the bootstrap to move the plan, apply, and drift federated
+  credentials to `v0.4.0`.
+- Pin the catalog at `v0.4.2` (was `v0.4.1` foundation, `v0.3.2` connectivity),
+  which strips the AVM modules' bundled tests and examples so plan, apply, and
+  drift output is clean and free of `Initializing modules... examples/` noise.
 - Repository scaffold generated from `nrit-azure-customer-template`.
 - `live/root.hcl` and `live/tenant.hcl`: the shared backend and locals contract.
   The backend reads the `BACKEND_*` Action variables at run time; units include
