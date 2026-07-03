@@ -72,7 +72,7 @@ jobs:
       fail-fast: false
       matrix:
         working_directory: ${{ fromJSON(needs.discover.outputs.dirs) }}
-    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-drift.yml@v0.4.0
+    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-drift.yml@v0.4.2
     with:
       working_directory: ${{ matrix.working_directory }}
       runs_on: ${{ vars.RUNNER_LABEL }}

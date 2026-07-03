@@ -74,8 +74,8 @@ DDoS plan and private DNS, turn those on in the connectivity stack and set
 Update `catalog_ref` in each `terragrunt.stack.hcl` and the `@v<version>` ref on
 each reusable workflow in `.github/workflows/`. The workflow ref must match the
 tag the bootstrap pinned the federated credential to (its `pipelines_ref`,
-default `v0.4.0`), or OIDC login fails. `drift.yml` is the exception: it pins
-`terragrunt-drift.yml` at the separate `drift_workflow_ref` (default `v0.4.0`),
+default `v0.4.2`), or OIDC login fails. `drift.yml` is the exception: it pins
+`terragrunt-drift.yml` at the separate `drift_workflow_ref` (default `v0.4.2`),
 because the drift credential was added after the plan and apply pin. Keep the two
 in step.
 
@@ -192,6 +192,6 @@ Two things to know:
   The issue says so. Check whether the latest foundation commit has been applied
   before treating it as drift.
 - Drift detection needs the bootstrap's drift federated credential. It exists for
-  any customer bootstrapped with `nrit-azure-pipelines` v0.4.0 or later. For an
+  any customer bootstrapped with `nrit-azure-pipelines` v0.4.2 or later. For an
   earlier customer, re-run the bootstrap once (step 1); it adds only the new
   credential.

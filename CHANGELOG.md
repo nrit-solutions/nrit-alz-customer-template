@@ -22,11 +22,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Pin the reusable plan, apply, and drift workflows at `nrit-azure-pipelines`
-  `v0.4.0` (was `v0.1.5` / `v0.3.0`). Plan, apply, and drift now render
+  `v0.4.2` (was `v0.1.5` / `v0.3.0`). Plan, apply, and drift now render
   structured, per-unit attributed output from `terraform show -json` (which unit
   changed which resource) instead of scraping plan text; apply applies the saved
   plan files. Re-run the bootstrap to move the plan, apply, and drift federated
-  credentials to `v0.4.0`.
+  credentials to `v0.4.2`.
 - Pin the catalog at `v0.4.2` (was `v0.4.1` foundation, `v0.3.2` connectivity),
   which strips the AVM modules' bundled tests and examples so plan, apply, and
   drift output is clean and free of `Initializing modules... examples/` noise.
