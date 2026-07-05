@@ -8,5 +8,5 @@ groups:
 - `corp` — corp-connected workloads (no public ingress by default)
 - `online` — internet-facing workloads
 
-Each archetype MG holds one named subscription folder per environment, for
-example `corp/corp-prd/` and `corp/corp-tst/`.
+Both are placeholders until a customer's first landing zone is onboarded; see
+`corp/README.md` and `online/README.md`.

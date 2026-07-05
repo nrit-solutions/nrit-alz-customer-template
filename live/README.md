@@ -10,12 +10,15 @@ exposes the shared locals; each unit includes it and generates its own
 folder tree below mirrors the CAF management group hierarchy, using management
 group IDs as folder names:
 
-- `tenant/` — tenant-scope deployments: the foundation stack under `_global/`
-  that builds the MG hierarchy, policy, and the management resources
-- `platform/` — Platform MG: connectivity, identity, management, security
-- `landingzones/` — Landing Zones MG: corp, online
+- `platform/` — Platform MG: connectivity, identity, management, security. The
+  platform foundation (the MG hierarchy, policy, and the management
+  resources) lives under
+  `platform/management/westeurope/caf-platform-foundation/`
+- `landingzones/` — Landing Zones MG: corp, online (placeholders; onboarded
+  per customer)
 - `decommissioned/` — Decommissioned MG
 - `sandbox/` — Sandbox MG
 
-The foundation under `tenant/_global/caf-platform-foundation/` is wired. The
-connectivity and landing-zone folders are still scaffold (later phases).
+The platform foundation and the connectivity hub are wired. `identity`,
+`security`, and the landing zones are placeholders until a customer's
+subscriptions are onboarded.

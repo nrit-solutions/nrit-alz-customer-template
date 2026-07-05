@@ -10,5 +10,7 @@ landing zone. Child management groups:
 - `management` — logging, monitoring, automation
 - `security` — security tooling
 
-Subscriptions live in a named folder under each child MG, for example
-`connectivity/sub-connectivity/`.
+Each child MG with a subscription holds `subscription.hcl` (and, per region,
+`region.hcl`) directly, for example `connectivity/subscription.hcl` and
+`connectivity/westeurope/`. A child MG with no subscription yet holds only a
+README until one is provisioned.

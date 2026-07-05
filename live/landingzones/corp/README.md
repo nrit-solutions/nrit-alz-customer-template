@@ -2,10 +2,21 @@
 
 Management group: **Corp** (id `corp`), child of `landingzones`.
 
-Corp-connected landing zones. One named subscription folder per environment:
+Corp-connected landing zones: workloads with no public ingress by default,
+connected to the platform hub. Placeholder until the customer's first corp
+subscription is onboarded.
 
-- `corp-prd/` — production (holds the `webapp-sql-baseline` workload in v1)
-- `corp-tst/` — test (no workload yet, scaffolded to show where one goes)
+To onboard one, add a named subscription folder here (for example
+`corp-workload/`) with:
 
-Scaffold only. The `subscription.hcl`, `region.hcl`, and workload stack
-configs are not written yet.
+- `subscription.hcl` — the subscription id
+- a placement stack wrapping the catalog `lz-vending` stack, to adopt (or
+  vend) the subscription and place it under this management group
+- a network stack, under a region folder, wrapping the catalog `lz-network`
+  stack for the spoke network peered to the platform hub
+
+See the catalog `lz-network` stack's example and README for the settings a
+spoke needs against this template's minimal hub: a `network_security_groups`
+entry associated to every subnet (the ALZ policy `Deny-Subnet-Without-Nsg`
+denies subnets with none) and `hub_peering_options_tohub = {
+use_remote_gateways = false }` if the hub has no VPN/ExpressRoute gateway.
