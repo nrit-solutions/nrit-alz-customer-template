@@ -16,7 +16,7 @@
 
 locals {
   catalog_url = "git::https://github.com/nrit-solutions/nrit-terragrunt-catalog.git"
-  catalog_ref = "v0.6.0"
+  catalog_ref = "v0.6.1"
 
   subscription_vars = read_terragrunt_config(find_in_parent_folders("subscription.hcl"))
   region_vars       = read_terragrunt_config(find_in_parent_folders("region.hcl"))
@@ -88,24 +88,24 @@ stack "caf_platform_foundation" {
     #   }
     subscription_placement = {}
 
-    # Enforce-Tag-Gov starts in Audit so it flags, but does not block, resource
-    # groups that are not yet tag-compliant (including the AMBA and any
-    # bootstrap resource groups). Flip these effects to Deny once every RG
-    # carries the mandatory tags.
-    policy_assignments_to_modify = {
-      alz = {
-        policy_assignments = {
-          Enforce-Tag-Gov = {
-            parameters = {
-              rgMandatoryTagsEffect = jsonencode({ value = "Audit" })
-              criticalityEffect     = jsonencode({ value = "Audit" })
-              confidentialityEffect = jsonencode({ value = "Audit" })
-              environmentEffect     = jsonencode({ value = "Audit" })
-            }
-          }
-        }
-      }
-    }
+    # Tag governance ships in Audit by default (the catalog initiative's effects
+    # default to Audit): it flags resource groups missing the mandatory tags but
+    # does not block them. To enforce, once every RG (including the AMBA and cicd
+    # bootstrap groups) carries the mandatory tags, set the effects to Deny:
+    #   policy_assignments_to_modify = {
+    #     alz = {
+    #       policy_assignments = {
+    #         Enforce-Tag-Gov = {
+    #           parameters = {
+    #             rgMandatoryTagsEffect = jsonencode({ value = "Deny" })
+    #             criticalityEffect     = jsonencode({ value = "Deny" })
+    #             confidentialityEffect = jsonencode({ value = "Deny" })
+    #             environmentEffect     = jsonencode({ value = "Deny" })
+    #           }
+    #         }
+    #       }
+    #     }
+    #   }
 
     # DDoS: the Enable-DDoS-VNET modify policy injects a DDoS plan reference
     # into every VNet the moment it is created. Production: deploy a DDoS
