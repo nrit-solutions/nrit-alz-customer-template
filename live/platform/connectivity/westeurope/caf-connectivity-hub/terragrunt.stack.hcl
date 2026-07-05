@@ -5,30 +5,44 @@
 # single-region Virtual WAN with Azure Firewall, deployed into the connectivity
 # subscription named in subscription.hcl.
 #
+# Deployed from this folder because subscription.hcl and region.hcl are
+# inherited from the two ancestor folders above (live/platform/connectivity/),
+# not co-located here, so the connectivity subscription id and region are set
+# once for the whole connectivity MG.
+#
 # This is the minimal hub that has been validated: firewall on (Basic), and DDoS,
 # private DNS, gateways, and bastion off. Turn those on in primary_hub /
 # virtual_wan_settings below as the customer needs them. If you enable the DDoS
 # protection plan and private DNS zones, also wire the foundation policy default
 # values (set connectivity_subscription_id and the DDoS/DNS names in
-# live/tenant/_global/caf-platform-foundation/terragrunt.stack.hcl) so the ALZ
-# policy assignments point at the live resources.
+# live/platform/management/westeurope/caf-platform-foundation/terragrunt.stack.hcl)
+# so the ALZ policy assignments point at the live resources.
 
 locals {
   catalog_url = "git::https://github.com/nrit-solutions/nrit-terragrunt-catalog.git"
   catalog_ref = "v0.4.2"
 
+  region_vars = read_terragrunt_config(find_in_parent_folders("region.hcl"))
+
   # Region short code, used in the connectivity resource names (no customer prefix
   # and no sequence number, matching the ALZ accelerator convention).
   # customer_name is used only in tags. Set both during onboarding.
   customer_name  = "customer"
-  location_short = "weu"
-  environment    = "prod"
+  location_short = local.region_vars.locals.location_short
+  environment    = local.region_vars.locals.environment
 
+  # owner, criticality, and confidentiality below are placeholders: set them
+  # per the customer during onboarding. They are mandatory RG tags under the
+  # nrit tag governance (see ONBOARDING.md, step 2).
   tags = {
-    customer     = local.customer_name
-    environment  = local.environment
-    workload     = "alz-connectivity-vwan"
-    "managed-by" = "terraform"
+    customer        = local.customer_name
+    environment     = local.environment
+    "cost-center"   = "platform"
+    workload        = "alz-connectivity-vwan"
+    owner           = "platform-team"
+    criticality     = "medium"
+    confidentiality = "internal"
+    "managed-by"    = "terraform"
   }
 }
 

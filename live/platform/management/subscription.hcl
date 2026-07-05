@@ -1,6 +1,6 @@
 # subscription.hcl
 #
-# The management subscription. It hosts the foundation state backend and the
+# The management subscription. It hosts the shared state backend and the
 # management resources (Log Analytics, data collection rules, the AMA identity).
 #
 # In CI the bootstrap sets the AZURE_SUBSCRIPTION_ID Action variable and the

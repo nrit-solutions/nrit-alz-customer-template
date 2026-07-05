@@ -2,16 +2,18 @@
 
 Management group: **Management** (id `management`), child of `platform`.
 
-Subscription folder: `sub-management/`.
+Holds the management subscription (`subscription.hcl`) and its deployables,
+one region folder per region:
 
-The central logging and monitoring resources (the Log Analytics workspace, the
-Azure Monitor Agent data collection rules, and the AMA identity) are **not**
-deployed from this folder. They are part of the platform foundation and are
-created by the `caf-platform-foundation` stack under
-`live/tenant/_global/`, because the landing-zones policy assignments reference
-them by id and need them to exist first.
+- `westeurope/caf-platform-foundation/` — the platform foundation: the CAF
+  management group hierarchy, policy, and the management resources (the Log
+  Analytics workspace, the Azure Monitor Agent data collection rules, and the
+  AMA identity). Deployed once, from here, because the landing-zones policy
+  assignments reference the management resources by id and need them to exist
+  first. It can also centrally place the connectivity and management
+  subscriptions into their management groups (`subscription_placement`).
 
-`sub-management/` is reserved for any extra management-subscription workloads a
-customer adds later (for example a dedicated automation account, a backup
-vault, or a monitoring workload), each as its own unit or stack. See
-`sub-management/README.md`.
+Add any extra management-subscription workloads a customer needs later (for
+example a dedicated automation account, a backup vault, or a monitoring
+workload) as their own unit or stack under a region folder here, the same way
+`caf-platform-foundation` is laid out.

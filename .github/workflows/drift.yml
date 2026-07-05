@@ -79,6 +79,6 @@ jobs:
       catalog_app_client_id: ${{ vars.CATALOG_APP_CLIENT_ID }}
       # The foundation is applied by hand, not on merge, so a diff there may be a
       # pending apply rather than tenant drift; flag it so the issue says so.
-      manual_apply: ${{ startsWith(matrix.working_directory, 'live/tenant/') }}
+      manual_apply: ${{ startsWith(matrix.working_directory, 'live/platform/management/') }}
     secrets:
       catalog_app_private_key: ${{ secrets.CATALOG_APP_PRIVATE_KEY }}

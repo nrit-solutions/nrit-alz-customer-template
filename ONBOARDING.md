@@ -43,20 +43,29 @@ replace them, or export the variables, if you plan against the tenant locally.
 
 The values you must set:
 
-- `live/tenant/_global/caf-platform-foundation/terragrunt.stack.hcl`: set
-  `customer_name` (short, lowercase) in the `locals` block. Replace the
+- `live/platform/management/westeurope/caf-platform-foundation/terragrunt.stack.hcl`:
+  set `customer_name` (short, lowercase) in the `locals` block. Replace the
   `amba_action_group_email` placeholder (`alerts@example.com`) with a real
   monitored inbox: Azure Monitor Baseline Alerts is on by default and every AMBA
   alert routes to this address. Set `subscription_placement` if you are placing
   subscriptions into management groups in this first apply.
-- `live/platform/connectivity/.../caf-connectivity-hub/terragrunt.stack.hcl`:
+- `live/platform/connectivity/westeurope/caf-connectivity-hub/terragrunt.stack.hcl`:
   set `customer_name` to match.
-- `live/platform/connectivity/.../caf-connectivity-hub/subscription.hcl`: set
+- `live/platform/connectivity/subscription.hcl`: set
   the connectivity subscription id (the hub deploys there, a different
   subscription from the foundation's management subscription).
 
 Region defaults to `westeurope`; change `live/**/region.hcl` only if the
 customer specifies otherwise.
+
+The foundation ships nrit tag governance (`Enforce-Tag-Gov`) in Audit. Every
+resource group must carry `workload`, `owner`, `criticality`, and
+`confidentiality`, each with an allowed value (criticality: `mission-critical`,
+`high`, `medium`, `low`; confidentiality: `public`, `internal`, `confidential`,
+`restricted`; environment: `prod`, `nonprod`, `dev`), or it is flagged now and
+denied once the policy effects are set to Deny. Set the placeholder `owner`,
+`criticality`, and `confidentiality` values in the foundation and hub `tags`
+blocks per workload.
 
 The backend names are never edited here. They come from the `BACKEND_*` Action
 variables the bootstrap set. All subscriptions share that one state account
@@ -68,6 +77,18 @@ The connectivity hub ships as the minimal validated config (firewall on, DDoS
 and private DNS off). To have the foundation policy assignments reference a live
 DDoS plan and private DNS, turn those on in the connectivity stack and set
 `connectivity_subscription_id` plus the DDoS/DNS names in the foundation stack.
+
+DDoS: the ALZ `Enable-DDoS-VNET` modify policy ships on by default and injects
+a DDoS plan reference into every VNet the moment it is created. Until that is
+resolved, no VNet in this tenant can be created, including the connectivity
+hub, so its first apply will fail. Resolve it one of two ways before that
+apply: deploy a real DDoS protection plan and wire its id into the
+foundation's policy default values, or open the foundation stack
+(`caf-platform-foundation/terragrunt.stack.hcl`) and uncomment the
+`policy_assignments_to_modify` carve-out that disables the modify policy for
+`connectivity` and `landingzones` (fine for a minimal or dev tenant with no
+DDoS plan; not recommended for production). The same blocker applies to any
+landing-zone spoke network onboarded later.
 
 ## Step 3: Pin catalog and pipelines versions
 
@@ -142,9 +163,11 @@ Expect the first apply to take sixty to ninety minutes due to policy
 propagation.
 
 Once the foundation is in place, routine lower-scope workloads apply
-automatically: merging a PR that touches `live/platform/**` (for example the
-connectivity hub) runs the `apply` workflow on the push to main. The foundation,
-under `live/tenant/**`, is excluded from that auto-apply by design.
+automatically: merging a PR that touches `live/platform/connectivity/**` or
+`live/landingzones/**` (for example the connectivity hub, or a landing zone
+onboarded later) runs the `apply` workflow on the push to main. The
+foundation, under `live/platform/management/**`, is excluded from that
+auto-apply by design.
 
 ## Step 8: Remediate the AMBA policies
 

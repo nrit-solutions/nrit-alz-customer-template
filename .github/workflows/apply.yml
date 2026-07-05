@@ -1,41 +1,54 @@
 # apply
 #
-# Auto-applies routine, lower-scope workloads when a pull request that touched
-# live/platform/ is merged to main. Calls the reusable apply workflow in
-# nrit-azure-pipelines, which logs in to the customer tenant with OIDC (the
-# apply identity, Owner) and applies the targeted stack.
+# Applies the routine, lower-scope platform workloads on push to main. A detect
+# job asks the reusable terragrunt-affected workflow which components the push
+# changed; then a matrix applies only those, one at a time.
 #
-# The foundation (the management group hierarchy at tenant-root scope) is NOT
-# applied here. It is deliberately manual: see apply-foundation.yml. The path
-# filter below is scoped to live/platform/** so a change to the foundation under
-# live/tenant/** never triggers an auto-apply.
+# The foundation is excluded twice over. The path filter below keeps this
+# workflow to connectivity and landing zones, so a change under
+# live/platform/management/** never triggers it. And detect passes
+# exclude_prefixes: live/platform/management/, so even a mixed commit that also
+# touches connectivity can never pull the foundation into this auto-apply. The
+# foundation is applied only by the manual apply-foundation workflow.
 #
-# The apply waits on the apply environment's gate before it runs. Approve the
-# deployment on the run's page to release it.
-#
-# The reusable workflow is pinned to the same tag the bootstrap pinned the
-# federated credential to. Do not change the @ref or the working_directory
-# without re-running the bootstrap: the OIDC subject embeds both.
+# The apply job keeps calling the pinned terragrunt-apply workflow at v0.4.2
+# through the apply environment: that tag and environment are baked into the
+# apply identity's OIDC subject, so do not change them or the working_directory
+# shape without re-running the bootstrap (see ADR 11).
 
 name: apply
 
 on:
   push:
     branches: [main]
-    paths: ["live/platform/**"]
+    paths:
+      - "live/platform/connectivity/**"
+      - "live/landingzones/**"
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  # The foundation must already be applied (apply-foundation.yml) so the
-  # management group hierarchy and the apply identity's role assignments are in
-  # place before resources land in the connectivity subscription.
-  connectivity:
+  detect:
+    uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-affected.yml@v0.2.0
+    with:
+      base_ref: ${{ github.event.before }}
+      head_ref: ${{ github.sha }}
+      runs_on: ${{ vars.RUNNER_LABEL }}
+      exclude_prefixes: live/platform/management/
+
+  apply:
+    needs: detect
+    if: needs.detect.outputs.dirs != '[]'
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        working_directory: ${{ fromJSON(needs.detect.outputs.dirs) }}
     uses: nrit-solutions/nrit-azure-pipelines/.github/workflows/terragrunt-apply.yml@v0.4.2
     with:
-      working_directory: live/platform/connectivity/sub-connectivity/westeurope/caf-connectivity-hub
+      working_directory: ${{ matrix.working_directory }}
       runs_on: ${{ vars.RUNNER_LABEL }}
       catalog_app_client_id: ${{ vars.CATALOG_APP_CLIENT_ID }}
     secrets:
