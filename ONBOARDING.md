@@ -46,9 +46,10 @@ The values you must set:
 - `live/platform/management/westeurope/caf-platform-foundation/terragrunt.stack.hcl`:
   set `customer_name` (short, lowercase) in the `locals` block. Replace the
   `amba_action_group_email` placeholder (`alerts@example.com`) with a real
-  monitored inbox: Azure Monitor Baseline Alerts is on by default and every AMBA
-  alert routes to this address. Set `subscription_placement` if you are placing
-  subscriptions into management groups in this first apply.
+  monitored inbox: Azure Monitor Baseline Alerts is mandatory in the NRIT
+  baseline and every AMBA alert routes to this address. Set
+  `landing_zones.subscription_placement` (in the `landing_zones` namespace) if
+  you are placing subscriptions into management groups in this first apply.
 - `live/platform/connectivity/westeurope/caf-connectivity-hub/terragrunt.stack.hcl`:
   set `customer_name` to match.
 - `live/platform/connectivity/subscription.hcl`: set
@@ -75,8 +76,9 @@ the deploy target, not the state location.
 
 The connectivity hub ships as the minimal validated config (firewall on, DDoS
 and private DNS off). To have the foundation policy assignments reference a live
-DDoS plan and private DNS, turn those on in the connectivity stack and set
-`connectivity_subscription_id` plus the DDoS/DNS names in the foundation stack.
+DDoS plan and private DNS, turn those on per hub in the connectivity stack's
+`virtual_wan.virtual_hubs` map and set `landing_zones.connectivity_subscription_id`
+plus the DDoS/DNS names in the foundation stack's `landing_zones` namespace.
 
 DDoS: the ALZ `Enable-DDoS-VNET` modify policy ships on by default and injects
 a DDoS plan reference into every VNet the moment it is created. Until that is
@@ -85,15 +87,17 @@ hub, so its first apply will fail. Resolve it one of two ways before that
 apply: deploy a real DDoS protection plan and wire its id into the
 foundation's policy default values, or open the foundation stack
 (`caf-platform-foundation/terragrunt.stack.hcl`) and uncomment the
-`policy_assignments_to_modify` carve-out that disables the modify policy for
-`connectivity` and `landingzones` (fine for a minimal or dev tenant with no
-DDoS plan; not recommended for production). The same blocker applies to any
-landing-zone spoke network onboarded later.
+`policy_assignments_to_modify` carve-out in the `landing_zones` namespace that
+disables the modify policy for `connectivity` and `landingzones` (fine for a
+minimal or dev tenant with no DDoS plan; not recommended for production). The
+same blocker applies to any landing-zone spoke network onboarded later.
 
 ## Step 3: Pin catalog and pipelines versions
 
-Update `catalog_ref` in each `terragrunt.stack.hcl` and the `@v<version>` ref on
-each reusable workflow in `.github/workflows/`. The workflow ref must match the
+Bump the single `catalog_version` local in each `terragrunt.stack.hcl` (it
+renders both the stack block `?ref` and `values.catalog_ref`, so the stack and
+its units can never resolve at different tags) and the `@v<version>` ref on each
+reusable workflow in `.github/workflows/`. The workflow ref must match the
 tag the bootstrap pinned the federated credential to (its `pipelines_ref`,
 default `v0.4.2`), or OIDC login fails. `drift.yml` is the exception: it pins
 `terragrunt-drift.yml` at the separate `drift_workflow_ref` (default `v0.4.2`),

@@ -12,10 +12,13 @@ It deploys to a different subscription from the foundation, so its
 goes to the shared backend (in the management subscription) over Entra ID.
 
 The committed default is the minimal validated hub (firewall on, DDoS and
-private DNS off). Turn DDoS, private DNS, gateways, and bastion on in the
-stack's `primary_hub` / `virtual_wan_settings` blocks as needed. If you enable
-the DDoS plan and private DNS, also wire the foundation policy default values
-(see
+private DNS off). The catalog unit is safe by default: every optional resource
+stays off unless a hub opts in. Turn DDoS, private DNS, gateways, and bastion on
+per hub in the stack's `virtual_wan.virtual_hubs` map (and the WAN-level DDoS
+plan in `virtual_wan.virtual_wan_settings`) as needed. Add a hub per region as a
+further entry in the `virtual_hubs` map. If you enable the DDoS plan and private
+DNS, also wire the foundation policy default values in the `landing_zones`
+namespace (see
 `live/platform/management/westeurope/caf-platform-foundation/terragrunt.stack.hcl`)
 so the ALZ policy assignments reference the live resources.
 

@@ -21,6 +21,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Adopt the catalog `v1.0.0` values contract (breaking). Per-unit keys now live
+  under their unit namespace (`management`, `landing_zones`, `virtual_wan`);
+  shared resource names, `tags`, `enable_telemetry`, and the AMBA settings stay
+  top level. `subscription_placement` and the `policy_assignments_to_modify`
+  carve-outs move into the foundation stack's `landing_zones` namespace.
+- Pin the catalog through a single `catalog_version` local per stack file. It
+  renders both the stack block `?ref` and `values.catalog_ref`, so the stack and
+  its units can never resolve at different tags.
+- Reshape the connectivity hub to the module-shaped contract: `primary_hub` and
+  `hub_address_space` become the `virtual_wan.virtual_hubs` map (one entry per
+  region), and the WAN DDoS plan moves into `virtual_wan.virtual_wan_settings`.
+  The catalog unit is now safe by default: every optional cost-bearing resource
+  stays off unless a hub opts in, so the stack only sets `firewall = true`.
+- Document Azure Monitor Baseline Alerts (AMBA) as mandatory in the NRIT
+  baseline, not "on by default". The action group email stays a required
+  onboarding value.
+- Clarify the landing-zone split in README and ONBOARDING: `lz-vending` owns
+  subscription lifecycle only (alias/adoption, MG placement, identities, RBAC,
+  budgets), and `lz-network` owns all spoke network config. Corp versus online
+  is just the target management group.
 - Pin the reusable plan, apply, and drift workflows at `nrit-azure-pipelines`
   `v0.4.2` (was `v0.1.5` / `v0.3.0`). Plan, apply, and drift now render
   structured, per-unit attributed output from `terraform show -json` (which unit
