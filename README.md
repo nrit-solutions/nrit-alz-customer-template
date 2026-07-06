@@ -17,9 +17,12 @@ The foundation and connectivity are wired end to end. `live/root.hcl` and
 under `live/platform/connectivity/westeurope/` consume the pinned catalog
 stacks, and the `plan` and `apply` workflows call the pinned pipelines
 reusable workflows. The landing-zone folders are placeholders: a customer's
-first landing zone is onboarded with the catalog `lz-vending` and `lz-network`
-stacks, the same pattern the foundation and connectivity hub use. See
-`ONBOARDING.md`.
+first landing zone is onboarded with two catalog stacks, the same pattern the
+foundation and connectivity hub use. `lz-vending` handles subscription lifecycle
+only (alias or adoption, management group placement, identities, RBAC, budgets);
+`lz-network` owns all spoke network config (the virtual network, subnets, NSGs,
+route tables, and hub peering). Corp versus online is just the target management
+group. See `ONBOARDING.md`.
 
 ## Layout
 

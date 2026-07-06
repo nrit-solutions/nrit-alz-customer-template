@@ -10,17 +10,23 @@
 # not co-located here, so the connectivity subscription id and region are set
 # once for the whole connectivity MG.
 #
-# This is the minimal hub that has been validated: firewall on (Basic), and DDoS,
-# private DNS, gateways, and bastion off. Turn those on in primary_hub /
-# virtual_wan_settings below as the customer needs them. If you enable the DDoS
-# protection plan and private DNS zones, also wire the foundation policy default
-# values (set connectivity_subscription_id and the DDoS/DNS names in
+# This is the minimal hub that has been validated: firewall on (Basic), and
+# DDoS, private DNS, gateways, and bastion off. The unit is safe by default:
+# every optional cost-bearing resource stays off unless a hub opts in. Turn them
+# on per hub in virtual_wan.virtual_hubs / virtual_wan.virtual_wan_settings
+# below as the customer needs them. If you enable the DDoS protection plan and
+# private DNS zones, also wire the foundation policy default values (set
+# landing_zones.connectivity_subscription_id and the DDoS/DNS names in
 # live/platform/management/westeurope/caf-platform-foundation/terragrunt.stack.hcl)
 # so the ALZ policy assignments point at the live resources.
 
 locals {
   catalog_url = "git::https://github.com/nrit-solutions/nrit-terragrunt-catalog.git"
-  catalog_ref = "v0.4.2"
+
+  # Single source of truth for the catalog version. The stack block ?ref and
+  # values.catalog_ref both render from this, so the stack and its units can
+  # never resolve at different tags.
+  catalog_version = "v1.0.0"
 
   region_vars = read_terragrunt_config(find_in_parent_folders("region.hcl"))
 
@@ -47,44 +53,43 @@ locals {
 }
 
 stack "caf_connectivity_vwan" {
-  source = "${local.catalog_url}//stacks/caf-connectivity-vwan?ref=${local.catalog_ref}"
+  source = "${local.catalog_url}//stacks/caf-connectivity-vwan?ref=${local.catalog_version}"
   path   = "caf-connectivity-vwan"
   values = {
+    # Pin the catalog once: the source ?ref and catalog_ref render from the same
+    # local, and catalog_url is forwarded so the units resolve from the same host.
+    catalog_ref = local.catalog_version
+    catalog_url = local.catalog_url
+
+    # Names the hub resource group and feeds every hub's parent-id computation.
     hub_resource_group_name = "rg-vwan-hub-${local.location_short}"
-    hub_address_space       = "10.0.0.0/16"
-
-    primary_hub = {
-      hub = {
-        name = "vhub-hub-${local.location_short}"
-      }
-      enabled_resources = {
-        firewall                              = true
-        bastion                               = false
-        virtual_network_gateway_vpn           = false
-        virtual_network_gateway_express_route = false
-        private_dns_zones                     = false
-        private_dns_resolver                  = false
-        sidecar_virtual_network               = false
-      }
-      firewall = {
-        name     = "fw-hub-${local.location_short}"
-        sku_tier = "Basic"
-      }
-      firewall_policy = {
-        name = "fwp-hub-${local.location_short}"
-      }
-    }
-
-    virtual_wan_settings = {
-      virtual_wan = {
-        name = "vwan-hub-${local.location_short}"
-      }
-      enabled_resources = {
-        ddos_protection_plan = false
-      }
-    }
 
     tags             = local.tags
     enable_telemetry = false
+
+    # All Virtual WAN config lives in the virtual_wan namespace. One stack
+    # instance owns the WAN and all its regional hubs: add a hub per region as an
+    # entry in virtual_hubs and set its address space per entry.
+    virtual_wan = {
+      virtual_hubs = {
+        weu = {
+          default_hub_address_space = "10.0.0.0/16"
+          hub                       = { name = "vhub-hub-${local.location_short}" }
+
+          # Minimal validated hub: firewall on (Basic). DDoS, private DNS,
+          # gateways, and bastion stay off because the unit defaults every
+          # optional resource off; opt in by adding its enabled_resources flag.
+          enabled_resources = { firewall = true }
+          firewall          = { name = "fw-hub-${local.location_short}", sku_tier = "Basic" }
+          firewall_policy   = { name = "fwp-hub-${local.location_short}" }
+        }
+      }
+
+      # The unit disables the WAN-level DDoS plan by default (roughly EUR 2.5k a
+      # month). Enable it with enabled_resources.ddos_protection_plan = true here.
+      virtual_wan_settings = {
+        virtual_wan = { name = "vwan-hub-${local.location_short}" }
+      }
+    }
   }
 }
