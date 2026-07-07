@@ -27,3 +27,35 @@ for the settings a spoke needs against this template's minimal hub: a
 = { use_remote_gateways = false }` if the hub has no VPN/ExpressRoute gateway.
 Subscription-level keys are reserved in `lz-network` and fail loudly by design;
 set them in the `lz-vending` stack.
+
+## Workload resources
+
+Common single resources (storage account, key vault, Log Analytics workspace,
+user-assigned identity) are not catalog stacks. Compose them here from catalog
+**units**: add a region folder and a resource folder (for example
+`westeurope/storage/`) with a `terragrunt.stack.hcl` holding one `unit` block per
+resource, each sourcing the catalog unit at a pinned `?ref`:
+
+```hcl
+locals {
+  catalog_url     = "git::https://github.com/nrit-solutions/nrit-terragrunt-catalog.git"
+  catalog_version = "v1.1.0"
+}
+
+unit "storage_account" {
+  source = "${local.catalog_url}//units/storage-account?ref=${local.catalog_version}"
+  path   = "storage-account"
+  values = {
+    name                = "stcorpworkloadweu001"
+    resource_group_name = "rg-corp-workload-weu" # existing or created below
+    # add a resource-group unit block and set resource_group_path to create the
+    # group here; omit both to deploy into an existing group.
+  }
+}
+```
+
+The resource group is optional: include a `resource-group` unit block (and set
+the resource's `resource_group_path`) to create one, or omit it and point
+`resource_group_name` at an existing group. See the catalog units under
+`units/` and the worked example at
+`examples/terragrunt/stacks/storage-account` for both variants.
