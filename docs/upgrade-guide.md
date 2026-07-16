@@ -1,25 +1,34 @@
 # Upgrade guide
 
-How to upgrade catalog and pipelines versions.
+How to upgrade the versions this repository pins. There are no catalog stacks and
+no `catalog_version` local. Three things carry pinned versions.
 
-## Catalog
+## Public AVM modules
 
-Each `terragrunt.stack.hcl` pins the catalog through a single `catalog_version`
-local. It renders both the stack block `?ref` and `values.catalog_ref`, so the
-stack and its units always resolve at the same tag; there is no second place to
-edit and no way for the two to drift.
+Each unit's `main.tf` sources an Azure Verified Module with an explicit `version`.
+To upgrade, change the `version` argument, open a PR, and review the plan.
 
-1. Bump `catalog_version` in the stack file (for example the foundation, at
-   `live/platform/management/westeurope/caf-platform-foundation/terragrunt.stack.hcl`).
-2. Open a pull request. The plan workflow renders the diff before anything is
-   applied. A new catalog release can change the values contract, so read the
-   catalog's CHANGELOG for the target tag and reshape the stack values if needed.
-3. Merge and apply (the foundation applies by hand through `apply-foundation`;
-   lower-scope stacks apply on merge). Roll back by reverting the
-   `catalog_version` change and applying again.
+## The catalog policy library
 
-## Pipelines
+The `landing-zones` unit references the private catalog policy library in
+`live/_foundation/landing-zones/terragrunt.hcl` through the `alz` provider's
+`library_references`. To upgrade, change the `ref` on each entry.
 
-Update the `@v<version>` ref on each reusable workflow in `.github/workflows/`.
-The ref must match the tag the bootstrap pinned the federated credential to, or
-OIDC login fails (see ONBOARDING.md, step 3).
+## The engine
+
+The comment-ops engine is consumed as a reusable workflow, not vendored. The two
+workflows in `.github/workflows/` pin `nrit-tf-pr-ops` at `@v1` with a matching
+`engine_ref: v1`. To move to a new engine release, bump both pins together (the
+`uses:` ref and `engine_ref`) in each caller file. The two must match, or the
+engine checkout skews from the reusable-workflow body.
+
+## The process
+
+1. Change the `version`, `ref`, or the caller pins on a branch.
+2. Open a PR. The engine plans the impacted units and posts the diff.
+3. Review the plan and the gate output.
+4. Comment `/apply` after approval.
+5. Roll back by reverting the version, ref, or pin change and applying again.
+
+Upgrade one module, library, or the engine at a time so the plan diff stays
+readable.

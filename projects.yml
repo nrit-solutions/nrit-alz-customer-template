@@ -1,0 +1,26 @@
+# nrit-tf-pr-ops project discovery for this infrastructure-live repository.
+# Terragrunt monorepo: units (folders with terragrunt.hcl) live under live/.
+# Foundation is treated like any other unit (governance is plan review +
+# approvals + the merge-gate), so no exclude.
+terragrunt:
+  root: live
+  include_dependents: true
+
+# Policy, scan, and cost gates on every plan (and drift). All start report-only,
+# so they surface findings in the run comment / drift issue without blocking the
+# merge gate: conftest runs policy/governance.rego (warn rules only), checkov runs
+# in soft-fail, and infracost always exits 0. The runner image carries conftest and
+# checkov (see nrit-alz-bootstrap runner-image); infracost is a static
+# binary installed per run via the TFPR_EXTRA_TOOLS repo variable (add "infracost"),
+# and it needs the INFRACOST_API_KEY secret for the hosted pricing API (until set,
+# it notes it and skips). To enforce policy/scan: add `deny` rules to the policy and
+# drop CHECKOV_SOFT_FAIL from the checkov hook.
+#
+# $TFPR_ENGINE_DIR is exported into the hook environment by the engine. It points at
+# the engine checkout, so hooks resolve the gate scripts there rather than in the
+# consumer workspace.
+steps:
+  post_plan:
+    - bash "$TFPR_ENGINE_DIR/scripts/conftest-gate.sh"
+    - CHECKOV_SOFT_FAIL=1 bash "$TFPR_ENGINE_DIR/scripts/checkov-gate.sh"
+    - bash "$TFPR_ENGINE_DIR/scripts/infracost-gate.sh"

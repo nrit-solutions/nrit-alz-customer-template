@@ -2,25 +2,18 @@
 
 Management group: **Connectivity** (id `connectivity`), child of `platform`.
 
-Holds the connectivity subscription (`subscription.hcl`) and the hub
-networking stack (`caf-connectivity-hub`) under `westeurope/`.
+Placeholder. No hub is provisioned in the template; onboard the connectivity hub
+here per customer.
 
-The hub is wired to the catalog `caf-connectivity-vwan` stack: a single-region
-Virtual WAN with Azure Firewall, deployed into the connectivity subscription.
-It deploys to a different subscription from the foundation, so its
-`subscription.hcl` sets the connectivity subscription id explicitly; state still
-goes to the shared backend (in the management subscription) over Entra ID.
+To onboard it, add `subscription.hcl` (the connectivity subscription id) and a hub
+networking unit under a region folder (for example `westeurope/hub/`), sourcing the
+catalog or Azure Verified Modules directly. The hub deploys into the connectivity
+subscription, a different subscription from the foundation's management
+subscription, so its `subscription.hcl` sets that id explicitly; state still goes to
+the shared backend (in the management subscription) over Entra ID.
 
-The committed default is the minimal validated hub (firewall on, DDoS and
-private DNS off). The catalog unit is safe by default: every optional resource
-stays off unless a hub opts in. Turn DDoS, private DNS, gateways, and bastion on
-per hub in the stack's `virtual_wan.virtual_hubs` map (and the WAN-level DDoS
-plan in `virtual_wan.virtual_wan_settings`) as needed. Add a hub per region as a
-further entry in the `virtual_hubs` map. If you enable the DDoS plan and private
-DNS, also wire the foundation policy default values in the `landing_zones`
-namespace (see
-`live/platform/management/westeurope/caf-platform-foundation/terragrunt.stack.hcl`)
-so the ALZ policy assignments reference the live resources.
-
-To use a hub virtual network instead of Virtual WAN, point the stack at the
-catalog `caf-connectivity-hub-and-spoke` stack instead.
+Start from the minimal, low-cost hub (one virtual network, no firewall, bastion,
+gateways, private DNS, NAT gateway, or DDoS plan) and turn options on per hub as a
+workload needs them. If you enable private DNS zones, also wire the foundation
+policy default values in `live/_foundation/landing-zones/main.tf` so the ALZ policy
+assignments reference the live resources.
