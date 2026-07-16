@@ -1,17 +1,17 @@
 # root.hcl
 #
-# Shared backend and locals contract for this customer's live tree. Every unit
-# includes this and generates its own providers from the exposed locals:
+# Shared backend, provider defaults, and locals contract for this customer's
+# live tree. Every unit includes this:
 #   include "root" { path = find_in_parent_folders("root.hcl") ; expose = true }
 #
 # What lives here:
 #   - the remote state backend (Azure Storage, Entra ID auth, no account keys)
 #   - the locals every unit reads: tenant, subscription, location
-# What does NOT live here:
-#   - the provider block. The foundation units need different provider sets (the
-#     management unit uses azurerm + azapi; the landing-zones unit uses alz +
-#     azapi), and Terragrunt does not let a unit override a generate block it
-#     inherited from root, so each unit declares its own generate "provider".
+#   - the default provider block: azurerm + azapi, the set most units need.
+#     A unit needing a different set (the landing-zones unit uses alz + azapi;
+#     the amba unit adds alz) declares its own generate "provider" and sets
+#     merge_strategy = "deep" on its include, so its block overrides this one.
+#     Without the deep merge, two same-named generate blocks are a hard error.
 #
 # Coordinates come from the environment the reusable workflows export (the
 # AZURE_* and BACKEND_* Action variables the bootstrap set). Each get_env falls
@@ -50,6 +50,41 @@ remote_state {
     tenant_id        = local.tenant_id
     use_azuread_auth = true
   }
+}
+
+# Default providers: azurerm + azapi, pinned to the unit's own subscription and
+# tenant. The two units that need the alz provider (landing-zones, amba) declare
+# their own generate "provider", which shallow-merges over this one.
+generate "provider" {
+  path      = "providers.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<-EOF
+    terraform {
+      required_providers {
+        azapi = {
+          source  = "Azure/azapi"
+          version = "~> 2.4"
+        }
+        azurerm = {
+          source  = "hashicorp/azurerm"
+          version = "~> 4.0"
+        }
+      }
+    }
+
+    provider "azurerm" {
+      subscription_id                 = "${local.subscription_id}"
+      tenant_id                       = "${local.tenant_id}"
+      resource_provider_registrations = "none"
+      features {}
+    }
+
+    provider "azapi" {
+      subscription_id            = "${local.subscription_id}"
+      tenant_id                  = "${local.tenant_id}"
+      skip_provider_registration = true
+    }
+  EOF
 }
 
 terraform_binary              = "terraform"
