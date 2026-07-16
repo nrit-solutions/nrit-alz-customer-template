@@ -24,7 +24,7 @@ ruleset, and the self-hosted runner are created by the Terraform bootstrap in
 
 The bootstrap generates the customer repository *from this template* (its
 `github.tf` sets `template { owner, repository }` pointing at
-`nrit-solutions/nrit-azure-customer-template`), so the new repository starts with
+`nrit-solutions/nrit-alz-customer-template`), so the new repository starts with
 this whole tree, including the two caller workflows. The apply also creates:
 
 - the state storage account and container (Entra ID auth only, firewalled),

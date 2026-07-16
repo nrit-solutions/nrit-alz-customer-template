@@ -1,4 +1,4 @@
-# nrit-azure-customer-template
+# nrit-alz-customer-template
 
 A GitHub template repository. The bootstrap generates a new customer
 infrastructure-live repository from it, one per customer. Each generated
