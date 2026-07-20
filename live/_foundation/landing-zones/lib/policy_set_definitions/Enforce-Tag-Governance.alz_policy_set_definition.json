@@ -129,7 +129,7 @@
             "value": "[parameters('rgMandatoryTags')]"
           }
         },
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Audit-Tags-Mandatory-Rg",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/placeholder/providers/Microsoft.Authorization/policyDefinitions/Audit-Tags-Mandatory-Rg",
         "policyDefinitionReferenceId": "RgMandatoryTags"
       },
       {
@@ -145,7 +145,7 @@
             "value": "criticality"
           }
         },
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deny-Tag-NotAllowedValues",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/placeholder/providers/Microsoft.Authorization/policyDefinitions/Deny-Tag-NotAllowedValues",
         "policyDefinitionReferenceId": "CriticalityAllowedValues"
       },
       {
@@ -161,7 +161,7 @@
             "value": "confidentiality"
           }
         },
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deny-Tag-NotAllowedValues",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/placeholder/providers/Microsoft.Authorization/policyDefinitions/Deny-Tag-NotAllowedValues",
         "policyDefinitionReferenceId": "ConfidentialityAllowedValues"
       },
       {
@@ -177,7 +177,7 @@
             "value": "env"
           }
         },
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deny-Tag-NotAllowedValues",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/placeholder/providers/Microsoft.Authorization/policyDefinitions/Deny-Tag-NotAllowedValues",
         "policyDefinitionReferenceId": "EnvironmentAllowedValues"
       },
       {
