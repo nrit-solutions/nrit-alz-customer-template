@@ -1,0 +1,66 @@
+{
+  "name": "Deny-Tag-NotAllowedValues",
+  "properties": {
+    "description": "Denies a resource or resource group when the given tag is present with a value outside the allowed list. A missing tag is not evaluated; combine with a mandatory-tags policy to require the tag itself.",
+    "displayName": "Deny a tag value outside the allowed list",
+    "metadata": {
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ],
+      "category": "Tags",
+      "source": "https://github.com/nrit-solutions",
+      "version": "1.0.0"
+    },
+    "mode": "All",
+    "parameters": {
+      "effect": {
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Deny",
+        "metadata": {
+          "description": "Enable or disable the execution of the policy",
+          "displayName": "Effect"
+        },
+        "type": "String"
+      },
+      "tagName": {
+        "metadata": {
+          "description": "Name of the tag to validate, for example criticality.",
+          "displayName": "Tag name"
+        },
+        "type": "String"
+      },
+      "tagAllowedValues": {
+        "metadata": {
+          "description": "Values the tag may hold. Comparison is case insensitive.",
+          "displayName": "Allowed tag values"
+        },
+        "type": "Array"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "exists": "true",
+            "field": "[concat('tags[', parameters('tagName'), ']')]"
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "notIn": "[parameters('tagAllowedValues')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]"
+      }
+    },
+    "policyType": "Custom"
+  },
+  "type": "Microsoft.Authorization/policyDefinitions"
+}

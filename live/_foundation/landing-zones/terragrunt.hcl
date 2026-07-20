@@ -1,7 +1,7 @@
 # Landing zones leaf: management groups, policy, subscription placement on the
 # base architecture. The AVM module owns the schema (main.tf). Terragrunt
 # generates the backend and the azapi + alz providers; alz carries platform/alz
-# plus a custom policy library from the catalog. Its own state.
+# plus the custom policy library, vendored locally under lib/. Its own state.
 
 # deep merge so this unit's generate "provider" overrides root's default block
 # instead of colliding with it (generate blocks are shallow-merged, child wins).
@@ -38,7 +38,7 @@ generate "provider" {
       library_overwrite_enabled = true
       library_references = [
         { path = "platform/alz", ref = "2026.04.2" },
-        { custom_url = "git::https://github.com/nrit-solutions/nrit-terragrunt-catalog.git//library/platform/nrit?ref=v1.0.0" },
+        { custom_url = "${get_terragrunt_dir()}/lib" },
       ]
     }
   EOF
