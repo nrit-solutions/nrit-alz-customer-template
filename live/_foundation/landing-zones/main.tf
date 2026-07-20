@@ -56,6 +56,50 @@ locals {
   }
 
   # ---------------------------------------------------------------------------
+  # Common customizations (reference, commented out).
+  #
+  # The stock ALZ settings customers most often change on day one. Lift the
+  # entries you want into policy_assignments_to_modify above (merge by management
+  # group key). To move guardrails and tag effects to enforced, see the
+  # "Recommended production hardening" block below and the platform docs
+  # (Azure Policy > Enforcement strategy).
+  #
+  # common_customizations = {
+  #   alz = {
+  #     policy_assignments = {
+  #       # Microsoft Defender for Cloud. Set your real security contact email
+  #       # (it ships as a placeholder), and enable the plans you want: each plan
+  #       # ships "Disabled"; "DeployIfNotExists" turns it on. Enabled plans cost.
+  #       Deploy-MDFC-Config-H224 = {
+  #         parameters = {
+  #           emailSecurityContact    = jsonencode({ value = "soc@your-domain.com" })
+  #           enableAscForServers     = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForStorage     = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForContainers  = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForKeyVault    = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForAppServices = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForSql         = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForArm         = jsonencode({ value = "DeployIfNotExists" })
+  #           # ...enableAscForOssDb, enableAscForCosmosDbs, enableAscForCspm,
+  #           #    enableAscForSqlOnVm, enableAscForServersVulnerabilityAssessments
+  #         }
+  #       }
+  #     }
+  #   }
+  # }
+  #
+  # DDoS Protection is opted out in the active config above (Enable-DDoS-VNET
+  # creation_enabled = false) so VNet creates work without a plan. In production,
+  # flip those two entries to creation_enabled = true to enforce a DDoS plan
+  # (it carries a monthly cost).
+  #
+  # Patterns you can apply to any assignment:
+  #   Test without acting:   <Assignment> = { enforcement_mode = "DoNotEnforce" }
+  #   Opt out of a control:  <Assignment> = { creation_enabled  = false }
+  #   Change an effect:      <Assignment> = { parameters = { <effectParam> = jsonencode({ value = "Deny" }) } }
+  # ---------------------------------------------------------------------------
+
+  # ---------------------------------------------------------------------------
   # Recommended production hardening (reference, commented out).
   #
   # NRIT's recommended settings to move a production landing zone from the soft
