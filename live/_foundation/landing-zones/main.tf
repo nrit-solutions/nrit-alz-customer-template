@@ -56,6 +56,86 @@ locals {
   }
 
   # ---------------------------------------------------------------------------
+  # Common customizations (reference, commented out).
+  #
+  # The stock ALZ settings customers most often change on day one. Lift the
+  # entries you want into policy_assignments_to_modify above (merge by management
+  # group key). To move guardrails and tag effects to enforced, see the
+  # "Recommended production hardening" block below and the platform docs
+  # (Azure Policy > Enforcement strategy).
+  #
+  # common_customizations = {
+  #   alz = {
+  #     policy_assignments = {
+  #       # Microsoft Defender for Cloud. Set your real security contact email
+  #       # (it ships as a placeholder), and enable the plans you want: each plan
+  #       # ships "Disabled"; "DeployIfNotExists" turns it on. Enabled plans cost.
+  #       Deploy-MDFC-Config-H224 = {
+  #         parameters = {
+  #           emailSecurityContact    = jsonencode({ value = "soc@your-domain.com" })
+  #           enableAscForServers     = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForStorage     = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForContainers  = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForKeyVault    = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForAppServices = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForSql         = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForArm         = jsonencode({ value = "DeployIfNotExists" })
+  #           # ...enableAscForOssDb, enableAscForCosmosDbs, enableAscForCspm,
+  #           #    enableAscForSqlOnVm, enableAscForServersVulnerabilityAssessments
+  #         }
+  #       }
+  #     }
+  #   }
+  # }
+  #
+  # DDoS Protection is opted out in the active config above (Enable-DDoS-VNET
+  # creation_enabled = false) so VNet creates work without a plan. In production,
+  # flip those two entries to creation_enabled = true to enforce a DDoS plan
+  # (it carries a monthly cost).
+  #
+  # Modify capabilities you can apply to any assignment (docs: Azure Policy >
+  # Customizing policies). Each is an attribute of the assignment object:
+  #
+  #   # Evaluate without acting (safe-deployment "what if").
+  #   <Assignment> = { enforcement_mode = "DoNotEnforce" }
+  #
+  #   # Opt out of a control entirely.
+  #   <Assignment> = { creation_enabled = false }
+  #
+  #   # Change a parameter / effect.
+  #   <Assignment> = { parameters = { <param> = jsonencode({ value = "Deny" }) } }
+  #
+  #   # Phased rollout (safe deployment): enforce in one region first, then widen
+  #   # the list. This is the recommended way to turn a guardrail on. See the
+  #   # platform docs, Azure Policy > Enforcement strategy.
+  #   <Assignment> = {
+  #     enforcement_mode = "Default"
+  #     resource_selectors = [{
+  #       name                        = "phased-rollout"
+  #       resource_selector_selectors = [{ kind = "resourceLocation", in = ["westeurope"] }]
+  #     }]
+  #   }
+  #
+  #   # Exclude a scope from evaluation (a test subscription, a legacy RG).
+  #   <Assignment> = { not_scopes = ["/subscriptions/<id>/resourceGroups/<rg>"] }
+  #
+  #   # Override the effect of specific policies inside an initiative.
+  #   <Assignment> = {
+  #     overrides = [{
+  #       kind               = "policyEffect"
+  #       value              = "Disabled"
+  #       override_selectors = [{ kind = "policyDefinitionReferenceId", in = ["<referenceId>"] }]
+  #     }]
+  #   }
+  #
+  #   # Custom non-compliance message (may not always produce a plan diff).
+  #   <Assignment> = { non_compliance_messages = [{ message = "..." }] }
+  #
+  # For a one-off, time-bound exception on a specific resource, prefer an Azure
+  # Policy exemption (a separate resource, tracked, with an expiry) over not_scopes.
+  # ---------------------------------------------------------------------------
+
+  # ---------------------------------------------------------------------------
   # Recommended production hardening (reference, commented out).
   #
   # NRIT's recommended settings to move a production landing zone from the soft
