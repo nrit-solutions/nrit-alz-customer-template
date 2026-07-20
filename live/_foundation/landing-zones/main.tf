@@ -93,10 +93,46 @@ locals {
   # flip those two entries to creation_enabled = true to enforce a DDoS plan
   # (it carries a monthly cost).
   #
-  # Patterns you can apply to any assignment:
-  #   Test without acting:   <Assignment> = { enforcement_mode = "DoNotEnforce" }
-  #   Opt out of a control:  <Assignment> = { creation_enabled  = false }
-  #   Change an effect:      <Assignment> = { parameters = { <effectParam> = jsonencode({ value = "Deny" }) } }
+  # Modify capabilities you can apply to any assignment (docs: Azure Policy >
+  # Customizing policies). Each is an attribute of the assignment object:
+  #
+  #   # Evaluate without acting (safe-deployment "what if").
+  #   <Assignment> = { enforcement_mode = "DoNotEnforce" }
+  #
+  #   # Opt out of a control entirely.
+  #   <Assignment> = { creation_enabled = false }
+  #
+  #   # Change a parameter / effect.
+  #   <Assignment> = { parameters = { <param> = jsonencode({ value = "Deny" }) } }
+  #
+  #   # Phased rollout (safe deployment): enforce in one region first, then widen
+  #   # the list. This is the recommended way to turn a guardrail on. See the
+  #   # platform docs, Azure Policy > Enforcement strategy.
+  #   <Assignment> = {
+  #     enforcement_mode = "Default"
+  #     resource_selectors = [{
+  #       name                        = "phased-rollout"
+  #       resource_selector_selectors = [{ kind = "resourceLocation", in = ["westeurope"] }]
+  #     }]
+  #   }
+  #
+  #   # Exclude a scope from evaluation (a test subscription, a legacy RG).
+  #   <Assignment> = { not_scopes = ["/subscriptions/<id>/resourceGroups/<rg>"] }
+  #
+  #   # Override the effect of specific policies inside an initiative.
+  #   <Assignment> = {
+  #     overrides = [{
+  #       kind               = "policyEffect"
+  #       value              = "Disabled"
+  #       override_selectors = [{ kind = "policyDefinitionReferenceId", in = ["<referenceId>"] }]
+  #     }]
+  #   }
+  #
+  #   # Custom non-compliance message (may not always produce a plan diff).
+  #   <Assignment> = { non_compliance_messages = [{ message = "..." }] }
+  #
+  # For a one-off, time-bound exception on a specific resource, prefer an Azure
+  # Policy exemption (a separate resource, tracked, with an expiry) over not_scopes.
   # ---------------------------------------------------------------------------
 
   # ---------------------------------------------------------------------------
