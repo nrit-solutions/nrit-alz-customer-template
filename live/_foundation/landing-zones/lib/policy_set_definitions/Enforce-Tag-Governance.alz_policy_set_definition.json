@@ -1,0 +1,264 @@
+{
+  "name": "Enforce-Tag-Governance",
+  "properties": {
+    "description": "Enforces the NRIT baseline tagging strategy, using the tag keys from the Microsoft Cloud Adoption Framework tag examples: mandatory tags on resource groups (app, opsteam, criticality, confidentiality), allowed values for classification tags, and tag inheritance from subscription and resource group down to resources. Reference: https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-tagging",
+    "displayName": "Enforce baseline tag governance",
+    "metadata": {
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ],
+      "category": "Tags",
+      "reference": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-tagging",
+      "source": "https://github.com/nrit-solutions",
+      "version": "1.1.0"
+    },
+    "parameters": {
+      "rgMandatoryTags": {
+        "defaultValue": [
+          "app",
+          "opsteam",
+          "criticality",
+          "confidentiality"
+        ],
+        "metadata": {
+          "description": "Tags that must be present, with a non-empty value, on every resource group.",
+          "displayName": "Mandatory resource group tags"
+        },
+        "type": "Array"
+      },
+      "rgMandatoryTagsEffect": {
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Audit",
+        "metadata": {
+          "description": "Effect for the mandatory resource group tags policy",
+          "displayName": "Mandatory resource group tags effect"
+        },
+        "type": "String"
+      },
+      "criticalityAllowedValues": {
+        "defaultValue": [
+          "mission-critical",
+          "medium",
+          "low"
+        ],
+        "metadata": {
+          "description": "Allowed values for the criticality tag. Matches the Cloud Adoption Framework classification tag examples.",
+          "displayName": "Allowed criticality values"
+        },
+        "type": "Array"
+      },
+      "criticalityEffect": {
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Audit",
+        "metadata": {
+          "description": "Effect for the criticality allowed values policy",
+          "displayName": "Criticality effect"
+        },
+        "type": "String"
+      },
+      "confidentialityAllowedValues": {
+        "defaultValue": [
+          "public",
+          "private",
+          "confidential",
+          "restricted"
+        ],
+        "metadata": {
+          "description": "Allowed values for the confidentiality tag. 'private' matches the Cloud Adoption Framework example; the remaining values complete the classification scale.",
+          "displayName": "Allowed confidentiality values"
+        },
+        "type": "Array"
+      },
+      "confidentialityEffect": {
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Audit",
+        "metadata": {
+          "description": "Effect for the confidentiality allowed values policy",
+          "displayName": "Confidentiality effect"
+        },
+        "type": "String"
+      },
+      "environmentAllowedValues": {
+        "defaultValue": [
+          "prod",
+          "staging",
+          "dev"
+        ],
+        "metadata": {
+          "description": "Allowed values for the env tag. Matches the Cloud Adoption Framework functional tag examples.",
+          "displayName": "Allowed env values"
+        },
+        "type": "Array"
+      },
+      "environmentEffect": {
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Audit",
+        "metadata": {
+          "description": "Effect for the env allowed values policy",
+          "displayName": "Env effect"
+        },
+        "type": "String"
+      }
+    },
+    "policyDefinitions": [
+      {
+        "groupNames": [],
+        "parameters": {
+          "effect": {
+            "value": "[parameters('rgMandatoryTagsEffect')]"
+          },
+          "mandatoryTags": {
+            "value": "[parameters('rgMandatoryTags')]"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Audit-Tags-Mandatory-Rg",
+        "policyDefinitionReferenceId": "RgMandatoryTags"
+      },
+      {
+        "groupNames": [],
+        "parameters": {
+          "effect": {
+            "value": "[parameters('criticalityEffect')]"
+          },
+          "tagAllowedValues": {
+            "value": "[parameters('criticalityAllowedValues')]"
+          },
+          "tagName": {
+            "value": "criticality"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deny-Tag-NotAllowedValues",
+        "policyDefinitionReferenceId": "CriticalityAllowedValues"
+      },
+      {
+        "groupNames": [],
+        "parameters": {
+          "effect": {
+            "value": "[parameters('confidentialityEffect')]"
+          },
+          "tagAllowedValues": {
+            "value": "[parameters('confidentialityAllowedValues')]"
+          },
+          "tagName": {
+            "value": "confidentiality"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deny-Tag-NotAllowedValues",
+        "policyDefinitionReferenceId": "ConfidentialityAllowedValues"
+      },
+      {
+        "groupNames": [],
+        "parameters": {
+          "effect": {
+            "value": "[parameters('environmentEffect')]"
+          },
+          "tagAllowedValues": {
+            "value": "[parameters('environmentAllowedValues')]"
+          },
+          "tagName": {
+            "value": "env"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deny-Tag-NotAllowedValues",
+        "policyDefinitionReferenceId": "EnvironmentAllowedValues"
+      },
+      {
+        "definitionVersion": "1.*.*",
+        "groupNames": [],
+        "parameters": {
+          "tagName": {
+            "value": "app"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ea3f2387-9b95-492a-a190-fcdc54f7b070",
+        "policyDefinitionReferenceId": "InheritAppFromRg"
+      },
+      {
+        "definitionVersion": "1.*.*",
+        "groupNames": [],
+        "parameters": {
+          "tagName": {
+            "value": "opsteam"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ea3f2387-9b95-492a-a190-fcdc54f7b070",
+        "policyDefinitionReferenceId": "InheritOpsteamFromRg"
+      },
+      {
+        "definitionVersion": "1.*.*",
+        "groupNames": [],
+        "parameters": {
+          "tagName": {
+            "value": "criticality"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ea3f2387-9b95-492a-a190-fcdc54f7b070",
+        "policyDefinitionReferenceId": "InheritCriticalityFromRg"
+      },
+      {
+        "definitionVersion": "1.*.*",
+        "groupNames": [],
+        "parameters": {
+          "tagName": {
+            "value": "confidentiality"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ea3f2387-9b95-492a-a190-fcdc54f7b070",
+        "policyDefinitionReferenceId": "InheritConfidentialityFromRg"
+      },
+      {
+        "definitionVersion": "1.*.*",
+        "groupNames": [],
+        "parameters": {
+          "tagName": {
+            "value": "businessunit"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/40df99da-1232-49b1-a39a-6da8d878f469",
+        "policyDefinitionReferenceId": "InheritBusinessunitFromSub"
+      },
+      {
+        "definitionVersion": "1.*.*",
+        "groupNames": [],
+        "parameters": {
+          "tagName": {
+            "value": "env"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/40df99da-1232-49b1-a39a-6da8d878f469",
+        "policyDefinitionReferenceId": "InheritEnvFromSub"
+      },
+      {
+        "definitionVersion": "1.*.*",
+        "groupNames": [],
+        "parameters": {
+          "tagName": {
+            "value": "costcenter"
+          }
+        },
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/40df99da-1232-49b1-a39a-6da8d878f469",
+        "policyDefinitionReferenceId": "InheritCostcenterFromSub"
+      }
+    ],
+    "policyType": "Custom"
+  },
+  "type": "Microsoft.Authorization/policySetDefinitions"
+}

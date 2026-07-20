@@ -5,13 +5,13 @@ locals {
   location_short = "weu"
 
   tags = {
-    customer        = "changeme"
-    environment     = "prod"
-    "cost-center"   = "platform"
-    workload        = "alz-platform-foundation"
-    owner           = "platform-team"
+    businessunit    = "changeme"
+    env             = "prod"
+    costcenter      = "platform"
+    app             = "alz-platform-foundation"
+    opsteam         = "platform-team"
     criticality     = "mission-critical"
-    confidentiality = "internal"
+    confidentiality = "confidential"
     "managed-by"    = "terraform"
   }
 }

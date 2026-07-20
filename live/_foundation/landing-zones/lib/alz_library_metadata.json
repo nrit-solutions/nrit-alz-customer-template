@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/Azure-Landing-Zones-Library/main/schemas/library_metadata.json",
+  "name": "nrit",
+  "display_name": "NRIT platform library",
+  "description": "NRIT additions layered on the stock ALZ library. The nrit architecture is the stock alz hierarchy plus baseline tag governance assigned at the intermediate root.",
+  "path": "platform/nrit",
+  "dependencies": []
+}

@@ -75,7 +75,7 @@ module "management_groups" {
   version = "0.21.0"
 
   # Must match an architecture defined in the alz library referenced by
-  # terragrunt.hcl (the catalog library_references entry). Set per customer.
+  # terragrunt.hcl (the vendored lib/). Set per customer.
   architecture_name  = "changeme"
   parent_resource_id = data.azapi_client_config.current.tenant_id
   location           = local.location
