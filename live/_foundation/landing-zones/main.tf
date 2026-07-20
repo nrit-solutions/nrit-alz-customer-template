@@ -55,6 +55,77 @@ locals {
     }
   }
 
+  # ---------------------------------------------------------------------------
+  # Recommended production hardening (reference, commented out).
+  #
+  # NRIT's recommended settings to move a production landing zone from the soft
+  # AVM default posture to enforced. Do NOT enable everything at once: follow the
+  # safe-deployment approach (platform docs: Azure Policy > Enforcement strategy).
+  # Enable a wave scoped to sandbox or one region first with resource_selectors,
+  # validate compliance, then expand. To use, lift the entries you want into
+  # policy_assignments_to_modify above, merging by management group key.
+  #
+  # prod_hardening = {
+  #   # Tag governance: enforce the baseline tags once resource groups are clean.
+  #   alz = {
+  #     policy_assignments = {
+  #       Enforce-Tag-Gov = {
+  #         parameters = {
+  #           rgMandatoryTagsEffect = jsonencode({ value = "Deny" })
+  #           criticalityEffect     = jsonencode({ value = "Deny" })
+  #           confidentialityEffect = jsonencode({ value = "Deny" })
+  #           environmentEffect     = jsonencode({ value = "Deny" })
+  #         }
+  #       }
+  #     }
+  #   }
+  #
+  #   # Enforce-Guardrails: the per-service guardrail initiatives ship in
+  #   # DoNotEnforce. Switch to Default to enforce. The same set exists at the
+  #   # platform scope; enforce there too when the platform subscriptions are ready.
+  #   landingzones = {
+  #     policy_assignments = {
+  #       # Wave 1 - data services (lowest workload-breakage risk)
+  #       Enforce-GR-Storage0     = { enforcement_mode = "Default" }
+  #       Enforce-GR-KeyVaultSup0 = { enforcement_mode = "Default" }
+  #       Enforce-GR-SQL0         = { enforcement_mode = "Default" }
+  #       Enforce-GR-MySQL0       = { enforcement_mode = "Default" }
+  #       Enforce-GR-PostgreSQL0  = { enforcement_mode = "Default" }
+  #       Enforce-GR-CosmosDb0    = { enforcement_mode = "Default" }
+  #       Enforce-GR-DataExpl0    = { enforcement_mode = "Default" }
+  #       Enforce-GR-DataFactory0 = { enforcement_mode = "Default" }
+  #       Enforce-GR-Synapse0     = { enforcement_mode = "Default" }
+  #       Enforce-GR-EventHub0    = { enforcement_mode = "Default" }
+  #       Enforce-GR-EventGrid0   = { enforcement_mode = "Default" }
+  #       Enforce-GR-ServiceBus0  = { enforcement_mode = "Default" }
+  #
+  #       # Wave 2 - compute, containers, network, apps (validate against running workloads first)
+  #       Enforce-GR-Compute0     = { enforcement_mode = "Default" }
+  #       Enforce-GR-Network0     = { enforcement_mode = "Default" }
+  #       Enforce-GR-Kubernetes0  = { enforcement_mode = "Default" }
+  #       Enforce-GR-AppServices0 = { enforcement_mode = "Default" }
+  #       Enforce-GR-ContApps0    = { enforcement_mode = "Default" }
+  #       Enforce-GR-ContInst0    = { enforcement_mode = "Default" }
+  #       Enforce-GR-ContReg0     = { enforcement_mode = "Default" }
+  #       Enforce-GR-Automation0  = { enforcement_mode = "Default" }
+  #       Enforce-GR-APIM0        = { enforcement_mode = "Default" }
+  #       Enforce-GR-CogServ0     = { enforcement_mode = "Default" }
+  #       Enforce-GR-MachLearn0   = { enforcement_mode = "Default" }
+  #       Enforce-GR-OpenAI0      = { enforcement_mode = "Default" }
+  #       Enforce-GR-BotService0  = { enforcement_mode = "Default" }
+  #       Enforce-GR-VirtualDesk0 = { enforcement_mode = "Default" }
+  #
+  #       # Private subnets: confirm workload subnets comply before enforcing.
+  #       Enforce-Subnet-Private  = { enforcement_mode = "Default" }
+  #
+  #       # Customer-managed keys: enforce last, and only where key infrastructure
+  #       # exists per workload; expect breakage otherwise.
+  #       # Enforce-Encrypt-CMK0  = { enforcement_mode = "Default" }
+  #     }
+  #   }
+  # }
+  # ---------------------------------------------------------------------------
+
   # Policy default values, computed from the management resource names so every
   # id is known at plan time (the alz provider reads a data source at plan and
   # cannot take unknown values).
