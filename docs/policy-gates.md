@@ -2,7 +2,8 @@
 
 Every plan (and the daily drift sweep) runs three checks against the Terraform
 plan, via `post_plan` hooks in `projects.yml`. Findings appear in the PR run
-comment and in drift issues.
+comment and in drift issues, under an "Additional output" panel that stays
+collapsed when clean and expands automatically when a gate reports a finding.
 
 ## What runs
 

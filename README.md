@@ -20,11 +20,13 @@ A change is a pull request:
 
 1. Open a PR touching a unit. Every impacted unit is planned automatically.
 2. Review the plan posted as a comment, including the policy, security, and cost
-   gate output.
+   gate output (that panel expands automatically when a gate reports a finding).
 3. Comment `/apply` to apply the changed units in dependency order, after the
-   required approvals.
+   required approvals. The engine reacts to your comment as it works: 👀 seen,
+   🚀 running, 🎉 done (or 👎 on failure).
 4. The `terraform-pr-ops / merge-gate` check goes green once applied, and the PR
-   merges.
+   merges. It stays red if the PR changed Terraform but no unit was selected, so an
+   unapplied new or removed unit cannot merge green.
 
 The engine is not stored here. The two workflows in `.github/workflows/` call the
 `nrit-tf-pr-ops` reusable workflows, pinned `@v1`. Vendoring the engine into the
