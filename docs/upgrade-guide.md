@@ -8,11 +8,35 @@ no `catalog_version` local. Three things carry pinned versions.
 Each unit's `main.tf` sources an Azure Verified Module with an explicit `version`.
 To upgrade, change the `version` argument, open a PR, and review the plan.
 
-## The catalog policy library
+## The ALZ policy libraries
 
-The `landing-zones` unit references the private catalog policy library in
-`live/_foundation/landing-zones/terragrunt.hcl` through the `alz` provider's
-`library_references`. To upgrade, change the `ref` on each entry.
+Two units set `library_references` on the `alz` provider, and a library bump
+touches both.
+
+`live/_foundation/landing-zones/terragrunt.hcl` has two entries:
+
+- `{ path = "platform/alz", ref = "2026.04.2" }`, the upstream ALZ library. Bump
+  the `ref` to upgrade.
+- `{ custom_url = ".../lib" }`, the NRIT library vendored at
+  `live/_foundation/landing-zones/lib/`. It has no `ref`. It lives in this repo,
+  so you edit it in place.
+
+`live/_foundation/amba/terragrunt.hcl` has two entries with refs:
+`{ path = "platform/alz", ref = "2026.04.2" }` and
+`{ path = "platform/amba", ref = "2026.06.2" }`. Keep the `platform/alz` ref the
+same in both units.
+
+### Re-sync the vendored architecture after a platform/alz bump
+
+`lib/architecture_definitions/nrit.alz_architecture_definition.json` is a full
+copy of the stock `alz` architecture plus one line: the `nrit_tags` archetype on
+the intermediate root. The module needs a complete architecture, so the whole
+hierarchy is duplicated there.
+
+When you bump the `platform/alz` ref, diff that file against the stock `alz`
+architecture at the new version, apply any hierarchy changes, and keep
+`nrit_tags` on the root. Nothing tracks this automatically. See
+`live/_foundation/landing-zones/lib/README.md`.
 
 ## The engine
 

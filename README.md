@@ -11,8 +11,11 @@ This is the only repository that ends up in customer hands. The comment-ops
 engine (`nrit-tf-pr-ops`), the private module and policy catalog
 (`nrit-terragrunt-catalog`), and the bootstrap that creates the backend,
 identities, and runner (`nrit-alz-bootstrap`) stay separate repositories under
-NRIT control. A generated repository consumes the engine and the catalog at
-pinned versions and is created by the bootstrap.
+NRIT control. A generated repository is created by the bootstrap and consumes the
+engine at a pinned version. It does not consume the catalog: its policy library is
+vendored under `live/_foundation/landing-zones/lib/`, and its foundation units use
+public Azure Verified Modules. The catalog supplies the workload units onboarded
+after the foundation is in place.
 
 ## How changes are made
 
@@ -71,8 +74,9 @@ catalog after the foundation is in place.
 
 The `_foundation/` units are deployed first (the underscore sorts them to the top)
 and apply in dependency order: `management-resources`, then `landing-zones`, then
-`amba`. They use public Azure Verified Modules directly, and the `landing-zones`
-unit references a pinned policy library from the private catalog. See
+`amba`. They use public Azure Verified Modules directly. The `landing-zones` unit reads the
+upstream ALZ library at a pinned ref plus the NRIT library vendored under its
+`lib/`; `amba` reads the upstream ALZ and AMBA libraries at pinned refs. See
 `docs/foundation-structure.md` for the shape and the multi-region decision, and
 `docs/leaf-data-sharing.md` for how units share values without reading each other's
 outputs.
