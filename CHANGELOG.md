@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `live/root.hcl` generates a `context.tf` into every unit, holding the hierarchy
+  values as one `local.context` object (tenant, subscription, location,
+  location_short, environment). The foundation units read `local.context` instead
+  of hardcoding the region, so `live/_foundation/region.hcl` is the single source
+  of truth and changing the region is a one-file edit. Same mechanism already used
+  for `backend.tf` and `providers.tf`. Proven in `nrit-alz-live` first: the
+  rollout there applied as a no-op across all ten units.
 - Rebuilt the template to the current landing-zone design. The foundation is now
   three plain-Terraform `_foundation` units (`management-resources`,
   `landing-zones`, `amba`), each a `main.tf` plus `terragrunt.hcl` with its own

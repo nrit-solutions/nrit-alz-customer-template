@@ -57,11 +57,9 @@ The values to set for a new customer:
   Baseline Alerts is mandatory in the NRIT baseline and every AMBA alert routes to
   this address.
 - `live/_foundation/region.hcl`: region defaults to `westeurope`; change only if
-  the customer specifies otherwise. Changing it means editing four files, because
-  the foundation units take no Terragrunt inputs. Set `location` and
-  `location_short` here, then in the locals at the top of
-  `management-resources/main.tf`, `landing-zones/main.tf`, and `amba/main.tf`
-  (each hardcodes `westeurope` and `weu`).
+  the customer specifies otherwise. Set `location` and `location_short` here and
+  nowhere else. `root.hcl` generates a `context.tf` into each unit from this file,
+  and the units read `local.context`, so this is the only place the region lives.
 
 The backend names are never edited here. They come from the `BACKEND_*` variables
 the bootstrap set. All subscriptions share that one state account (in the

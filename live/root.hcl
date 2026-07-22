@@ -27,7 +27,28 @@ locals {
   tenant_root_id  = local.tenant_vars.locals.tenant_root_id
   subscription_id = local.subscription_vars.locals.subscription_id
   location        = local.region_vars.locals.location
+  location_short  = local.region_vars.locals.location_short
   environment     = local.region_vars.locals.environment
+}
+
+# The hierarchy values, generated into every unit so main.tf can read them as
+# plain Terraform. Namespaced under one object because leaves define their own
+# location local; local.context.location never collides with it.
+generate "context" {
+  path      = "context.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<-EOF
+    locals {
+      context = {
+        tenant_id       = "${local.tenant_id}"
+        tenant_root_id  = "${local.tenant_root_id}"
+        subscription_id = "${local.subscription_id}"
+        location        = "${local.location}"
+        location_short  = "${local.location_short}"
+        environment     = "${local.environment}"
+      }
+    }
+  EOF
 }
 
 remote_state {
