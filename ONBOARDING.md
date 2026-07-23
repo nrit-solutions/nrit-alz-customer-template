@@ -92,9 +92,10 @@ Two kinds of version are pinned in this repository:
   Keep the `platform/alz` ref the same in both units. Pin AVM module versions with
   the `version` argument in each unit's `main.tf`. See `docs/upgrade-guide.md`.
 - **The engine.** The two workflows in `.github/workflows/` call the
-  `nrit-tf-pr-ops` reusable workflows, pinned `@v1` with a matching `engine_ref: v1`.
-  There is no separate pipeline version. To move to a new engine release, bump both
-  pins together (the `uses:` ref and `engine_ref`) in each caller file.
+  `nrit-tf-pr-ops` reusable workflows, pinned at an exact version with a matching
+  `engine_ref`. There is no separate pipeline version, and there is no moving tag:
+  an upgrade is always a commit. To move to a new engine release, bump both pins
+  together (the `uses:` ref and `engine_ref`) in each caller file.
 
 ## Step 4: Grant access, set the cost gate, and require the merge gate
 
