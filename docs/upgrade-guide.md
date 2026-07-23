@@ -41,8 +41,8 @@ architecture at the new version, apply any hierarchy changes, and keep
 ## The engine
 
 The comment-ops engine is consumed as a reusable workflow, not vendored. The two
-workflows in `.github/workflows/` pin `nrit-tf-pr-ops` at `@v1` with a matching
-`engine_ref: v1`. To move to a new engine release, bump both pins together (the
+workflows in `.github/workflows/` pin `nrit-tf-pr-ops` at `@v1.3.0` with a matching
+`engine_ref: v1.3.0`. To move to a new engine release, bump both pins together (the
 `uses:` ref and `engine_ref`) in each caller file. The two must match, or the
 engine checkout skews from the reusable-workflow body.
 
