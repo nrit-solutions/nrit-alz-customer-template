@@ -5,8 +5,10 @@ Management group: **Connectivity** (id `connectivity`), child of `platform`.
 Placeholder. No hub is provisioned in the template; onboard the connectivity hub
 here per customer.
 
-To onboard it, add `subscription.hcl` (the connectivity subscription id) and a hub
-networking unit under a region folder (for example `westeurope/hub/`). Like every
+To onboard it, add `subscription.hcl` (the connectivity subscription id), a region
+folder (for example `westeurope/`) holding its own `region.hcl`, and a hub
+networking unit inside it (`westeurope/hub/`). The `region.hcl` is not optional:
+`root.hcl` reads a region unconditionally, so the file must exist. Like every
 unit here it is a `main.tf` on public Azure Verified Modules at a pinned `version`
 beside a thin `terragrunt.hcl`: `Azure/avm-res-resources-resourcegroup/azurerm` for
 the hub resource group, then

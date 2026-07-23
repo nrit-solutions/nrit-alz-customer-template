@@ -17,8 +17,8 @@ live/
   _foundation/                  # tenant governance, deploy first
     subscription.hcl            # management sub (get_env AZURE_SUBSCRIPTION_ID)
     region.hcl                  # primary region (westeurope)
-    landing-zones/              # avm-ptn-alz (base): MGs, base policy, placement
     management-resources/       # avm-ptn-alz-management: Log Analytics, DCRs, AMA identity
+    landing-zones/              # avm-ptn-alz (base): MGs, base policy, placement
     amba/                       # avm-ptn-monitoring-amba-alz + avm-ptn-alz (amba): resources + policy
   platform/
     management/                 # only genuine management-sub, per-region workloads
@@ -62,8 +62,8 @@ live/
   _foundation/                  # SINGLE. unchanged when a region is added
     subscription.hcl
     region.hcl                  # westeurope: real home of the LAW, nominal for identities
-    landing-zones/
     management-resources/       # one central Log Analytics workspace + DCRs + AMA identity
+    landing-zones/
     amba/                       # one AMBA resource group + identity + policy
   platform/
     connectivity/
