@@ -8,14 +8,13 @@ comment-ops engine consumed as a reusable workflow: plan and apply run from pull
 request comments, and a daily job reports drift.
 
 This is the only repository that ends up in customer hands. The comment-ops
-engine (`nrit-tf-pr-ops`), the private module and policy catalog
-(`nrit-terragrunt-catalog`), and the bootstrap that creates the backend,
-identities, and runner (`nrit-alz-bootstrap`) stay separate repositories under
-NRIT control. A generated repository is created by the bootstrap and consumes the
-engine at a pinned version. It does not consume the catalog: its policy library is
-vendored under `live/_foundation/landing-zones/lib/`, and its foundation units use
-public Azure Verified Modules. The catalog supplies the workload units onboarded
-after the foundation is in place.
+engine (`nrit-tf-pr-ops`) and the bootstrap that creates the backend, identities,
+and runner (`nrit-alz-bootstrap`) stay separate repositories under NRIT control.
+A generated repository is created by the bootstrap and consumes the engine at a
+pinned version. That is its only dependency on a private NRIT repository. Every
+unit, foundation and workload alike, is plain Terraform on public Azure Verified
+Modules, and the custom policy library is vendored under
+`live/_foundation/landing-zones/lib/`.
 
 ## How changes are made
 
@@ -27,7 +26,7 @@ A change is a pull request:
 3. Comment `/apply` to apply the changed units in dependency order, after the
    required approvals. The engine reacts to your comment as it works: 👀 seen,
    🚀 running, 🎉 done (or 👎 on failure).
-4. The `terraform-pr-ops / merge-gate` check goes green once applied, and the PR
+4. The `tf-pr-ops / merge-gate` check goes green once applied, and the PR
    merges. It stays red if the PR changed Terraform but no unit was selected, so an
    unapplied new or removed unit cannot merge green.
 
@@ -50,7 +49,7 @@ with a `terragrunt.hcl`).
 ├── README.md, ONBOARDING.md, CHANGELOG.md, LICENSE, mise.toml
 ├── .github/                     # caller workflows (call the nrit-tf-pr-ops engine)
 ├── policy/                      # active conftest policies (the policy gate)
-├── docs/                        # foundation structure, data sharing, gates, runbook
+├── docs/                        # foundation structure, data sharing, gates, upgrades, runbook
 └── live/
     ├── root.hcl                 # backend + providers + shared locals contract
     ├── tenant.hcl               # tenant id + root MG id (must sit at live/ root)
@@ -59,7 +58,7 @@ with a `terragrunt.hcl`).
     │   ├── landing-zones/       #   MG hierarchy + base policy + subscription placement
     │   └── amba/                #   Azure Monitor Baseline Alerts
     ├── platform/                # connectivity, identity, management, security (MG placeholders)
-    ├── landingzones/            # corp, online (MG placeholders, onboarded per customer)
+    ├── landingzones/            # corp, online, local (MG placeholders, onboarded per customer)
     ├── decommissioned/          # Decommissioned MG (placeholder)
     └── sandbox/                 # Sandbox MG (placeholder)
 ```
@@ -67,8 +66,9 @@ with a `terragrunt.hcl`).
 Each management group folder has a `README.md` describing what it holds. The MG
 hierarchy itself is created by the `_foundation/landing-zones` unit at tenant-root
 scope. The `platform` and `landingzones` children ship as README-only placeholders:
-a customer's connectivity hub and landing zones are onboarded into them from the
-catalog after the foundation is in place.
+a customer's connectivity hub and landing zones are added into them as new units
+after the foundation is in place. Each README says which AVM modules that unit
+uses.
 
 ## The foundation
 

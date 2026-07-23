@@ -75,7 +75,9 @@ remote_state {
 
 # Default providers: azurerm + azapi, pinned to the unit's own subscription and
 # tenant. The two units that need the alz provider (landing-zones, amba) declare
-# their own generate "provider", which shallow-merges over this one.
+# their own generate "provider", which shallow-merges over this one. That only
+# works because each of them sets merge_strategy = "deep" on its include; without
+# it, two same-named generate blocks are a hard error (see the note above).
 generate "provider" {
   path      = "providers.tf"
   if_exists = "overwrite_terragrunt"

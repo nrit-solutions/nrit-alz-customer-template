@@ -20,4 +20,4 @@
 - [ ] Affected `subscription.hcl` / `region.hcl` values confirmed
 - [ ] Reviewer from the required approver group requested
 - [ ] `/apply` run after approval and the apply succeeded
-- [ ] `terraform-pr-ops / merge-gate` is green
+- [ ] `tf-pr-ops / merge-gate` is green

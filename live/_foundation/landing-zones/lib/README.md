@@ -7,13 +7,20 @@ library (the tooling also accepts YAML if you ever need inline comments).
 
 ## Contents
 
-- `architecture_definitions/nrit` — the management group hierarchy the module deploys.
-- `archetype_definitions/nrit_tags` — the tag-governance archetype, attached to the root.
-- `policy_set_definitions/Enforce-Tag-Governance` — the tag-governance initiative.
-- `policy_definitions/Deny-Tag-NotAllowedValues` — a custom deny-on-tag-value policy.
-- `policy_assignments/Enforce-Tag-Gov` — the assignment placed by `nrit_tags`.
+- `architecture_definitions/nrit`: the management group hierarchy the module deploys.
+- `archetype_definitions/nrit_tags`: the tag-governance archetype, attached to the root.
+- `policy_set_definitions/Enforce-Tag-Governance`: the tag-governance initiative.
+- `policy_definitions/Deny-Tag-NotAllowedValues`: a custom deny-on-tag-value policy.
+- `policy_assignments/Enforce-Tag-Gov`: the assignment placed by `nrit_tags`.
 
 ## The nrit architecture
+
+This library defines exactly one architecture, named `nrit`. That name is the only
+valid value for `architecture_name` in `../main.tf`, which is where it is set. You
+would change it only if you add a second architecture definition here, or point the
+unit at a different library whose architecture is named something else. Adding one
+means copying a complete hierarchy: see "stock architecture, unchanged, plus one
+line" below.
 
 `nrit.alz_architecture_definition.json` is the **stock `alz` architecture, unchanged,
 plus one line**: the `nrit_tags` archetype on the intermediate root (`alz`). The ALZ

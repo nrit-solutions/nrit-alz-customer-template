@@ -10,16 +10,16 @@ providers. `tenant.hcl` sits alongside `root.hcl` so
 folder tree mirrors the CAF management group hierarchy, using management group IDs
 as folder names:
 
-- `_foundation/` — tenant-wide governance, deployed first, in dependency order: the
+- `_foundation/` holds tenant-wide governance, deployed first, in dependency order: the
   management resources (`management-resources`), the MG hierarchy and base policy
   (`landing-zones`), and the Azure Monitor Baseline Alerts (`amba`). The `_` prefix
   sorts it first; see `docs/foundation-structure.md`.
-- `platform/` — Platform MG: connectivity, identity, management, security.
-- `landingzones/` — Landing Zones MG: corp, online.
-- `decommissioned/` — Decommissioned MG.
-- `sandbox/` — Sandbox MG.
+- `platform/` is the Platform MG: connectivity, identity, management, security.
+- `landingzones/` is the Landing Zones MG: corp, online, local.
+- `decommissioned/` is the Decommissioned MG.
+- `sandbox/` is the Sandbox MG.
 
 The `_foundation/` units ship wired. Everything under `platform/` and
 `landingzones/` is a README-only placeholder: the connectivity hub and the landing
-zones are onboarded per customer, from the catalog, after the foundation is in
-place.
+zones are onboarded per customer, as new units on public Azure Verified Modules,
+after the foundation is in place.
