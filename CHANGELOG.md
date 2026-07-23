@@ -16,10 +16,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   the hierarchy under an existing intermediate management group. Before this it
   was read by nothing and the hierarchy was always created at tenant root, with a
   clean plan and a clean apply either way. The default is unchanged: it resolves
-  to the tenant id. A `terraform_data` precondition in the same unit fails the
-  plan if the value is empty or still the all-zeros placeholder, which is what a
-  missing `AZURE_TENANT_ID` produces, so a bad tenant id cannot silently become
-  the hierarchy's parent.
+  to the tenant id. A precondition on the unit's existing
+  `azapi_client_config` data source fails the plan if the value is empty or still
+  the all-zeros placeholder, which is what a missing `AZURE_TENANT_ID` produces,
+  so a bad tenant id cannot silently become the hierarchy's parent. The guard
+  adds nothing to state, so an applied estate still plans as a no-op.
 - `docs/foundation-structure.md` lists the foundation leaves in deploy order
   (`management-resources`, then `landing-zones`, then `amba`), matching the deploy
   order section further down the same page.
