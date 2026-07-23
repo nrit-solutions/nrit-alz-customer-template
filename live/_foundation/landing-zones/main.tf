@@ -227,6 +227,24 @@ locals {
   policy_default_values = { for key, value in local.policy_default_values_raw : key => jsonencode({ value = value }) }
 }
 
+# parent_resource_id used to come from the authenticated session, so it could
+# not be wrong. It now comes from tenant.hcl, which falls back to a placeholder
+# when AZURE_TENANT_ID is unset, so fail the plan rather than parent the whole
+# hierarchy under a management group that does not exist.
+resource "terraform_data" "tenant_root_id_guard" {
+  input = local.context.tenant_root_id
+
+  lifecycle {
+    precondition {
+      condition = !contains(
+        ["", "00000000-0000-0000-0000-000000000000"],
+        local.context.tenant_root_id,
+      )
+      error_message = "tenant_root_id is unset or still the placeholder. It defaults to tenant_id in live/tenant.hcl, so this usually means AZURE_TENANT_ID is not exported. Export AZURE_TENANT_ID, or set tenant_root_id in live/tenant.hcl to the customer's existing intermediate management group id."
+    }
+  }
+}
+
 module "management_groups" {
   source  = "Azure/avm-ptn-alz/azurerm"
   version = "0.21.0"
