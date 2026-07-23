@@ -10,8 +10,9 @@ request flow.
 - Owner at the scope the deploy identities operate at (the tenant root group, or
   the customer's ALZ parent management group), granted to the operator running the
   bootstrap
-- A connectivity subscription and a management subscription (the management
-  subscription holds the shared state backend and runner)
+- A management subscription (it holds the shared state backend and the runner).
+  A connectivity subscription too if the customer runs a hub; it is optional and
+  can be added later
 - GitHub organisation for the customer repository
 - A GitHub token with `repo` and `admin:org` scope, for the operator only
 - A point of contact at the customer for identity and networking decisions
@@ -45,11 +46,16 @@ runs.
 
 The values to set for a new customer:
 
-- `live/_foundation/landing-zones/main.tf`: set `architecture_name` (currently the
-  placeholder `changeme`). It must match an architecture defined in the alz library
-  referenced from `live/_foundation/landing-zones/terragrunt.hcl`. Set
-  `connectivity_subscription_id` (currently zeros) if you place a connectivity
-  subscription.
+- `live/_foundation/landing-zones/main.tf`: `architecture_name` defaults to `nrit`,
+  the only architecture the vendored library defines
+  (`live/_foundation/landing-zones/lib/architecture_definitions/`). Leave it alone
+  unless you add a second architecture definition to that library, or point the
+  unit at a different library that names its architecture something else.
+  `connectivity_subscription_id` defaults to an empty string, which omits the
+  connectivity entry from `subscription_placement`. Set it to the connectivity
+  subscription id when the customer has one; leave it empty when they do not and
+  the foundation plans and applies without it. Placement is not permanent: set the
+  id later and re-apply to move the subscription under the Connectivity MG.
 - `live/_foundation/management-resources/main.tf`: set the `businessunit` tag
   (currently `changeme`) to the customer's short name.
 - `live/_foundation/amba/main.tf`: replace the `amba_action_group_email`
@@ -83,25 +89,23 @@ Two kinds of version are pinned in this repository:
 
 ## Step 4: Grant access, set the cost gate, and require the merge gate
 
-This repository reaches two private NRIT repositories: the caller workflows use
-the `nrit-tf-pr-ops` reusable workflows, and the catalog supplies the workload
-units onboarded after the foundation is in place. The org must allow access to
-each:
+This repository reaches one private NRIT repository: the caller workflows use the
+`nrit-tf-pr-ops` reusable workflows. The org must allow Actions access to it:
 
 ```sh
 gh api -X PUT repos/nrit-solutions/nrit-tf-pr-ops/actions/permissions/access -f access_level=organization
-gh api -X PUT repos/nrit-solutions/nrit-terragrunt-catalog/actions/permissions/access -f access_level=organization
 ```
 
-Both are org-wide settings on the NRIT source repositories, so they are set once
-and already hold for later customers. Without the first one, the `uses:` reference
-fails to resolve and the first pull request never starts.
+That is an org-wide setting on the NRIT source repository, so it is set once and
+already holds for later customers. Without it the `uses:` reference fails to
+resolve and the first pull request never starts.
 
-Terragrunt shells out to `git`, which needs a credential for
-`github.com/nrit-solutions`. The workflow mints a GitHub App token for this from
-`CATALOG_APP_CLIENT_ID` (variable) and `CATALOG_APP_PRIVATE_KEY` (secret) and
-rewrites the git URL. The same App token checks out the private engine repository,
-so confirm both are set (the bootstrap sets them when a client id is supplied).
+The workflow also has to check the engine repository out, and `git` needs a
+credential for `github.com/nrit-solutions` to do it. The workflow mints a GitHub
+App token from `CATALOG_APP_CLIENT_ID` (variable) and `CATALOG_APP_PRIVATE_KEY`
+(secret) and rewrites the git URL, so confirm both are set (the bootstrap sets
+them when a client id is supplied). The names are historical: the App token is
+for the private engine checkout, not for a module catalog.
 
 Set the cost gate: add the `INFRACOST_API_KEY` secret. It is the only part the
 bootstrap does not set. The bootstrap already sets the `TFPR_EXTRA_TOOLS`

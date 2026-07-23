@@ -2,8 +2,12 @@ data "azapi_client_config" "current" {}
 
 locals {
 
-  management_subscription_id   = data.azapi_client_config.current.subscription_id
-  connectivity_subscription_id = "00000000-0000-0000-0000-000000000000"
+  management_subscription_id = data.azapi_client_config.current.subscription_id
+
+  # Leave empty if the customer has no connectivity subscription: the
+  # connectivity placement entry below is then omitted rather than sent with a
+  # placeholder id, which apply rejects.
+  connectivity_subscription_id = ""
 
   # These management resource names must match the management leaf: it creates
   # the resources, the policy default values below point at them by id. Keep the
@@ -15,16 +19,20 @@ locals {
   dcr_vm_insights_name                    = "dcr-vm-insights-${local.context.location_short}"
   dcr_defender_sql_name                   = "dcr-defender-sql-${local.context.location_short}"
 
-  subscription_placement = {
-    connectivity = {
-      subscription_id       = local.connectivity_subscription_id
-      management_group_name = "connectivity"
-    }
-    management = {
-      subscription_id       = local.management_subscription_id
-      management_group_name = "management"
-    }
-  }
+  subscription_placement = merge(
+    {
+      management = {
+        subscription_id       = local.management_subscription_id
+        management_group_name = "management"
+      }
+    },
+    local.connectivity_subscription_id == "" ? {} : {
+      connectivity = {
+        subscription_id       = local.connectivity_subscription_id
+        management_group_name = "connectivity"
+      }
+    },
+  )
 
   # Tag governance stays in Audit while resource groups are reconciled; the
   # placeholder DDoS assignment is disabled so VNet creates work.
@@ -224,8 +232,8 @@ module "management_groups" {
   version = "0.21.0"
 
   # Must match an architecture defined in the alz library referenced by
-  # terragrunt.hcl (the vendored lib/). Set per customer.
-  architecture_name  = "changeme"
+  # terragrunt.hcl. The vendored lib/ defines one: nrit.
+  architecture_name  = "nrit"
   parent_resource_id = data.azapi_client_config.current.tenant_id
   location           = local.context.location
   enable_telemetry   = false

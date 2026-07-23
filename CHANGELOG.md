@@ -1,12 +1,21 @@
 # Changelog
 
 Per-customer changelog for repositories generated from this template. Records
-version bumps (catalog, AVM modules, the engine caller pins) and when new
-workloads are added.
+version bumps (AVM modules, the ALZ and AMBA library refs, the engine caller
+pins) and when new workloads are added.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+### Fixed
+
+- The first plan no longer needs a guess. `architecture_name` in
+  `live/_foundation/landing-zones/main.tf` defaults to `nrit`, the only
+  architecture the vendored library defines, and
+  `connectivity_subscription_id` defaults to empty, which omits the connectivity
+  entry from `subscription_placement` instead of sending a placeholder id a
+  customer without a connectivity subscription cannot satisfy.
 
 ### Changed
 
