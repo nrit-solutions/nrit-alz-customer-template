@@ -4,14 +4,20 @@
 
 ## Scope
 
+<!-- A unit is a folder with a terragrunt.hcl. List every unit this PR touches. -->
+
+- Units impacted:
 - Subscription / landing zone:
-- Stack or unit:
-- Catalog version pinned (`?ref=`):
-- Pipelines version pinned (`@`):
+- Version pins moved (AVM `version` in `main.tf`, policy library `ref`, engine pins):
+  <!-- Write "none" if no pin moved. Engine pins are the uses: ref and engine_ref
+       in both terraform-pr-ops.yml and drift.yml. They must match. -->
 
 ## Checklist
 
-- [ ] Plan output reviewed in the PR comment
-- [ ] Change is pinned to a released catalog version, not `main`
+- [ ] Plan comment reviewed for every impacted unit, including deletes and replaces
+- [ ] Policy, security, and cost gate output reviewed
+- [ ] If an engine pin moved, the `uses:` ref and `engine_ref` match in both workflows
 - [ ] Affected `subscription.hcl` / `region.hcl` values confirmed
 - [ ] Reviewer from the required approver group requested
+- [ ] `/apply` run after approval and the apply succeeded
+- [ ] `terraform-pr-ops / merge-gate` is green

@@ -1,11 +1,9 @@
 data "azapi_client_config" "current" {}
 
 locals {
-  location       = "westeurope"
-  location_short = "weu"
 
-  amba_resource_group_name                 = "rg-amba-${local.location_short}"
-  amba_user_assigned_managed_identity_name = "uami-amba-${local.location_short}"
+  amba_resource_group_name                 = "rg-amba-${local.context.location_short}"
+  amba_user_assigned_managed_identity_name = "uami-amba-${local.context.location_short}"
   amba_action_group_email                  = "alerts@example.com"
 
   # The action group email is an Array policy parameter, so it is wrapped in a
@@ -13,7 +11,7 @@ locals {
   amba_policy_default_values_raw = {
     amba_alz_management_subscription_id          = data.azapi_client_config.current.subscription_id
     amba_alz_resource_group_name                 = local.amba_resource_group_name
-    amba_alz_resource_group_location             = local.location
+    amba_alz_resource_group_location             = local.context.location
     amba_alz_user_assigned_managed_identity_name = local.amba_user_assigned_managed_identity_name
     amba_alz_action_group_email                  = [local.amba_action_group_email]
   }
@@ -24,7 +22,7 @@ module "amba_resources" {
   source  = "Azure/avm-ptn-monitoring-amba-alz/azurerm"
   version = "0.4.0"
 
-  location                            = local.location
+  location                            = local.context.location
   root_management_group_name          = "alz"
   resource_group_name                 = local.amba_resource_group_name
   user_assigned_managed_identity_name = local.amba_user_assigned_managed_identity_name
@@ -38,7 +36,7 @@ module "amba_policy" {
 
   architecture_name  = "amba"
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  location           = local.location
+  location           = local.context.location
   enable_telemetry   = false
 
   policy_default_values = local.amba_policy_default_values

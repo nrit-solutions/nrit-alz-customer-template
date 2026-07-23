@@ -2,7 +2,7 @@
 # Copy to a consumer repo as .github/workflows/terraform-pr-ops.yml. This file is
 # stable: engine changes never need a caller edit. Bump the two version pins
 # (the uses: ref and engine_ref) together to move to a new engine release.
-name: terraform-pr-ops
+name: tf-pr-ops
 
 on:
   pull_request:
@@ -27,7 +27,7 @@ permissions:
   id-token: write
 
 jobs:
-  tf-pr-ops:
+  engine:
     uses: nrit-solutions/nrit-tf-pr-ops/.github/workflows/terraform-pr-ops.yml@v1
     with:
       command: ${{ inputs.command || 'plan' }}

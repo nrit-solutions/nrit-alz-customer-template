@@ -1,8 +1,6 @@
 data "azapi_client_config" "current" {}
 
 locals {
-  location       = "westeurope"
-  location_short = "weu"
 
   management_subscription_id   = data.azapi_client_config.current.subscription_id
   connectivity_subscription_id = "00000000-0000-0000-0000-000000000000"
@@ -10,12 +8,12 @@ locals {
   # These management resource names must match the management leaf: it creates
   # the resources, the policy default values below point at them by id. Keep the
   # two in sync.
-  management_resource_group_name          = "rg-management-${local.location_short}"
-  log_analytics_workspace_name            = "law-management-${local.location_short}"
-  ama_user_assigned_managed_identity_name = "uami-management-ama-${local.location_short}"
-  dcr_change_tracking_name                = "dcr-change-tracking-${local.location_short}"
-  dcr_vm_insights_name                    = "dcr-vm-insights-${local.location_short}"
-  dcr_defender_sql_name                   = "dcr-defender-sql-${local.location_short}"
+  management_resource_group_name          = "rg-management-${local.context.location_short}"
+  log_analytics_workspace_name            = "law-management-${local.context.location_short}"
+  ama_user_assigned_managed_identity_name = "uami-management-ama-${local.context.location_short}"
+  dcr_change_tracking_name                = "dcr-change-tracking-${local.context.location_short}"
+  dcr_vm_insights_name                    = "dcr-vm-insights-${local.context.location_short}"
+  dcr_defender_sql_name                   = "dcr-defender-sql-${local.context.location_short}"
 
   subscription_placement = {
     connectivity = {
@@ -229,7 +227,7 @@ module "management_groups" {
   # terragrunt.hcl (the vendored lib/). Set per customer.
   architecture_name  = "changeme"
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  location           = local.location
+  location           = local.context.location
   enable_telemetry   = false
 
   subscription_placement       = local.subscription_placement

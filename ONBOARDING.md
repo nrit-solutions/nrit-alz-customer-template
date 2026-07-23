@@ -50,14 +50,16 @@ The values to set for a new customer:
   referenced from `live/_foundation/landing-zones/terragrunt.hcl`. Set
   `connectivity_subscription_id` (currently zeros) if you place a connectivity
   subscription.
-- `live/_foundation/management-resources/main.tf`: set the `customer` tag
+- `live/_foundation/management-resources/main.tf`: set the `businessunit` tag
   (currently `changeme`) to the customer's short name.
 - `live/_foundation/amba/main.tf`: replace the `amba_action_group_email`
   placeholder (`alerts@example.com`) with a real monitored inbox. Azure Monitor
   Baseline Alerts is mandatory in the NRIT baseline and every AMBA alert routes to
   this address.
 - `live/_foundation/region.hcl`: region defaults to `westeurope`; change only if
-  the customer specifies otherwise.
+  the customer specifies otherwise. Set `location` and `location_short` here and
+  nowhere else. `root.hcl` generates a `context.tf` into each unit from this file,
+  and the units read `local.context`, so this is the only place the region lives.
 
 The backend names are never edited here. They come from the `BACKEND_*` variables
 the bootstrap set. All subscriptions share that one state account (in the
@@ -68,10 +70,12 @@ only the deploy target, not the state location.
 
 Two kinds of version are pinned in this repository:
 
-- **Catalog and AVM versions.** The `landing-zones` unit references the private
-  catalog policy library in `live/_foundation/landing-zones/terragrunt.hcl`. Pin
-  the `ref` on each `library_references` entry. Pin AVM module versions with the
-  `version` argument in each unit's `main.tf`.
+- **Library and AVM versions.** The `landing-zones` unit reads the upstream ALZ
+  library at a pinned `ref` plus the NRIT library vendored under
+  `live/_foundation/landing-zones/lib/` (a local path, so it carries no `ref`).
+  The `amba` unit reads the upstream ALZ and AMBA libraries, both at pinned refs.
+  Keep the `platform/alz` ref the same in both units. Pin AVM module versions with
+  the `version` argument in each unit's `main.tf`. See `docs/upgrade-guide.md`.
 - **The engine.** The two workflows in `.github/workflows/` call the
   `nrit-tf-pr-ops` reusable workflows, pinned `@v1` with a matching `engine_ref: v1`.
   There is no separate pipeline version. To move to a new engine release, bump both
@@ -79,13 +83,19 @@ Two kinds of version are pinned in this repository:
 
 ## Step 4: Grant access, set the cost gate, and require the merge gate
 
-The `landing-zones` unit fetches the policy library from the private
-`nrit-terragrunt-catalog` repository, so the org must allow this repository to
-reach it:
+This repository reaches two private NRIT repositories: the caller workflows use
+the `nrit-tf-pr-ops` reusable workflows, and the catalog supplies the workload
+units onboarded after the foundation is in place. The org must allow access to
+each:
 
 ```sh
+gh api -X PUT repos/nrit-solutions/nrit-tf-pr-ops/actions/permissions/access -f access_level=organization
 gh api -X PUT repos/nrit-solutions/nrit-terragrunt-catalog/actions/permissions/access -f access_level=organization
 ```
+
+Both are org-wide settings on the NRIT source repositories, so they are set once
+and already hold for later customers. Without the first one, the `uses:` reference
+fails to resolve and the first pull request never starts.
 
 Terragrunt shells out to `git`, which needs a credential for
 `github.com/nrit-solutions`. The workflow mints a GitHub App token for this from
@@ -93,8 +103,11 @@ Terragrunt shells out to `git`, which needs a credential for
 rewrites the git URL. The same App token checks out the private engine repository,
 so confirm both are set (the bootstrap sets them when a client id is supplied).
 
-Set the cost gate: `INFRACOST_API_KEY` (secret) and add `infracost` to the
-`TFPR_EXTRA_TOOLS` variable. Neither is set by the bootstrap.
+Set the cost gate: add the `INFRACOST_API_KEY` secret. It is the only part the
+bootstrap does not set. The bootstrap already sets the `TFPR_EXTRA_TOOLS`
+variable and its value includes `infracost` (`infracost` on a self-hosted runner,
+whose image already carries conftest and checkov; `conftest checkov infracost` on
+GitHub-hosted). Check the variable rather than editing it blindly.
 
 Make `terraform-pr-ops / merge-gate` a required status check on the main branch.
 The bootstrap's `require-approved-pr-to-main` ruleset takes the check context from

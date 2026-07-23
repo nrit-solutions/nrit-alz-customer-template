@@ -1,12 +1,7 @@
 locals {
-  # Region matches the region.hcl above this folder. Hardcoded because this leaf
-  # takes no variables; the folder is region-specific.
-  location       = "westeurope"
-  location_short = "weu"
-
   tags = {
     businessunit    = "changeme"
-    env             = "prod"
+    env             = local.context.environment
     costcenter      = "platform"
     app             = "alz-platform-foundation"
     opsteam         = "platform-team"
@@ -21,19 +16,19 @@ module "management_resources" {
   version = "0.9.0"
 
   automation_account_name                   = null
-  location                                  = local.location
-  resource_group_name                       = "rg-management-${local.location_short}"
-  log_analytics_workspace_name              = "law-management-${local.location_short}"
+  location                                  = local.context.location
+  resource_group_name                       = "rg-management-${local.context.location_short}"
+  log_analytics_workspace_name              = "law-management-${local.context.location_short}"
   log_analytics_workspace_retention_in_days = 30
 
   data_collection_rules = {
-    change_tracking = { name = "dcr-change-tracking-${local.location_short}" }
-    vm_insights     = { name = "dcr-vm-insights-${local.location_short}" }
-    defender_sql    = { name = "dcr-defender-sql-${local.location_short}" }
+    change_tracking = { name = "dcr-change-tracking-${local.context.location_short}" }
+    vm_insights     = { name = "dcr-vm-insights-${local.context.location_short}" }
+    defender_sql    = { name = "dcr-defender-sql-${local.context.location_short}" }
   }
 
   user_assigned_managed_identities = {
-    ama = { name = "uami-management-ama-${local.location_short}" }
+    ama = { name = "uami-management-ama-${local.context.location_short}" }
   }
 
   enable_telemetry = false
