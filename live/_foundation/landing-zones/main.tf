@@ -234,7 +234,7 @@ module "management_groups" {
   # Must match an architecture defined in the alz library referenced by
   # terragrunt.hcl. The vendored lib/ defines one: nrit.
   architecture_name  = "nrit"
-  parent_resource_id = data.azapi_client_config.current.tenant_id
+  parent_resource_id = local.context.tenant_root_id
   location           = local.context.location
   enable_telemetry   = false
 
