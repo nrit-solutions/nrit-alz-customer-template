@@ -32,11 +32,14 @@ id, constructs it. Nothing crosses state.
 
 ```hcl
 # management-resources leaf creates it
-resource_group_name = "rg-management-${local.location_short}"
+resource_group_name = "rg-management-${local.context.location_short}"
 
 # landing-zones leaf references it by convention (must stay in sync)
-management_providers_scope = "/subscriptions/${local.management_subscription_id}/resourceGroups/rg-management-${local.location_short}/providers"
+management_providers_scope = "/subscriptions/${local.management_subscription_id}/resourceGroups/rg-management-${local.context.location_short}/providers"
 ```
+
+`local.context` is generated into every unit by `live/root.hcl`, so the region is
+read from `region.hcl` on both sides and cannot drift between them.
 
 Cost: the two leaves share a naming rule that must not drift. Comment the
 coupling on both sides.
@@ -50,8 +53,8 @@ already know the resource's name. This stays inside the consuming leaf's
 ```hcl
 # get the AMA identity's principal id without touching the producer's state
 data "azurerm_user_assigned_identity" "ama" {
-  name                = "uami-management-ama-${local.location_short}"
-  resource_group_name = "rg-management-${local.location_short}"
+  name                = "uami-management-ama-${local.context.location_short}"
+  resource_group_name = "rg-management-${local.context.location_short}"
 }
 # data.azurerm_user_assigned_identity.ama.principal_id
 ```

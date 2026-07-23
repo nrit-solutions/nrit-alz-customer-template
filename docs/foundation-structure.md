@@ -110,4 +110,6 @@ standard multi-region estate built for resilience, Variant A is correct.
 into them), then `platform/` (connectivity hubs), then `landingzones/`. Within
 `_foundation/`, the leaf order is management-resources, then landing-zones (its
 policy references the workspace), then amba. Terragrunt enforces the leaf order
-with the `dependencies` blocks in each `terragrunt.hcl`.
+with a `dependencies` block in each `terragrunt.hcl` that has a predecessor:
+`landing-zones` depends on `management-resources`, and `amba` on `landing-zones`.
+`management-resources` runs first and so has no `dependencies` block.
