@@ -10,12 +10,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- `tenant_root_id` is wired up. `live/_foundation/landing-zones/main.tf` sets
+  `parent_resource_id` from `local.context.tenant_root_id` instead of the client
+  config tenant id, so setting the value in `live/tenant.hcl` now actually places
+  the hierarchy under an existing intermediate management group. Before this it
+  was read by nothing and the hierarchy was always created at tenant root, with a
+  clean plan and a clean apply either way. The default is unchanged: it resolves
+  to the tenant id. A precondition on the unit's existing
+  `azapi_client_config` data source fails the plan if the value is empty or still
+  the all-zeros placeholder, which is what a missing `AZURE_TENANT_ID` produces,
+  so a bad tenant id cannot silently become the hierarchy's parent. The guard
+  adds nothing to state, so an applied estate still plans as a no-op.
+- `docs/foundation-structure.md` lists the foundation leaves in deploy order
+  (`management-resources`, then `landing-zones`, then `amba`), matching the deploy
+  order section further down the same page.
+- `live/platform/connectivity/README.md` includes the co-located `region.hcl` in
+  its onboarding recipe. `root.hcl` reads a region unconditionally, so the unit
+  failed without it.
 - The first plan no longer needs a guess. `architecture_name` in
   `live/_foundation/landing-zones/main.tf` defaults to `nrit`, the only
   architecture the vendored library defines, and
   `connectivity_subscription_id` defaults to empty, which omits the connectivity
   entry from `subscription_placement` instead of sending a placeholder id a
   customer without a connectivity subscription cannot satisfy.
+
+### Added
+
+- ONBOARDING step 2 covers the two per-customer values it omitted: `environment`
+  in `live/_foundation/region.hcl` (it feeds the `env` tag, and the tag policy
+  allows prod, staging, and dev only) and `tenant_root_id` in `live/tenant.hcl`.
+- ONBOARDING step 5 makes `.github/CODEOWNERS` and `LICENSE` explicit decisions.
+  The CODEOWNERS team exists only in the NRIT organisation, so GitHub reports the
+  file as invalid in the customer's; the licence is a self-declared placeholder
+  that otherwise ships to the customer untouched.
 
 ### Changed
 

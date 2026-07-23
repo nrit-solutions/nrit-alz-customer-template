@@ -1,4 +1,18 @@
-data "azapi_client_config" "current" {}
+# parent_resource_id used to come from the authenticated session, so it could
+# not be wrong. It now comes from tenant.hcl, which falls back to a placeholder
+# when AZURE_TENANT_ID is unset, so fail the plan rather than parent the whole
+# hierarchy under a management group that does not exist.
+data "azapi_client_config" "current" {
+  lifecycle {
+    precondition {
+      condition = !contains(
+        ["", "00000000-0000-0000-0000-000000000000"],
+        local.context.tenant_root_id,
+      )
+      error_message = "tenant_root_id is unset or still the placeholder. It defaults to tenant_id in live/tenant.hcl, so this usually means AZURE_TENANT_ID is not exported. Export AZURE_TENANT_ID, or set tenant_root_id in live/tenant.hcl to the customer's existing intermediate management group id."
+    }
+  }
+}
 
 locals {
 
@@ -234,7 +248,7 @@ module "management_groups" {
   # Must match an architecture defined in the alz library referenced by
   # terragrunt.hcl. The vendored lib/ defines one: nrit.
   architecture_name  = "nrit"
-  parent_resource_id = data.azapi_client_config.current.tenant_id
+  parent_resource_id = local.context.tenant_root_id
   location           = local.context.location
   enable_telemetry   = false
 

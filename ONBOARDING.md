@@ -1,7 +1,7 @@
 # Onboarding checklist
 
 This document walks through standing up a new customer landing zone from this
-template. Steps 1 to 4 are run once by NRIT; the rest are the normal pull
+template. Steps 1 to 5 are run once by NRIT; the rest are the normal pull
 request flow.
 
 ## Prerequisites
@@ -66,6 +66,15 @@ The values to set for a new customer:
   the customer specifies otherwise. Set `location` and `location_short` here and
   nowhere else. `root.hcl` generates a `context.tf` into each unit from this file,
   and the units read `local.context`, so this is the only place the region lives.
+  The same file sets `environment`, which defaults to `prod` and becomes the `env`
+  tag through `live/_foundation/management-resources/main.tf`. The tag policy
+  allows `prod`, `staging`, and `dev` only, so a foundation that is not the
+  customer's production estate must change it to one of those.
+- `live/tenant.hcl`: `tenant_root_id` is the management group the ALZ hierarchy is
+  created under. It defaults to the tenant root group, which is what most
+  customers want. Set it to an existing intermediate management group id when the
+  customer already has one, and do it before the first apply: changing it later
+  moves the whole hierarchy and is destructive.
 
 The backend names are never edited here. They come from the `BACKEND_*` variables
 the bootstrap set. All subscriptions share that one state account (in the
@@ -132,13 +141,33 @@ deliberately; it must then set the repository variable
 variable unset everywhere else. If `/apply` is refused with a message about the
 repository requiring no reviews, this is the setting it means.
 
-## Step 5: First plan
+## Step 5: Set the code owners and settle the licence
+
+Two files ship from the template with NRIT values that mean nothing in the
+customer's organisation. Both need a decision here.
+
+`.github/CODEOWNERS` assigns every path to `@nrit-solutions/platform-engineering`.
+That team does not exist in the customer's organisation, so GitHub reports the
+file as invalid and the owners never apply. Replace the team with one that exists
+in the customer's organisation, or delete the file if the customer wants no code
+owners. Code owners are not enforced today: the bootstrap sets
+`require_code_owner_review = false` in its `github.tf`. Turn that on in the
+customer's tfvars if the customer wants owner review required before merge.
+
+`LICENSE` is a placeholder. It says the binding terms live in the partnership
+agreement and that the text must be replaced before external distribution. This
+repository is the one artefact the customer keeps, so the placeholder reaches
+them unless someone acts. Replace it with the licence text agreed in the
+partnership agreement, or confirm with the agreement owner that the placeholder
+is acceptable for this customer. Do not write licence terms here.
+
+## Step 6: First plan
 
 Open a pull request with a trivial change (for example a comment in
 `live/tenant.hcl`) to trigger the plan. Review the output posted on the PR. To plan
 the foundation, open a PR touching the `_foundation/` units.
 
-## Step 6: First apply
+## Step 7: First apply
 
 After review and approval, comment `/apply` on the PR. The foundation applies in
 dependency order automatically: `management-resources`, then `landing-zones`, then
