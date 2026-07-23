@@ -117,6 +117,21 @@ Make `tf-pr-ops / merge-gate` a required status check on the main branch.
 The bootstrap's `require-approved-pr-to-main` ruleset takes the check context from
 its `required_status_checks` variable; set it there, or add the check by hand.
 
+Decide how `/apply` is approved. The engine reads GitHub's review decision, so
+the number of approvals is whatever the ruleset requires. The bootstrap defaults
+`required_approving_review_count` to 1, which is what most customers want and
+needs nothing further here.
+
+A repository that requires no approving reviews is a special case. GitHub reports
+no review decision at all, which the engine refuses rather than treats as consent:
+an empty decision is indistinguishable from a ruleset that was removed, so
+allowing it would let the apply gate disappear with no signal. A single-writer
+organisation cannot self-approve on GitHub and so sets the count to 0
+deliberately; it must then set the repository variable
+`TF_PR_OPS_ALLOW_UNREVIEWED_APPLY` to `true` to allow `/apply`. Leave that
+variable unset everywhere else. If `/apply` is refused with a message about the
+repository requiring no reviews, this is the setting it means.
+
 ## Step 5: First plan
 
 Open a pull request with a trivial change (for example a comment in
