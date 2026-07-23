@@ -113,7 +113,7 @@ variable and its value includes `infracost` (`infracost` on a self-hosted runner
 whose image already carries conftest and checkov; `conftest checkov infracost` on
 GitHub-hosted). Check the variable rather than editing it blindly.
 
-Make `terraform-pr-ops / merge-gate` a required status check on the main branch.
+Make `tf-pr-ops / merge-gate` a required status check on the main branch.
 The bootstrap's `require-approved-pr-to-main` ruleset takes the check context from
 its `required_status_checks` variable; set it there, or add the check by hand.
 

@@ -26,7 +26,7 @@ A change is a pull request:
 3. Comment `/apply` to apply the changed units in dependency order, after the
    required approvals. The engine reacts to your comment as it works: 👀 seen,
    🚀 running, 🎉 done (or 👎 on failure).
-4. The `terraform-pr-ops / merge-gate` check goes green once applied, and the PR
+4. The `tf-pr-ops / merge-gate` check goes green once applied, and the PR
    merges. It stays red if the PR changed Terraform but no unit was selected, so an
    unapplied new or removed unit cannot merge green.
 

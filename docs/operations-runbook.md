@@ -34,7 +34,7 @@ Every change is a pull request. There is no manual dispatch and no local apply.
 2. Read the plan. The gate panel expands on its own when a gate has a finding.
 3. Get the required approval, then comment `/apply`. The engine applies the
    changed units in dependency order and reacts to your comment as it goes.
-4. `terraform-pr-ops / merge-gate` goes green once the applied set matches what
+4. `tf-pr-ops / merge-gate` goes green once the applied set matches what
    the PR changed. Merge.
 
 The gate stays red if the PR touched Terraform but no unit was selected, so a new
