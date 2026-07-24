@@ -17,6 +17,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - A changelog reminder workflow: CI warns, without failing, when a PR changes
   code but not this file. Backport: optional, only new stamps need it.
 
+### Changed
+
+- The engine caller pins moved from `v1.4.0` to `v1.5.0` and the
+  `terraform-pr-ops.yml` caller added `closed` to its `pull_request` trigger
+  types. This adopts cross-PR unit locks: the first PR to plan a unit owns it
+  until that PR merges or closes, other PRs see a `locked` result, and
+  `/unlock` force-releases. The `closed` trigger is what releases locks on
+  merge. Backport: required for existing customer repositories; without the
+  bump they have no locking, and a repository bumped without the `closed`
+  type would strand locks until someone comments `/unlock`. The identities
+  need Storage Table Data Contributor on the state account first, which the
+  current nrit-alz-bootstrap applies.
+
 ### Fixed
 
 - `tenant_root_id` is wired up. `live/_foundation/landing-zones/main.tf` sets

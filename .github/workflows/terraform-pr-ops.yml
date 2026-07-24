@@ -6,7 +6,8 @@ name: tf-pr-ops
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    # closed lets the engine release the PR's cross-PR unit locks.
+    types: [opened, synchronize, reopened, closed]
   issue_comment:
     types: [created]
   workflow_dispatch:
@@ -28,9 +29,9 @@ permissions:
 
 jobs:
   engine:
-    uses: nrit-solutions/nrit-tf-pr-ops/.github/workflows/terraform-pr-ops.yml@v1.4.0
+    uses: nrit-solutions/nrit-tf-pr-ops/.github/workflows/terraform-pr-ops.yml@v1.5.0
     with:
       command: ${{ inputs.command || 'plan' }}
       project: ${{ inputs.project || '' }}
-      engine_ref: v1.4.0   # must match the uses: ref above
+      engine_ref: v1.5.0   # must match the uses: ref above
     secrets: inherit
