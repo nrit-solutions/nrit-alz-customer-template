@@ -4,9 +4,18 @@ Per-customer changelog for repositories generated from this template. Records
 version bumps (AVM modules, the ALZ and AMBA library refs, the engine caller
 pins) and when new workloads are added.
 
+Template changes only reach repositories stamped after they merge. Each entry
+therefore states whether existing customer repositories need the change
+backported, or whether only new stamps get it.
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+### Added
+
+- A changelog reminder workflow: CI warns, without failing, when a PR changes
+  code but not this file. Backport: optional, only new stamps need it.
 
 ### Fixed
 
