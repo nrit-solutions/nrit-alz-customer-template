@@ -12,6 +12,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Documentation that named an engine version no longer does. `README.md` and
+  `docs/upgrade-guide.md` said the callers were pinned at `v1.4.0` while the
+  workflows had been on `v1.5.0` since the cross-PR locks rollout. They now point
+  at the caller files as the source of truth instead of repeating a number that
+  goes stale on every bump. `ONBOARDING.md` was already version-agnostic.
+  Backport: optional, documentation only.
+- The comment above the deep-merged include in `_foundation/landing-zones` and
+  `_foundation/amba` said generate blocks are "shallow-merged, child wins". That
+  describes what happens once `merge_strategy = "deep"` is set, not the default.
+  Under the default include, two same-named generate blocks are a hard error and
+  nothing is generated. Confirmed by removing the attribute on terragrunt 1.0.7.
+  The rationale in `live/root.hcl` was already correct. Backport: optional,
+  comment only, no behaviour change.
+
 ### Added
 
 - `.mcp.json` declaring two MCP servers for agents working in the repository:

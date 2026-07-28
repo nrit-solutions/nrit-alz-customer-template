@@ -4,8 +4,10 @@
 # alz providers; alz carries platform/alz plus platform/amba. Isolated from the
 # base policy leaf, so an AMBA change re-plans only this leaf.
 
-# deep merge so this unit's generate "provider" overrides root's default block
-# instead of colliding with it (generate blocks are shallow-merged, child wins).
+# deep merge so this unit's generate "provider" overrides root's default block.
+# Not optional: under the default include, two same-named generate blocks are a
+# hard error ("Detected generate blocks with the same name") and nothing is
+# generated at all. Verified on terragrunt 1.0.7.
 include "root" {
   path           = find_in_parent_folders("root.hcl")
   expose         = true

@@ -31,9 +31,10 @@ A change is a pull request:
    unapplied new or removed unit cannot merge green.
 
 The engine is not stored here. The two workflows in `.github/workflows/` call the
-`nrit-tf-pr-ops` reusable workflows, pinned `@v1.4.0`. Vendoring the engine into the
-repository is a documented escape hatch for a fully self-contained repository; see
-`ONBOARDING.md`.
+`nrit-tf-pr-ops` reusable workflows at a pinned tag, matched by the `engine_ref`
+input. Read the current version from those two files rather than from prose.
+Vendoring the engine into the repository is a documented escape hatch for a fully
+self-contained repository; see `ONBOARDING.md`.
 
 ## Layout
 
