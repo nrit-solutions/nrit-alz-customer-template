@@ -111,6 +111,10 @@ and keep the placeholder README accurate afterwards.
 own state. The engine's word for a unit is "project", and the label is the path,
 for example `live/platform/connectivity/westeurope/caf-connectivity-hub`.
 
+Never add a `terragrunt.stack.hcl` here. A stack leaf has no `terragrunt.hcl`,
+so discovery skips it entirely: the PR plans nothing, every gate passes with
+nothing to gate, and it can merge green having deployed nothing.
+
 **The root contract.** Every unit does
 `include "root" { path = find_in_parent_folders("root.hcl"), expose = true }`.
 `live/root.hcl` then generates three files into the unit at run time:
