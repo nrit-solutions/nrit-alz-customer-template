@@ -50,19 +50,19 @@ In-repo, in this order:
 | `docs/operations-runbook.md` | Teardown ordering and AMBA remediation |
 
 Public platform documentation (Material for MkDocs, safe to link and to read):
-<https://nrit-solutions.github.io/nrit-alz-platform-docs/>
+<https://docs.nrit.cloud/>
 
 | Page | Use it for |
 | --- | --- |
-| [Repository anatomy](https://nrit-solutions.github.io/nrit-alz-platform-docs/anatomy/) | The live tree, the root contract, the foundation units, the policy library |
-| [Growing the tree](https://nrit-solutions.github.io/nrit-alz-platform-docs/operations/growing-the-tree/) | Filling in a placeholder folder: a connectivity hub, a landing zone, a unit. The flattening rule |
-| [Plan and apply](https://nrit-solutions.github.io/nrit-alz-platform-docs/operations/plan-and-apply/) | The run flow, dependency-ordered apply, cross-PR unit locks |
-| [Gates](https://nrit-solutions.github.io/nrit-alz-platform-docs/operations/gates/) | Policy, security, and cost gates |
-| [Azure Policy](https://nrit-solutions.github.io/nrit-alz-platform-docs/policy/) | Customizing assignments, enforcement strategy, testing a policy change |
-| [Command reference](https://nrit-solutions.github.io/nrit-alz-platform-docs/reference/commands/) | Every comment command and what it posts |
-| [projects.yml schema](https://nrit-solutions.github.io/nrit-alz-platform-docs/reference/projects-yml/) | Discovery and hook configuration |
-| [Versions and upgrades](https://nrit-solutions.github.io/nrit-alz-platform-docs/reference/versions/) | The version statement for the platform as the template ships it |
-| [Troubleshooting](https://nrit-solutions.github.io/nrit-alz-platform-docs/reference/troubleshooting/) | Failure modes and their fixes |
+| [Repository anatomy](https://docs.nrit.cloud/anatomy/) | The live tree, the root contract, the foundation units, the policy library |
+| [Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/) | Filling in a placeholder folder: a connectivity hub, a landing zone, a unit. The flattening rule |
+| [Plan and apply](https://docs.nrit.cloud/operations/plan-and-apply/) | The run flow, dependency-ordered apply, cross-PR unit locks |
+| [Gates](https://docs.nrit.cloud/operations/gates/) | Policy, security, and cost gates |
+| [Azure Policy](https://docs.nrit.cloud/policy/) | Customizing assignments, enforcement strategy, testing a policy change |
+| [Command reference](https://docs.nrit.cloud/reference/commands/) | Every comment command and what it posts |
+| [projects.yml schema](https://docs.nrit.cloud/reference/projects-yml/) | Discovery and hook configuration |
+| [Versions and upgrades](https://docs.nrit.cloud/reference/versions/) | The version statement for the platform as the template ships it |
+| [Troubleshooting](https://docs.nrit.cloud/reference/troubleshooting/) | Failure modes and their fixes |
 
 The docs site describes the platform as the template ships it. This repository
 owns its own pins, so the site is a reference, not the truth about what is
@@ -102,7 +102,7 @@ Everything outside `_foundation/` ships as README-only placeholder folders. A
 folder with no `terragrunt.hcl` is not a unit, so discovery walks past it and it
 costs nothing. The tree documents the shape of the estate before the resources
 exist. You fill a placeholder in when the customer needs it. Follow
-[Growing the tree](https://nrit-solutions.github.io/nrit-alz-platform-docs/operations/growing-the-tree/),
+[Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/),
 and keep the placeholder README accurate afterwards.
 
 ## Core concepts
@@ -433,7 +433,7 @@ findings, never as a side effect of another change.
 - [Cloud Adoption Framework](https://learn.microsoft.com/azure/cloud-adoption-framework/)
 - [Well-Architected Framework](https://learn.microsoft.com/azure/well-architected/)
 - [Azure Policy](https://learn.microsoft.com/azure/governance/policy/overview)
-- [Terragrunt documentation](https://terragrunt.gruntwork.io/docs/)
+- [Terragrunt documentation](https://docs.terragrunt.com/)
 - [Terraform language](https://developer.hashicorp.com/terraform/language)
 - [HashiCorp Terraform style guide](https://developer.hashicorp.com/terraform/language/style)
 - [conftest](https://www.conftest.dev/) and [Rego](https://www.openpolicyagent.org/docs/policy-language)
