@@ -1,0 +1,8 @@
+framework:
+  - terraform
+compact: true
+quiet: true
+skip-check:
+  # Registry sources cannot carry a commit hash. Every Azure Verified Module
+  # call pins an exact `version` instead, which CKV_TF_2 checks.
+  - CKV_TF_1

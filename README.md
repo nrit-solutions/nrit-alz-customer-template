@@ -51,7 +51,8 @@ with a `terragrunt.hcl`).
 ├── AGENTS.md, CLAUDE.md         # instructions for AI coding agents
 ├── .mcp.json                    # MCP servers: Microsoft Learn, Terraform registry
 ├── .claude/                     # agent skills + what the tooling does (README)
-├── .github/                     # caller workflows (call the nrit-tf-pr-ops engine)
+├── .pre-commit-config.yaml      # commit hooks; .tflint.hcl and .checkov.yaml configure them
+├── .github/                     # caller workflows (engine), changelog + lint checks, hook script
 ├── policy/                      # active conftest policies (the policy gate)
 ├── docs/                        # foundation structure, data sharing, gates, upgrades, runbook
 └── live/
@@ -97,4 +98,19 @@ landing zone from this template.
 
 ## Local development
 
-Install the pinned toolchain with `mise install`. See `mise.toml`.
+Install the pinned toolchain with `mise install`, then wire up the hooks with
+`pre-commit install`. `mise.toml` pins every tool involved, `pre-commit` and its
+linters included, so local runs and CI use identical versions.
+
+On commit the hooks format HCL and Terraform, run tflint and checkov over the
+changed units, and check the repository invariants (no generated `backend.tf`,
+`providers.tf`, or `context.tf` committed, no state, no stack leaves, no
+Terraform outside a unit, and every unit has a `.terraform.lock.hcl`). The `lint`
+workflow runs the same hooks on every pull request and fails, so a commit made
+with `--no-verify` is caught there.
+
+Each unit's `.terraform.lock.hcl` is committed, which is what actually pins the
+provider versions; the `~>` constraints in the generated `providers.tf` only
+bound them. To take a new provider version, run
+`terragrunt --working-dir live/<unit> init -backend=false -upgrade` and commit
+the diff as its own PR.
