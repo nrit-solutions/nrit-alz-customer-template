@@ -14,6 +14,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Two agent skills vendored under `.claude/skills/`, so they work the moment a
+  repository is stamped with no install step, no network, and no dependency on a
+  particular CLI: `terragrunt` (NRIT's own, covering the Terragrunt 1.0 CLI, HCL
+  blocks, functions, Stacks, best practices, an Azure/ALZ layer, and copyable
+  templates) and `terraform-style-guide` (HashiCorp's official HCL style
+  conventions, MPL-2.0, with its `LICENSE` alongside it). A README in that folder
+  records provenance, the precedence rule that `AGENTS.md` wins on any conflict,
+  and how to refresh each one. Skills for authoring Terraform providers, building
+  Azure Verified Modules, and Packer images were deliberately left out: this
+  repository consumes published modules rather than authoring them. Backport:
+  optional, only new stamps need it.
 - `AGENTS.md`, generic instructions for AI coding agents, identical in every
   repository built on this platform: the layout, the root contract and
   `local.context`, unit authoring rules (shape, provider overrides, module

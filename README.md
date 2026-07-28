@@ -47,6 +47,8 @@ with a `terragrunt.hcl`).
 ```
 <customer>-alz-live/
 ├── README.md, ONBOARDING.md, CHANGELOG.md, LICENSE, mise.toml
+├── AGENTS.md, CLAUDE.md         # instructions for AI coding agents
+├── .claude/skills/              # agent skills: terragrunt, terraform-style-guide
 ├── .github/                     # caller workflows (call the nrit-tf-pr-ops engine)
 ├── policy/                      # active conftest policies (the policy gate)
 ├── docs/                        # foundation structure, data sharing, gates, upgrades, runbook
