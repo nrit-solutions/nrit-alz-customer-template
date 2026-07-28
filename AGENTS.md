@@ -216,13 +216,29 @@ example `rg-management-weu`, `law-management-weu`, `vnet-hub-weu`,
 Read `local.context`. `Azure/naming/azurerm` is available where a generated name
 is acceptable.
 
-**Tags.** Workload and platform resources carry the governance tag set:
+**Tags.** Two different things, and they are easy to confuse.
+
+What policy requires. The `Enforce-Tag-Gov` assignment (the vendored
+`Enforce-Tag-Governance` set) does three things, all shipping as `Audit`:
+
+| Rule | Tags |
+| --- | --- |
+| Mandatory, on resource groups only | `app`, `opsteam`, `criticality`, `confidentiality` |
+| Value must be in the allowed list | `criticality` (`mission-critical`, `medium`, `low`), `confidentiality` (`public`, `private`, `confidential`, `restricted`), `env` (`prod`, `staging`, `dev`) |
+| Inherited onto resources when missing | `app`, `opsteam`, `criticality`, `confidentiality` from the resource group; `businessunit`, `env`, `costcenter` from the subscription |
+
+What the code does on top. The foundation units set a house tag block:
 `businessunit`, `env`, `costcenter`, `app`, `opsteam`, `criticality`,
-`confidentiality`, `managed-by`. The `Enforce-Tag-Gov` assignment audits these by
-default. Set tags explicitly on a virtual network as well as its resource group,
-otherwise the ALZ inherit-tag policy copies them down and the unit drifts
-forever. The AMBA resource group is the documented exception: AMBA remediation
-restamps it, so Terraform leaves its tags unmanaged.
+`confidentiality`, `managed-by`. Only the first seven are read by policy.
+`managed-by` is convention alone. Copy the block when you add a unit, and keep
+the values inside the allowed lists above.
+
+Set tags explicitly on a virtual network as well as on its resource group. The
+inherit rules above copy them down at run time, so a VNet with no tags in code
+drifts on every plan.
+
+The AMBA resource group is the documented exception: AMBA remediation restamps
+it, so Terraform leaves its tags unmanaged.
 
 **Sharing values between units.** Take the first option that fits, in this order:
 
