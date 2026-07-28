@@ -1,3 +1,9 @@
 [tools]
 terragrunt = "1.0.7"
 terraform = "1.15.5"
+
+# the pre-commit toolchain, pinned here so local hooks and the lint workflow
+# run identical versions
+pre-commit = "4.6.1"
+tflint = "0.64.0"
+checkov = "3.3.8"

@@ -1,0 +1,53 @@
+# Install once with `pre-commit install`. The same hooks run on every pull
+# request via .github/workflows/lint.yml, so a commit made without them is
+# caught there rather than reaching main.
+#
+# terraform and terragrunt come from mise (see mise.toml), so the versions here
+# match the ones the engine runs. tflint and checkov are not pinned by mise; the
+# workflow installs the versions named below.
+minimum_pre_commit_version: "3.5.0"
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: trailing-whitespace
+        # .editorconfig keeps trailing whitespace in Markdown, where two spaces
+        # are a line break.
+        exclude: \.md$
+      - id: check-yaml
+      - id: check-json
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.108.1
+    hooks:
+      - id: terraform_fmt
+      - id: terragrunt_fmt
+      - id: terraform_tflint
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+      - id: terraform_checkov
+        args:
+          - --args=--config-file=__GIT_WORKING_DIR__/.checkov.yaml
+
+  - repo: local
+    hooks:
+      - id: repo-invariants
+        name: Repository invariants
+        entry: .github/scripts/check-repo-invariants.sh
+        language: script
+        # Scans everything tracked rather than the staged subset: a committed
+        # providers.tf is a problem whoever staged it, and pre-commit splits a
+        # long file list across several invocations, which repeated the lock
+        # file warning once per chunk.
+        pass_filenames: false
+        always_run: true
+        # the missing-lock-file warning is advisory, and pre-commit hides the
+        # output of a passing hook unless the hook is verbose
+        verbose: true
