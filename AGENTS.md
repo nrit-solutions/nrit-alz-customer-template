@@ -4,11 +4,16 @@ Instructions for AI coding agents working in this repository. Humans should read
 `README.md` first; this file is the same picture written for an agent, with the
 rules that are easy to get wrong made explicit.
 
+This file is generic and identical across every repository built on this
+platform. It describes the shape and the standards, never one tenant's values.
+Anything specific to this repository lives in the files it points at:
+`README.md`, `ONBOARDING.md`, `CHANGELOG.md`, and the `live/` tree itself.
+
 ## What this repository is
 
-An infrastructure-live repository for one customer's Azure tenant. It holds
-Terragrunt configuration for a Cloud Adoption Framework (CAF) landing zone under
-`live/`. It is operated by the `nrit-tf-pr-ops` comment-ops engine, consumed as a
+An infrastructure-live repository for one Azure tenant. It holds Terragrunt
+configuration for a Cloud Adoption Framework (CAF) landing zone under `live/`,
+and it is operated by the `nrit-tf-pr-ops` comment-ops engine, consumed as a
 pinned reusable GitHub Actions workflow.
 
 Two things drive most of the rules below:
@@ -19,21 +24,8 @@ Two things drive most of the rules below:
 2. **State is real.** This tree manages a live tenant. A wrong `terraform state`
    or `az` command is not recoverable by reverting a commit.
 
-This repository owns its own version pins from the moment it is created. It has
-no live link back to the template it was stamped from. Upgrades arrive as
-deliberate, reviewed commits here, never automatically.
-
-### If you are working in the template itself
-
-`nrit-alz-customer-template` is a GitHub template repository. Customer repos are
-stamped from it. Two things differ:
-
-- The engine skips template repositories, so the template's own pull requests run
-  no plans. Review is by eye, and by the result on the reference implementation.
-- Nothing here may be customer specific. A change is proven on the reference
-  implementation first, then ported. Record in `CHANGELOG.md` whether existing
-  customer repositories need the change backported, and what the backport
-  touches.
+Each repository owns its own version pins. Upgrades arrive as deliberate,
+reviewed commits, never automatically.
 
 ## Read these before changing anything
 
@@ -41,38 +33,37 @@ In-repo, in this order:
 
 | File | What it tells you |
 | --- | --- |
-| `README.md` | The shape of the repo and the change flow |
-| `ONBOARDING.md` | Every value to set for a new customer, and the required repo configuration |
+| `README.md` | The shape of this repository and its change flow |
+| `ONBOARDING.md` | Every value to set for this tenant, and the required repo configuration |
 | `docs/foundation-structure.md` | Why `_foundation/` sits above subscriptions, and the multi-region decision |
 | `docs/leaf-data-sharing.md` | How units share values and ordering. Read before adding any cross-unit reference |
 | `docs/policy-gates.md` | The conftest, checkov, and infracost gates |
 | `docs/upgrade-guide.md` | What is pinned and how to move a pin |
 | `docs/operations-runbook.md` | Teardown ordering and AMBA remediation |
 
-Public platform documentation (Material for MkDocs, safe to link and to read):
-<https://docs.nrit.cloud/>
+Public platform documentation (Material for MkDocs): <https://docs.nrit.cloud/>
 
 | Page | Use it for |
 | --- | --- |
 | [Repository anatomy](https://docs.nrit.cloud/anatomy/) | The live tree, the root contract, the foundation units, the policy library |
-| [Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/) | Filling in a placeholder folder: a connectivity hub, a landing zone, a unit. The flattening rule |
+| [Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/) | Adding a connectivity hub, a landing zone, or a unit. The flattening rule |
 | [Plan and apply](https://docs.nrit.cloud/operations/plan-and-apply/) | The run flow, dependency-ordered apply, cross-PR unit locks |
 | [Gates](https://docs.nrit.cloud/operations/gates/) | Policy, security, and cost gates |
 | [Azure Policy](https://docs.nrit.cloud/policy/) | Customizing assignments, enforcement strategy, testing a policy change |
 | [Command reference](https://docs.nrit.cloud/reference/commands/) | Every comment command and what it posts |
 | [projects.yml schema](https://docs.nrit.cloud/reference/projects-yml/) | Discovery and hook configuration |
-| [Versions and upgrades](https://docs.nrit.cloud/reference/versions/) | The version statement for the platform as the template ships it |
+| [Versions and upgrades](https://docs.nrit.cloud/reference/versions/) | The version statement for the platform |
 | [Troubleshooting](https://docs.nrit.cloud/reference/troubleshooting/) | Failure modes and their fixes |
 
 The docs site describes the platform as the template ships it. This repository
-owns its own pins, so the site is a reference, not the truth about what is
-deployed here. Read a pin from the file that owns it. Prose in older documents
-can be stale; the workflow files, `main.tf` files, and `mise.toml` are the truth.
+owns its own pins, so read a pin from the file that owns it. Prose in older
+documents can be stale; the workflow files, `main.tf` files, and `mise.toml` are
+the truth.
 
 ## Layout
 
 ```
-<customer>-alz-live/
+<repo>/
 ├── AGENTS.md, README.md, ONBOARDING.md, CHANGELOG.md, LICENSE
 ├── mise.toml                    # pinned terraform + terragrunt versions
 ├── projects.yml                 # engine discovery config and post-plan gate hooks
@@ -86,7 +77,7 @@ can be stale; the workflow files, `main.tf` files, and `mise.toml` are the truth
     ├── _foundation/             # tenant-wide governance, applied first
     │   ├── management-resources/#   Log Analytics, DCRs, AMA identity
     │   ├── landing-zones/       #   MG hierarchy, base policy, subscription placement
-    │   │   └── lib/             #   vendored NRIT ALZ policy library
+    │   │   └── lib/             #   vendored ALZ policy library
     │   └── amba/                #   Azure Monitor Baseline Alerts
     ├── platform/                # connectivity, identity, management, security
     ├── landingzones/            # corp, online, local
@@ -98,18 +89,18 @@ Folder names under `live/` are management group IDs. The tree mirrors the CAF
 hierarchy: management group, then a subscription folder, then a region folder,
 then units.
 
-Everything outside `_foundation/` ships as README-only placeholder folders. A
-folder with no `terragrunt.hcl` is not a unit, so discovery walks past it and it
-costs nothing. The tree documents the shape of the estate before the resources
-exist. You fill a placeholder in when the customer needs it. Follow
-[Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/),
-and keep the placeholder README accurate afterwards.
+A management group folder with no `terragrunt.hcl` beneath it is a placeholder.
+It documents the shape of the estate before the resources exist, costs nothing
+at plan time, and is filled in when the tenant needs it. Follow
+[Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/), and
+keep the folder's README accurate afterwards.
 
 ## Core concepts
 
 **Unit.** A folder containing `terragrunt.hcl`. It is one Terraform root with its
-own state. The engine's word for a unit is "project", and the label is the path,
-for example `live/platform/connectivity/westeurope/caf-connectivity-hub`.
+own state. A folder without `terragrunt.hcl` is invisible to discovery. The
+engine's word for a unit is "project", and the label is the path, for example
+`live/platform/connectivity/westeurope/caf-connectivity-hub`.
 
 Never add a `terragrunt.stack.hcl` here. A stack leaf has no `terragrunt.hcl`,
 so discovery skips it entirely: the PR plans nothing, every gate passes with
@@ -137,25 +128,6 @@ still needs a `region.hcl`, which is why `_global/` folders carry one.
 **Offline by design.** Every coordinate falls back to a placeholder through
 `get_env`, so the tree generates and validates with no Azure access.
 
-## Customer-specific values
-
-A freshly stamped repository carries placeholders that must be set before the
-first apply. `ONBOARDING.md` is the full list and the authority. The ones an
-agent trips over:
-
-| Where | What | Note |
-| --- | --- | --- |
-| `live/_foundation/management-resources/main.tf` | `businessunit` tag, ships as `changeme` | The customer's short name |
-| `live/_foundation/amba/main.tf` | `amba_action_group_email`, ships as `alerts@example.com` | Every AMBA alert routes here |
-| `live/_foundation/landing-zones/main.tf` | `connectivity_subscription_id`, ships empty | Empty omits the connectivity placement. Setting it later and re-applying moves the subscription |
-| `live/_foundation/region.hcl` | `location`, `location_short`, `environment` | The only place the region lives. `environment` must be `prod`, `staging`, or `dev`, the values the tag policy allows |
-| `live/tenant.hcl` | `tenant_root_id` | Defaults to the tenant root group. Set it before the first apply. Changing it later moves the whole hierarchy and is destructive |
-| `.github/CODEOWNERS` | The NRIT team reference | Replace with a team in the customer's organisation, or delete the file |
-| `LICENSE` | Placeholder text | Replace with the licence agreed in the partnership agreement. Do not write licence terms yourself |
-
-Backend names are never edited in this repo. They come from the `BACKEND_*`
-Action variables the bootstrap set.
-
 ## Making a change
 
 1. Branch from `main`. Use a `feat/`, `fix/`, `chore/`, or `docs/` prefix.
@@ -168,9 +140,9 @@ Action variables the bootstrap set.
 5. The engine plans every impacted unit automatically and posts a run comment.
    `include_dependents: true` in `projects.yml` means dependents are planned too.
 6. Read the whole plan. Every delete and every replace. Read the gate panel.
-7. Get the review this repository requires, then comment `/apply`. Units apply in
-   dependency order. A failed unit skips its dependents rather than applying them
-   against stale outputs.
+7. Satisfy whatever review this repository requires, then comment `/apply`. Units
+   apply in dependency order. A failed unit skips its dependents rather than
+   applying them against stale outputs.
 8. Merge once `tf-pr-ops / merge-gate` is green.
 
 Comment commands: `/plan`, `/plan -p <label>`, `/apply`, `/apply -p <label>`,
@@ -182,12 +154,17 @@ closes. Another PR touching the same unit gets a `🔒 Locked by another PR`
 report. That is expected behaviour, not a bug. `/unlock` on the owning PR
 force-releases.
 
-`/apply` is gated on the repository's required reviews, read from GitHub's review
-decision. A repository that deliberately requires no approvals must opt back in
-with the `TF_PR_OPS_ALLOW_UNREVIEWED_APPLY` variable. Only set that on a
-single-writer repository, and never as a way around a review that is failing.
+**Approvals.** `/apply` is gated on this repository's required reviews, read from
+GitHub's review decision. A repository that deliberately requires no approvals
+opts back in with the `TF_PR_OPS_ALLOW_UNREVIEWED_APPLY` variable; that is only
+appropriate for a single-writer repository, where the plan review is the gate.
+Check the repository's ruleset and that variable to know which applies here, and
+never set it to work around a review that is failing.
 
-Expect the first foundation apply to take sixty to ninety minutes, because of
+If this repository is itself a GitHub template, the engine skips it: its own pull
+requests run no plans, and review is by eye.
+
+Expect a first foundation apply to take sixty to ninety minutes, because of
 policy propagation.
 
 ## Authoring rules for units
@@ -204,9 +181,9 @@ state. Match that style.
 
 **Overriding providers.** A unit that needs a provider set other than
 `azurerm` + `azapi` declares its own `generate "provider"` and must set
-`merge_strategy = "deep"` on its include. Without the deep merge, two
-same-named generate blocks are a hard error. `_foundation/landing-zones` and
-`_foundation/amba` are the worked examples.
+`merge_strategy = "deep"` on its include. Without the deep merge, two same-named
+generate blocks are a hard error and nothing is generated.
+`_foundation/landing-zones` and `_foundation/amba` are the worked examples.
 
 **Modules.** Source public Azure Verified Modules from the registry, with an
 explicit exact `version`. No `~>` on a module version, no git sources, no local
@@ -241,7 +218,10 @@ shared resources the same way, for example `vnet-shared-eastus2-001`.
 The instance suffix (`001`) is optional everywhere: add it when a second resource
 of the same type, purpose, and region is plausible, and leave it off otherwise.
 Decide it once, at creation. Azure resource names cannot be changed, so a
-resource that starts without a number can never gain one.
+resource that starts without a number can never gain one. For the same reason,
+**never rename an existing resource to match a newer convention**: renaming a
+resource group destroys and recreates it and everything inside it. Expect a
+mature tenant to be mixed, and leave the old names alone.
 
 Never hardcode a region or an environment in a unit. Both come from
 `local.context`, which `region.hcl` feeds. `Azure/naming/azurerm` is available
@@ -271,8 +251,8 @@ What policy requires. The `Enforce-Tag-Gov` assignment (the vendored
 | Value must be in the allowed list | `criticality` (`mission-critical`, `medium`, `low`), `confidentiality` (`public`, `private`, `confidential`, `restricted`), `env` (`prod`, `staging`, `dev`) |
 | Inherited onto resources when missing | `app`, `opsteam`, `criticality`, `confidentiality` from the resource group; `businessunit`, `env`, `costcenter` from the subscription |
 
-What the code does on top. The foundation units set a house tag block:
-`businessunit`, `env`, `costcenter`, `app`, `opsteam`, `criticality`,
+What the code does on top. The foundation and platform units set a house tag
+block: `businessunit`, `env`, `costcenter`, `app`, `opsteam`, `criticality`,
 `confidentiality`, `managed-by`. Only the first seven are read by policy.
 `managed-by` is convention alone. Copy the block when you add a unit, and keep
 the values inside the allowed lists above.
@@ -345,9 +325,9 @@ the same conversation:
 - `git push --force`, or any push to `main`
 - `gh workflow run`, `gh pr merge`, or posting `/apply` on someone's behalf
 
-Reading is fine: `az account show`, `gh pr view`, `gh run view`. Confirm first
-that the active `az` subscription is in this customer's tenant and that `gh` is
-authenticated as the account that should be acting here.
+Reading is fine: `az account show`, `gh pr view`, `gh run view`. Confirm the
+active identities first: `az` must be signed in to the tenant this repository
+deploys to, and `gh` must be the account that should be acting here.
 
 ## Version pins
 
@@ -366,10 +346,14 @@ against old scripts.
 
 Move one pin per PR so the plan diff stays readable. After bumping the
 `platform/alz` ref, re-sync
-`lib/architecture_definitions/nrit.alz_architecture_definition.json` against the
-stock architecture at the new version and keep the tag archetype on the
+`lib/architecture_definitions/*.alz_architecture_definition.json` against the
+stock architecture at the new version and keep the custom tag archetype on the
 intermediate root. Nothing automates that. See
 `live/_foundation/landing-zones/lib/README.md`.
+
+`docs/reference/versions.md` on the public docs site is the version statement for
+the platform as the template ships it. Do not create a competing version table in
+this repository.
 
 ## Gates
 
@@ -399,8 +383,10 @@ findings, never as a side effect of another change.
   GitHub environments. Do not add a client secret or a storage account key
   anywhere, and do not change the environment names: the federated credential
   subjects embed them.
-- infracost sends region and SKU to a hosted pricing API. Do not add any other
-  tool that sends repository content off-platform.
+- infracost sends region and SKU to a hosted pricing API. That is an accepted,
+  documented trade-off. Do not add any other tool that sends repository content
+  off-platform.
+- Do not name other tenants or customers in this repository.
 
 ## Definition of done
 

@@ -14,12 +14,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- `AGENTS.md`, instructions for AI coding agents: the repo layout, the root
-  contract, the customer-specific values to set, unit authoring rules, the
-  comment-ops flow, what is pinned where, the commands an agent may and may not
-  run, and links to the public platform docs and to upstream references.
-  `CLAUDE.md` is a one-line pointer at it. Backport: optional, and useful for any
-  customer repository worked on with an AI agent.
+- `AGENTS.md`, generic instructions for AI coding agents, identical in every
+  repository built on this platform: the layout, the root contract and
+  `local.context`, unit authoring rules (shape, provider overrides, module
+  pinning, the CAF naming split, tags, sharing values between units), the
+  comment-ops change flow, what is pinned where, the commands an agent may and
+  may not run, and a definition of done. It carries no tenant values; anything
+  specific to this repository stays in `README.md`, `ONBOARDING.md`, and the
+  `live/` tree. `CLAUDE.md` is a one-line pointer at it.
 - A changelog reminder workflow: CI warns, without failing, when a PR changes
   code but not this file. Backport: optional, only new stamps need it.
 
