@@ -26,12 +26,12 @@ locals {
   # These management resource names must match the management leaf: it creates
   # the resources, the policy default values below point at them by id. Keep the
   # two in sync.
-  management_resource_group_name          = "rg-management-${local.context.environment}-${local.context.location_short}"
-  log_analytics_workspace_name            = "law-management-${local.context.environment}-${local.context.location_short}"
-  ama_user_assigned_managed_identity_name = "uami-management-ama-${local.context.environment}-${local.context.location_short}"
-  dcr_change_tracking_name                = "dcr-change-tracking-${local.context.environment}-${local.context.location_short}"
-  dcr_vm_insights_name                    = "dcr-vm-insights-${local.context.environment}-${local.context.location_short}"
-  dcr_defender_sql_name                   = "dcr-defender-sql-${local.context.environment}-${local.context.location_short}"
+  management_resource_group_name          = "rg-management-${local.context.location_short}"
+  log_analytics_workspace_name            = "law-management-${local.context.location_short}"
+  ama_user_assigned_managed_identity_name = "uami-management-ama-${local.context.location_short}"
+  dcr_change_tracking_name                = "dcr-change-tracking-${local.context.location_short}"
+  dcr_vm_insights_name                    = "dcr-vm-insights-${local.context.location_short}"
+  dcr_defender_sql_name                   = "dcr-defender-sql-${local.context.location_short}"
 
   subscription_placement = merge(
     {

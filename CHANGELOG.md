@@ -25,17 +25,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- Resource names now carry the environment, following the Cloud Adoption
-  Framework component order `<type>-<purpose>-<environment>-<region>` with an
-  optional instance suffix. The foundation renames are
-  `rg-management-prod-weu`, `law-management-prod-weu`,
-  `uami-management-ama-prod-weu`, the three `dcr-*-prod-weu` rules,
-  `rg-amba-prod-weu`, and `uami-amba-prod-weu`. The mirrored names in
-  `_foundation/landing-zones/main.tf`, which build the policy default value ids,
-  moved with them. The environment comes from `local.context.environment`, so
-  `region.hcl` stays the only place it is set. Backport: no. Renaming a deployed
-  resource group destroys and recreates it and everything inside it, so existing
-  repositories keep the names they have. Only new stamps get this.
 - The engine caller pins moved from `v1.4.0` to `v1.5.0` and the
   `terraform-pr-ops.yml` caller added `closed` to its `pull_request` trigger
   types. This adopts cross-PR unit locks: the first PR to plan a unit owns it

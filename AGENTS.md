@@ -210,33 +210,40 @@ module directories. Set `enable_telemetry = false`. There is no private module
 catalog: every unit sources a public module directly, and the only custom content
 is the policy library vendored under `live/_foundation/landing-zones/lib/`.
 
-**Naming.** Follow the Cloud Adoption Framework component order:
+**Naming.** Follow the Cloud Adoption Framework component order. Whether the name
+carries an environment depends on where the unit sits in the tree.
 
 ```
-<type abbreviation>-<purpose>-<environment>-<region>[-<instance>]
+Platform, under _foundation/ and platform/
+  <type abbreviation>-<purpose>-<region>[-<instance>]
+  "${abbrev}-${purpose}-${local.context.location_short}"
 
-"${abbrev}-${purpose}-${local.context.environment}-${local.context.location_short}"
+Landing zones, under landingzones/
+  <type abbreviation>-<purpose>-<environment>-<region>[-<instance>]
+  "${abbrev}-${purpose}-${local.context.environment}-${local.context.location_short}"
 ```
 
-Environment is always present. The instance suffix (`001`) is optional: add it
-when a second resource of the same type, purpose, and region is plausible, and
-leave it off otherwise. Decide it once, at creation. Azure resource names cannot
-be changed, so a resource that starts without a number can never gain one.
+| Unit lives under | Name | Why |
+| --- | --- | --- |
+| `_foundation/` | `rg-management-weu`, `law-management-weu`, `uami-management-ama-weu`, `dcr-change-tracking-weu`, `rg-amba-weu` | Tenant singletons. One hierarchy, one workspace, one AMBA deployment, serving every environment in the tenant |
+| `platform/` | `rg-hub-weu`, `vnet-hub-weu` | Platform shared services. The hub carries traffic for prod, dev, and sandbox spokes alike |
+| `landingzones/` | `rg-corp-network-prod-weu`, `vnet-corp-prod-weu`, `snet-workload-prod-weu`, `nsg-corp-workload-prod-weu` | A landing zone belongs to exactly one environment |
 
-| Resource | Name |
-| --- | --- |
-| Management resource group | `rg-management-prod-weu` |
-| Log Analytics workspace | `law-management-prod-weu` |
-| AMA identity | `uami-management-ama-prod-weu` |
-| Change tracking DCR | `dcr-change-tracking-prod-weu` |
-| Hub virtual network | `vnet-hub-prod-weu-001` |
-| Spoke subnet | `snet-workload-prod-weu-001` |
+The rule behind the split: environment is a property of the workload, not of the
+platform. There will never be a non-production management workspace, so
+`law-management-prod-weu` would imply a sibling that cannot exist. CAF names its
+shared resources the same way, for example `vnet-shared-eastus2-001`.
+
+The instance suffix (`001`) is optional everywhere: add it when a second resource
+of the same type, purpose, and region is plausible, and leave it off otherwise.
+Decide it once, at creation. Azure resource names cannot be changed, so a
+resource that starts without a number can never gain one.
 
 Never hardcode a region or an environment in a unit. Both come from
 `local.context`, which `region.hcl` feeds. `Azure/naming/azurerm` is available
 where a generated name is acceptable.
 
-Two exceptions to know. Resource types that allow no hyphens and cap at 24
+Two length exceptions to know. Resource types that allow no hyphens and cap at 24
 characters, storage accounts and key vaults, compress to
 `st<purpose><env><loc><instance>`. Resource types with a tight limit need
 checking against

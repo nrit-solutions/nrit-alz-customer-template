@@ -2,8 +2,8 @@ data "azapi_client_config" "current" {}
 
 locals {
 
-  amba_resource_group_name                 = "rg-amba-${local.context.environment}-${local.context.location_short}"
-  amba_user_assigned_managed_identity_name = "uami-amba-${local.context.environment}-${local.context.location_short}"
+  amba_resource_group_name                 = "rg-amba-${local.context.location_short}"
+  amba_user_assigned_managed_identity_name = "uami-amba-${local.context.location_short}"
   amba_action_group_email                  = "alerts@example.com"
 
   # The action group email is an Array policy parameter, so it is wrapped in a
