@@ -210,11 +210,44 @@ module directories. Set `enable_telemetry = false`. There is no private module
 catalog: every unit sources a public module directly, and the only custom content
 is the policy library vendored under `live/_foundation/landing-zones/lib/`.
 
-**Naming.** `<abbreviation>-<purpose>-${local.context.location_short}`, for
-example `rg-management-weu`, `law-management-weu`, `vnet-hub-weu`,
-`snet-workload-weu`, `nsg-corp-workload-weu`. Never hardcode a region in a unit.
-Read `local.context`. `Azure/naming/azurerm` is available where a generated name
-is acceptable.
+**Naming.** Follow the Cloud Adoption Framework component order:
+
+```
+<type abbreviation>-<purpose>-<environment>-<region>[-<instance>]
+
+"${abbrev}-${purpose}-${local.context.environment}-${local.context.location_short}"
+```
+
+Environment is always present. The instance suffix (`001`) is optional: add it
+when a second resource of the same type, purpose, and region is plausible, and
+leave it off otherwise. Decide it once, at creation. Azure resource names cannot
+be changed, so a resource that starts without a number can never gain one.
+
+| Resource | Name |
+| --- | --- |
+| Management resource group | `rg-management-prod-weu` |
+| Log Analytics workspace | `law-management-prod-weu` |
+| AMA identity | `uami-management-ama-prod-weu` |
+| Change tracking DCR | `dcr-change-tracking-prod-weu` |
+| Hub virtual network | `vnet-hub-prod-weu-001` |
+| Spoke subnet | `snet-workload-prod-weu-001` |
+
+Never hardcode a region or an environment in a unit. Both come from
+`local.context`, which `region.hcl` feeds. `Azure/naming/azurerm` is available
+where a generated name is acceptable.
+
+Two exceptions to know. Resource types that allow no hyphens and cap at 24
+characters, storage accounts and key vaults, compress to
+`st<purpose><env><loc><instance>`. Resource types with a tight limit need
+checking against
+[the naming rules](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules)
+before you commit to a long purpose. Everything the foundation creates today
+sits at roughly half its limit.
+
+Reference:
+[Define your naming convention](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)
+and
+[resource abbreviations](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations).
 
 **Tags.** Two different things, and they are easy to confuse.
 
