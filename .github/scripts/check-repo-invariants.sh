@@ -24,6 +24,12 @@ fail() {
   printf '%s\n' "$@" >&2
 }
 
+# Advisory: prints, never blocks. For the one check that a freshly stamped
+# repository is expected to trip until onboarding runs.
+warn() {
+  printf '%s\n' "$@" >&2
+}
+
 while IFS= read -r f; do
   [ -n "$f" ] || continue
 
@@ -55,20 +61,32 @@ $files
 EOF
 
 # A directory under live/ holding Terraform but no terragrunt.hcl is invisible
-# to discovery, and fails the same silent way as a stack leaf. A unit without a
-# committed lock file resolves its providers afresh on every run, so plan and
-# apply can use different versions.
+# to discovery, and fails the same silent way as a stack leaf.
+#
+# A unit without a committed lock file resolves its providers afresh on every
+# run, so plan and apply can use different versions. That warns rather than
+# fails: a repository stamped from the template has no lock files until
+# onboarding generates them against the customer's own tree, and shipping
+# pre-generated ones would start every customer on whatever versions happened to
+# resolve the day the template was last touched.
+missing_locks=""
 while IFS= read -r dir; do
   [ -n "$dir" ] || continue
   [ -f "$dir/terragrunt.hcl" ] || fail \
     "$dir: has Terraform but no terragrunt.hcl, so it is not a unit." \
     "  Discovery skips it entirely and nothing is ever planned or applied."
-  [ -f "$dir/.terraform.lock.hcl" ] || fail \
-    "$dir: no .terraform.lock.hcl, so provider versions float between runs" \
-    "  and the plan you review can differ from what applies. Generate one:" \
-    "    terragrunt --working-dir $dir init -backend=false"
+  [ -f "$dir/.terraform.lock.hcl" ] || missing_locks="$missing_locks $dir"
 done <<EOF
 $(git ls-files 'live/*.tf' | sed 's|/[^/]*$||' | sort -u)
 EOF
+
+if [ -n "$missing_locks" ]; then
+  warn "warning: no .terraform.lock.hcl in:"
+  for d in $missing_locks; do warn "  $d"; done
+  warn "  Provider versions float between runs, so the plan you review can" \
+    "  differ from what applies. Generate one per unit and commit it:" \
+    "    terragrunt --working-dir <unit> init -backend=false" \
+    "  A newly stamped repository does this once, during onboarding."
+fi
 
 exit $status

@@ -42,4 +42,12 @@ repos:
         name: Repository invariants
         entry: .github/scripts/check-repo-invariants.sh
         language: script
-        pass_filenames: true
+        # Scans everything tracked rather than the staged subset: a committed
+        # providers.tf is a problem whoever staged it, and pre-commit splits a
+        # long file list across several invocations, which repeated the lock
+        # file warning once per chunk.
+        pass_filenames: false
+        always_run: true
+        # the missing-lock-file warning is advisory, and pre-commit hides the
+        # output of a passing hook unless the hook is verbose
+        verbose: true

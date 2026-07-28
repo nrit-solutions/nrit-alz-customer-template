@@ -25,11 +25,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   generated `backend.tf`, `providers.tf`, or `context.tf` staged by hand (each
   carries the resolved tenant and subscription ids and is excluded by
   `.gitignore`, so this only fires when something forced it in), Terraform state,
-  a `terragrunt.stack.hcl`, a directory holding Terraform but no
-  `terragrunt.hcl`, and a unit with no `.terraform.lock.hcl`. The stack leaf and
-  the non-unit directory are the silent failures worth catching early: discovery
-  skips the directory, so the pull request plans nothing, every gate passes with
-  nothing to gate, and it merges green having deployed nothing.
+  a `terragrunt.stack.hcl`, and a directory holding Terraform but no
+  `terragrunt.hcl`. The last two are the silent failures worth catching early:
+  discovery skips the directory, so the pull request plans nothing, every gate
+  passes with nothing to gate, and it merges green having deployed nothing. A
+  fifth check, a unit with no `.terraform.lock.hcl`, warns rather than fails,
+  because a freshly stamped repository has none until onboarding runs.
 - `.tflint.hcl` and `.checkov.yaml`. Both disable checks that this repository's
   shape makes permanently unsatisfiable rather than leaving them to fail on every
   run: `terraform_required_providers` and `terraform_required_version`, because
@@ -37,21 +38,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `CKV_TF_1`, because registry sources cannot carry a commit hash. In exchange
   `terraform_module_version` is set to `exact`, which enforces the exact-version
   rule on every Azure Verified Module call.
-- A `.terraform.lock.hcl` in each of the three foundation units, pinning `alz`
-  0.21.0, `azapi` 2.11.0, `modtm` 0.4.0, `azurerm` 4.81.0, `random` 3.9.0, and
-  `time` 0.14.0. All three are byte-identical to the ones in `nrit-alz-live`.
-  Both Terragrunt and HashiCorp say to commit these, and Terragrunt copies the
-  file into its run directory and back out again, so it is what actually decides
-  the provider versions. Until now nothing pinned them: the generated
-  `providers.tf` carries only `~>` constraints and no lock file was committed, so
-  every plan and every apply re-resolved, and `/apply` could run a different
-  provider version than the plan under review. A new unit must ship its own lock
-  file, which the invariants script enforces. Backport: recommended for existing
-  customer repositories, and it must be done per repository, because the versions
-  a customer's estate currently runs are whatever their last apply resolved.
-  Generate with `terragrunt --working-dir live/<unit> init -backend=false`, then
-  plan every unit and confirm the diff is empty before merging. A non-empty plan
-  means that repository has already drifted onto newer providers.
+- ONBOARDING step 3 covers a third kind of version: generating a
+  `.terraform.lock.hcl` per unit and committing them. Both Terragrunt and
+  HashiCorp say to commit these, and Terragrunt copies the file into its run
+  directory and back out again, so it is what actually decides the provider
+  versions. Nothing pinned them before: the generated `providers.tf` carries only
+  `~>` constraints, so every plan and every apply re-resolved and `/apply` could
+  run a different provider version than the plan under review.
+
+  This template deliberately ships no lock files. A lock file records the exact
+  versions resolved at the moment it is written, so pre-generating them here
+  would start every customer on whatever resolved the day this repository was
+  last touched, and further behind with each month that passes. Generating them
+  at stamp time pins the customer to current providers, deliberately, with the
+  versions visible in their first pull request. The invariants check warns rather
+  than fails so a freshly stamped repository is not red before onboarding runs.
+
+  Backport: recommended for existing customer repositories, and it must be done
+  per repository, because the versions a customer's estate currently runs are
+  whatever their last apply resolved. Generate with
+  `terragrunt --working-dir live/<unit> init -backend=false`, then plan every
+  unit and confirm the diff is empty before merging. A non-empty plan means that
+  repository has already drifted onto newer providers.
 
 ### Changed
 

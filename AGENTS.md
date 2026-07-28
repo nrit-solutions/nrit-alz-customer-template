@@ -345,10 +345,17 @@ Provider versions are settled by the committed `.terraform.lock.hcl` in each
 unit, not by the `~>` constraints. Terragrunt copies it into the run directory
 and back out again, so it is the file that decides what plan and apply use, and
 both vendors say to commit it. Without one, every run re-resolves and `/apply`
-can run a different provider than the plan you reviewed. To take a new provider
-version, run `terragrunt --working-dir live/<unit> init -backend=false -upgrade`
-and commit the diff, as its own PR. Never delete a lock file to make an error go
-away.
+can run a different provider than the plan you reviewed.
+
+A new unit ships its own, from `init -backend=false`. To move a provider version,
+run `terragrunt --working-dir live/<unit> init -backend=false -upgrade` and commit
+the diff as its own PR. Never delete a lock file to make an error go away.
+
+A repository stamped from the template starts with none, on purpose: a lock file
+records the versions resolved when it was written, so shipping pre-generated ones
+would start every customer behind by however long the template had been sitting.
+Onboarding generates them once, against that customer's own tree. Until then the
+invariants check warns on every run.
 
 Engine tags are immutable `vX.Y.Z`. There is no moving `v1` tag, so an upgrade is
 always a commit here. Bump the `uses:` ref and `engine_ref` together: `engine_ref`
@@ -375,12 +382,12 @@ tflint, checkov, and the repository invariants in
 `.github/scripts/check-repo-invariants.sh`.
 The invariants catch what the linters cannot: a generated `backend.tf`,
 `providers.tf`, or `context.tf` staged by hand (they carry resolved tenant and
-subscription ids), Terraform state, a `terragrunt.stack.hcl`, a directory holding
-Terraform but no `terragrunt.hcl`, and a unit with no `.terraform.lock.hcl`. The
-stack leaf and the non-unit directory are the silent failures: discovery skips
-them, so the PR plans nothing and merges green having deployed nothing. The
-`lint` workflow runs the identical hooks on every pull request and fails, so
-`--no-verify` buys nothing.
+subscription ids), Terraform state, a `terragrunt.stack.hcl`, and a directory
+holding Terraform but no `terragrunt.hcl`. The last two are the silent failures:
+discovery skips them, so the PR plans nothing and merges green having deployed
+nothing. It also warns, without blocking, about a unit with no
+`.terraform.lock.hcl`. The `lint` workflow runs the identical hooks on every pull
+request and fails, so `--no-verify` buys nothing.
 
 Checkov at this layer sees only the module calls, not what the Azure Verified
 Modules expand to. `CKV_TF_1` is skipped in `.checkov.yaml`: registry sources

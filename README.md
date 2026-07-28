@@ -105,12 +105,16 @@ linters included, so local runs and CI use identical versions.
 On commit the hooks format HCL and Terraform, run tflint and checkov over the
 changed units, and check the repository invariants (no generated `backend.tf`,
 `providers.tf`, or `context.tf` committed, no state, no stack leaves, no
-Terraform outside a unit, and every unit has a `.terraform.lock.hcl`). The `lint`
-workflow runs the same hooks on every pull request and fails, so a commit made
-with `--no-verify` is caught there.
+Terraform outside a unit). The `lint` workflow runs the same hooks on every pull
+request and fails, so a commit made with `--no-verify` is caught there.
 
-Each unit's `.terraform.lock.hcl` is committed, which is what actually pins the
-provider versions; the `~>` constraints in the generated `providers.tf` only
-bound them. To take a new provider version, run
+Each unit's `.terraform.lock.hcl` is committed once generated, and that is what
+actually pins the provider versions; the `~>` constraints in the generated
+`providers.tf` only bound them. **This template ships none**: a lock file records
+the versions resolved at the moment it is written, so a pre-generated one would
+start every customer on whatever resolved the day the template was last touched.
+Onboarding step 3 generates them against the customer's own tree, and the
+invariants check warns, without blocking, until it has. To move a provider
+version afterwards, run
 `terragrunt --working-dir live/<unit> init -backend=false -upgrade` and commit
 the diff as its own PR.

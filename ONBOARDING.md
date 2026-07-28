@@ -83,7 +83,7 @@ only the deploy target, not the state location.
 
 ## Step 3: Pin versions
 
-Two kinds of version are pinned in this repository:
+Three kinds of version are pinned in this repository:
 
 - **Library and AVM versions.** The `landing-zones` unit reads the upstream ALZ
   library at a pinned `ref` plus the NRIT library vendored under
@@ -96,6 +96,25 @@ Two kinds of version are pinned in this repository:
   `engine_ref`. There is no separate pipeline version, and there is no moving tag:
   an upgrade is always a commit. To move to a new engine release, bump both pins
   together (the `uses:` ref and `engine_ref`) in each caller file.
+- **Providers.** Generate a `.terraform.lock.hcl` for every unit and commit them:
+
+  ```sh
+  for u in live/_foundation/*/; do
+    terragrunt --working-dir "$u" init -backend=false
+  done
+  ```
+
+  The template deliberately ships none. A lock file records the exact provider
+  versions resolved at the moment it is written, so a pre-generated one would
+  start every customer on whatever happened to resolve the day the template was
+  last touched, quietly further behind with each month that passes. Generating
+  them here pins this customer to current providers, on purpose, with the versions
+  visible in the first pull request.
+
+  Until this is done, provider versions re-resolve on every run, so an `/apply`
+  can use a different version than the plan that was reviewed. The pre-commit
+  invariants check warns about it, without blocking, until the files exist. See
+  `AGENTS.md` for how to move a provider version afterwards.
 
 ## Step 4: Grant access, set the cost gate, and require the merge gate
 
