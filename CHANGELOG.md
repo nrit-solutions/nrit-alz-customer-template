@@ -14,6 +14,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `.mcp.json` declaring two MCP servers for agents working in the repository:
+  `microsoft-learn` (Microsoft's official documentation server over HTTPS, no
+  account or install, so Azure Policy, CAF, WAF, and naming answers come from
+  current Microsoft Learn rather than training data) and `terraform`
+  (HashiCorp's official registry server, run locally as a container pinned to
+  `1.1.0`, for looking up Azure Verified Module arguments and current versions).
+  No token is set: the public registry needs none. The Terraform server requires
+  Docker; without it, it fails to start and nothing else is affected. Both
+  receive queries only, never the contents of `live/`, state, or plan output.
+  `.claude/README.md` documents what each does, what leaves the machine, and how
+  to turn either off. Backport: optional, only new stamps need it.
 - Two agent skills vendored under `.claude/skills/`, so they work the moment a
   repository is stamped with no install step, no network, and no dependency on a
   particular CLI: `terragrunt` (NRIT's own, covering the Terragrunt 1.0 CLI, HCL
