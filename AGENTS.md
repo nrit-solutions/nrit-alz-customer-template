@@ -35,20 +35,19 @@ In-repo, in this order:
 | --- | --- |
 | `README.md` | The shape of this repository and its change flow |
 | `ONBOARDING.md` | Every value to set for this tenant, and the required repo configuration |
-| `docs/foundation-structure.md` | Why `_foundation/` sits above subscriptions, and the multi-region decision |
-| `docs/leaf-data-sharing.md` | How units share values and ordering. Read before adding any cross-unit reference |
-| `docs/policy-gates.md` | The conftest, checkov, and infracost gates |
-| `docs/upgrade-guide.md` | What is pinned and how to move a pin |
-| `docs/operations-runbook.md` | Teardown ordering and AMBA remediation |
 
-Public platform documentation (Material for MkDocs): <https://docs.nrit.cloud/>
+Everything else lives in the public platform documentation
+(<https://docs.nrit.cloud/>). The repository carries no `docs/` folder.
 
 | Page | Use it for |
 | --- | --- |
-| [Repository anatomy](https://docs.nrit.cloud/anatomy/) | The live tree, the root contract, the foundation units, the policy library |
+| [Repository anatomy](https://docs.nrit.cloud/anatomy/) | The live tree, the root contract, the foundation units (including the multi-region decision and deploy order), the policy library |
 | [Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/) | Adding a connectivity hub, a landing zone, or a unit. The flattening rule |
+| [Sharing data between units](https://docs.nrit.cloud/operations/sharing-data-between-units/) | How units share values and ordering. Read before adding any cross-unit reference |
 | [Plan and apply](https://docs.nrit.cloud/operations/plan-and-apply/) | The run flow, dependency-ordered apply, cross-PR unit locks |
-| [Gates](https://docs.nrit.cloud/operations/gates/) | Policy, security, and cost gates |
+| [Gates](https://docs.nrit.cloud/operations/gates/) | The commit-time hooks and the plan-time policy, security, and cost gates |
+| [Runbook](https://docs.nrit.cloud/operations/runbook/) | Teardown ordering, AMBA remediation, stale locks, moving a unit |
+| [Versions and upgrades](https://docs.nrit.cloud/reference/versions/) | What is pinned where and how to move a pin |
 | [Azure Policy](https://docs.nrit.cloud/policy/) | Customizing assignments, enforcement strategy, testing a policy change |
 | [Command reference](https://docs.nrit.cloud/reference/commands/) | Every comment command and what it posts |
 | [projects.yml schema](https://docs.nrit.cloud/reference/projects-yml/) | Discovery and hook configuration |
@@ -65,11 +64,10 @@ the truth.
 ```
 <repo>/
 ├── AGENTS.md, README.md, ONBOARDING.md, CHANGELOG.md, LICENSE
-├── mise.toml                    # pinned terraform + terragrunt versions
+├── mise.toml                    # the pinned toolchain (terraform, terragrunt, linters)
 ├── projects.yml                 # engine discovery config and post-plan gate hooks
 ├── policy/                      # active conftest policies (the policy gate)
 ├── examples/policy/             # example rego, not executed
-├── docs/                        # the documents listed above
 ├── .github/workflows/           # thin callers into the nrit-tf-pr-ops engine
 └── live/                        # everything deployable
     ├── root.hcl                 # backend, providers, and the locals contract

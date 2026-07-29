@@ -10,7 +10,7 @@ the management resources: the Log Analytics workspace, the Azure Monitor Agent d
 collection rules, and the AMA identity) is not here. It lives in `live/_foundation/`,
 deployed once at the top of the tree, because the landing-zones policy assignments
 reference the management resources by id and need them to exist first. See
-`docs/foundation-structure.md`.
+[The foundation units](https://docs.nrit.cloud/anatomy/foundation-units/).
 
 Placeholder otherwise. Add any management-subscription workloads a customer needs
 later (for example a dedicated automation account, a backup vault, or a monitoring

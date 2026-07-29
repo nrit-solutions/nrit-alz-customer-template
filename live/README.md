@@ -13,7 +13,8 @@ as folder names:
 - `_foundation/` holds tenant-wide governance, deployed first, in dependency order: the
   management resources (`management-resources`), the MG hierarchy and base policy
   (`landing-zones`), and the Azure Monitor Baseline Alerts (`amba`). The `_` prefix
-  sorts it first; see `docs/foundation-structure.md`.
+  sorts it first; see
+  [The foundation units](https://docs.nrit.cloud/anatomy/foundation-units/).
 - `platform/` is the Platform MG: connectivity, identity, management, security.
 - `landingzones/` is the Landing Zones MG: corp, online, local.
 - `decommissioned/` is the Decommissioned MG.
