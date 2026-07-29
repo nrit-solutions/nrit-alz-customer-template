@@ -12,6 +12,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Removed
+
+- The in-repo `docs/` folder. Its five pages had drifted against the copies in
+  `nrit-alz-live`, in both directions, which is exactly the failure a
+  duplicated doc invites. The public docs site is now the single source:
+  everything the pages covered lives there, including a new "Sharing data
+  between units" page and the multi-region and deploy-order material merged
+  into the foundation-units page. `README.md`, `ONBOARDING.md`, and
+  `AGENTS.md` link to the site instead. Backport: recommended for existing
+  customer repositories; delete `docs/` and copy the updated `AGENTS.md`,
+  nothing else changes.
+
 ### Added
 
 - Pre-commit hooks, in `.pre-commit-config.yaml`, and a `lint` workflow that runs

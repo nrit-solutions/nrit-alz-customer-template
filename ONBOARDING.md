@@ -90,7 +90,8 @@ Three kinds of version are pinned in this repository:
   `live/_foundation/landing-zones/lib/` (a local path, so it carries no `ref`).
   The `amba` unit reads the upstream ALZ and AMBA libraries, both at pinned refs.
   Keep the `platform/alz` ref the same in both units. Pin AVM module versions with
-  the `version` argument in each unit's `main.tf`. See `docs/upgrade-guide.md`.
+  the `version` argument in each unit's `main.tf`. See
+  [Versions and upgrades](https://docs.nrit.cloud/reference/versions/).
 - **The engine.** The two workflows in `.github/workflows/` call the
   `nrit-tf-pr-ops` reusable workflows, pinned at an exact version with a matching
   `engine_ref`. There is no separate pipeline version, and there is no moving tag:

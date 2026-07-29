@@ -54,7 +54,6 @@ with a `terragrunt.hcl`).
 ├── .pre-commit-config.yaml      # commit hooks; .tflint.hcl and .checkov.yaml configure them
 ├── .github/                     # caller workflows (engine), changelog + lint checks, hook script
 ├── policy/                      # active conftest policies (the policy gate)
-├── docs/                        # foundation structure, data sharing, gates, upgrades, runbook
 └── live/
     ├── root.hcl                 # backend + providers + shared locals contract
     ├── tenant.hcl               # tenant id + root MG id (must sit at live/ root)
@@ -82,14 +81,16 @@ and apply in dependency order: `management-resources`, then `landing-zones`, the
 `amba`. They use public Azure Verified Modules directly. The `landing-zones` unit reads the
 upstream ALZ library at a pinned ref plus the NRIT library vendored under its
 `lib/`; `amba` reads the upstream ALZ and AMBA libraries at pinned refs. See
-`docs/foundation-structure.md` for the shape and the multi-region decision, and
-`docs/leaf-data-sharing.md` for how units share values without reading each other's
-outputs.
+[The foundation units](https://docs.nrit.cloud/anatomy/foundation-units/) for the
+shape and the multi-region decision, and
+[Sharing data between units](https://docs.nrit.cloud/operations/sharing-data-between-units/)
+for how units share values without reading each other's outputs.
 
 ## Gates
 
 Every plan (and every drift plan) runs a conftest policy check, a checkov security
-scan, and an infracost cost estimate. They start advisory. See `docs/policy-gates.md`.
+scan, and an infracost cost estimate. They start
+advisory. See [the gates page](https://docs.nrit.cloud/operations/gates/).
 
 ## Onboarding
 
