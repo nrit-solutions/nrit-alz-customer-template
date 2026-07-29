@@ -2,9 +2,9 @@
 # request via .github/workflows/lint.yml, so a commit made without them is
 # caught there rather than reaching main.
 #
-# terraform and terragrunt come from mise (see mise.toml), so the versions here
-# match the ones the engine runs. tflint and checkov are not pinned by mise; the
-# workflow installs the versions named below.
+# Every tool the hooks call (terraform, terragrunt, tflint, checkov, and
+# pre-commit itself) is pinned in mise.toml, so local runs and the lint
+# workflow use identical versions.
 minimum_pre_commit_version: "3.5.0"
 
 repos:
