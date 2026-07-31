@@ -14,6 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.6.0` to `v1.6.1`. **Backport
+  recommended for existing customer repositories**, though nothing breaks
+  without it: v1.6.1 only changes how a failed hook is reported.
+
+  A failing hook used to mangle its own report and, more importantly, replace
+  the plan with the hook error. A policy denial therefore hid the diff needed
+  to judge it. The plan now survives the failure, with its summary table.
+
+
 - The engine caller pins move from `v1.5.0` to `v1.6.0`, in both
   `.github/workflows/terraform-pr-ops.yml` and `drift.yml`. **Backport
   required for existing customer repositories.**
