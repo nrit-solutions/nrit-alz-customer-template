@@ -8,8 +8,10 @@ terragrunt:
 
 # Policy, scan, and cost gates on every plan (and drift). All start report-only,
 # so they surface findings in the run comment / drift issue without blocking the
-# merge gate: conftest runs policy/governance.rego (warn rules only), checkov runs
-# in soft-fail, and infracost always exits 0. The runner image carries conftest and
+# merge gate: conftest runs whatever matches policy/*.rego and nothing is active
+# by default (policy/tags.rego.example is a starter; drop the suffix to turn it
+# on, and read what it denies first), checkov runs in soft-fail, and infracost
+# always exits 0. The runner image carries conftest and
 # checkov (see nrit-alz-bootstrap runner-image); infracost is a static
 # binary installed per run via the TFPR_EXTRA_TOOLS repo variable (add "infracost"),
 # and it needs the INFRACOST_API_KEY secret for the hosted pricing API (until set,

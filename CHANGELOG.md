@@ -14,6 +14,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The policy gate now ships with nothing active. `policy/governance.rego` and
+  the `examples/policy/` folder are gone, replaced by a single
+  `policy/tags.rego.example`. The gate globs `policy/*.rego`, which that name
+  does not match, so a freshly stamped repository reports "no policies found"
+  and passes until someone drops the suffix. **Backport optional**: it changes
+  what a repository ships, not how it behaves, since the old
+  `governance.rego` was warn-only and blocked nothing.
+
+  The example is a shift-left mirror of the ALZ `Enforce-Tag-Gov` assignment,
+  proven against real infrastructure before it shipped: deny on the four
+  `rgMandatoryTags` keys and on values outside the allowed sets, warn on the
+  three keys a Modify rule inherits from the subscription. It also absorbs the
+  destroy warning that was `governance.rego`'s only rule.
+
+  Activate with `git mv policy/tags.rego.example policy/tags.rego`, and read
+  what it denies first. Turning it on against an estate that is not yet tagged
+  blocks pull requests until the estate is clean, so the usual order is to
+  demote the deny rules to `warn`, clear the findings, then promote them back.
+
+  It ships inert on purpose. A template that shipped a blocking tag policy
+  would stop a new customer's first pull request, which is the opposite of the
+  report-only-by-default posture every other gate here takes.
+
 - The engine caller pins move from `v1.6.0` to `v1.6.1`. **Backport
   recommended for existing customer repositories**, though nothing breaks
   without it: v1.6.1 only changes how a failed hook is reported.
@@ -21,7 +44,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   A failing hook used to mangle its own report and, more importantly, replace
   the plan with the hook error. A policy denial therefore hid the diff needed
   to judge it. The plan now survives the failure, with its summary table.
-
 
 - The engine caller pins move from `v1.5.0` to `v1.6.0`, in both
   `.github/workflows/terraform-pr-ops.yml` and `drift.yml`. **Backport

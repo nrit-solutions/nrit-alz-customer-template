@@ -1,0 +1,116 @@
+# Starter conftest policy for the tf-pr-ops policy gate. NOT ACTIVE.
+#
+# The gate globs `policy/*.rego`. This file ends in `.example`, so it does not
+# match and nothing here runs. To activate it:
+#
+#   git mv policy/tags.rego.example policy/tags.rego
+#
+# Read what it denies first. A `deny` fails the hook and blocks the merge gate,
+# so turning this on against an estate that is not yet tagged will stop pull
+# requests. The usual order is to demote the deny rules to `warn`, clear the
+# findings, then promote them back.
+#
+# It runs against `terraform show -json`, which the gate exposes as
+# $TFPR_PLANJSON. The rules below mirror the ALZ `Enforce-Tag-Gov` assignment;
+# keys and value sets come from
+# lib/policy_set_definitions/Enforce-Tag-Governance.alz_policy_set_definition.json,
+# so adjust both together or they drift.
+#
+# Four things about plan JSON are load-bearing and easy to get wrong:
+#
+#   1. A rule that matches no resource reports a clean gate. That is
+#      indistinguishable from a rule that passed, and it is the most common way
+#      to ship a policy that does nothing. Azure Verified Modules increasingly
+#      declare `azapi_resource` rather than an `azurerm_*` type, so match both
+#      shapes, as is_resource_group does below.
+#   2. `change.actions` is an ARRAY. A replace is ["delete","create"] and an
+#      unchanged resource is ["no-op"]. Test membership with `in`, never
+#      actions[0].
+#   3. `change.after` is null on a destroy. Guard it, or the rule evaluates to
+#      undefined and a deny silently fails open.
+#   4. An empty string is a present value. `not tags[key]` passes a tag set to
+#      "", so check the value too.
+#
+# Test a change before trusting it, against a plan you know should fail:
+#
+#   conftest test --policy policy --namespace main <plan.json>
+#
+# The gate tests the `main` namespace, so keep `package main` (or set
+# CONFTEST_NAMESPACE to match).
+package main
+
+import rego.v1
+
+mandatory_tags := ["app", "opsteam", "criticality", "confidentiality"]
+
+# Inherited from the subscription by the Modify rules in the policy set, so
+# their absence from code is worth a note rather than a block.
+inherited_tags := ["businessunit", "env", "costcenter"]
+
+allowed_values := {
+	"criticality": {"mission-critical", "medium", "low"},
+	"confidentiality": {"public", "private", "confidential", "restricted"},
+	"env": {"prod", "staging", "dev"},
+}
+
+is_resource_group(resource) if resource.type == "azurerm_resource_group"
+
+is_resource_group(resource) if {
+	resource.type == "azapi_resource"
+	startswith(resource.change.after.type, "Microsoft.Resources/resourceGroups@")
+}
+
+# Resource groups this plan creates or changes. Destroys and no-ops drop out
+# here rather than in every rule below.
+managed_resource_groups contains rg if {
+	rg := input.resource_changes[_]
+	not "delete" in rg.change.actions
+	not "no-op" in rg.change.actions
+	rg.change.after != null
+	is_resource_group(rg)
+}
+
+has_value(rg, key) if {
+	value := rg.change.after.tags[key]
+	value != ""
+}
+
+deny contains msg if {
+	rg := managed_resource_groups[_]
+	tag := mandatory_tags[_]
+	not has_value(rg, tag)
+	msg := sprintf(
+		"%s: missing mandatory tag '%s'. Enforce-Tag-Gov requires %s on every resource group.",
+		[rg.address, tag, concat(", ", mandatory_tags)],
+	)
+}
+
+deny contains msg if {
+	rg := managed_resource_groups[_]
+	some key, allowed in allowed_values
+	value := rg.change.after.tags[key]
+	value != ""
+	not value in allowed
+	msg := sprintf(
+		"%s: tag '%s' is '%s', which Enforce-Tag-Gov does not allow. Use one of: %s.",
+		[rg.address, key, value, concat(", ", sort(allowed))],
+	)
+}
+
+warn contains msg if {
+	rg := managed_resource_groups[_]
+	tag := inherited_tags[_]
+	not has_value(rg, tag)
+	msg := sprintf(
+		"%s: tag '%s' is not set in code. Azure inherits it from the subscription, so set it here only if this group should differ.",
+		[rg.address, tag],
+	)
+}
+
+# Surface any resource that will be destroyed, so a destructive plan is obvious
+# in review. This one is deliberately not scoped to resource groups.
+warn contains msg if {
+	resource := input.resource_changes[_]
+	"delete" in resource.change.actions
+	msg := sprintf("%s will be destroyed", [resource.address])
+}
