@@ -12,6 +12,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- The engine caller pins move from `v1.5.0` to `v1.6.0`, in both
+  `.github/workflows/terraform-pr-ops.yml` and `drift.yml`. **Backport
+  required for existing customer repositories.**
+
+  v1.6.0 fixes a conftest policy gate that has never run in any repository
+  stamped from this template. The engine resolved its policy directory
+  relative to its own script location, which in reusable mode is the engine
+  checkout rather than the customer repository, so every run reported
+  ``No policies found in `.tfpr-engine/policy`; skipped`` and passed. The
+  `policy/governance.rego` this template ships has therefore never been
+  evaluated anywhere, and the plan-time gate has been checkov-only in
+  practice.
+
+  The shipped policy is `warn`-only, so after the bump it reports without
+  blocking the merge gate. Before backporting a repository that has added its
+  own rego, check it for `deny` rules: a `deny` that was silently passing will
+  start failing the hook and blocking the merge gate. Repositories the
+  bootstrap provisioned already have conftest available, from the runner image
+  on the private posture and from `TFPR_EXTRA_TOOLS` on the hosted one, so no
+  variable changes with this bump.
+
 ### Removed
 
 - The in-repo `docs/` folder. Its five pages had drifted against the copies in
