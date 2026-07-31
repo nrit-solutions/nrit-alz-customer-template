@@ -66,8 +66,8 @@ the truth.
 ├── AGENTS.md, README.md, ONBOARDING.md, CHANGELOG.md, LICENSE
 ├── mise.toml                    # the pinned toolchain (terraform, terragrunt, linters)
 ├── projects.yml                 # engine discovery config and post-plan gate hooks
-├── policy/                      # active conftest policies (the policy gate)
-├── examples/policy/             # example rego, not executed
+├── policy/                      # conftest policies (the policy gate)
+│   └── tags.rego.example        #   a starter policy; drop .example to activate
 ├── .github/workflows/           # thin callers into the nrit-tf-pr-ops engine
 └── live/                        # everything deployable
     ├── root.hcl                 # backend, providers, and the locals contract
@@ -399,13 +399,23 @@ through `$TFPR_ENGINE_DIR`.
 
 | Gate | Tool | Config | Default |
 | --- | --- | --- | --- |
-| Policy | conftest | `policy/governance.rego` | Advisory, `warn` rules only |
+| Policy | conftest | `policy/*.rego` | None active until you add one |
 | Security | checkov | `CHECKOV_SOFT_FAIL=1` in `projects.yml` | Advisory |
 | Cost | infracost | engine script, needs `INFRACOST_API_KEY` | Informational, always exits 0 |
+
+The policy gate ships with nothing active. `policy/tags.rego.example` is a
+starter, not a running rule: the gate globs `policy/*.rego`, and that name does
+not match, so it reports "no policies found" and passes. Drop the `.example`
+suffix to turn it on, after reading what it denies.
 
 To enforce policy, add a `deny` rule. To enforce security, drop
 `CHECKOV_SOFT_FAIL`. Do that deliberately, after triaging the report-only
 findings, never as a side effect of another change.
+
+A rule that matches no resource is the failure mode to watch for. It reports a
+clean gate, which looks exactly like a rule that passed. Azure Verified Modules
+increasingly declare `azapi_resource` rather than an `azurerm_*` type, so match
+both shapes and test a new rule against a plan you know should fail it.
 
 ## Security and data handling
 
