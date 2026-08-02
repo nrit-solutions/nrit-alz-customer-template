@@ -14,6 +14,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.6.1` to `v1.7.0`. Comment-UX and
+  locking release: one-line result headlines in the run report, the hook
+  section renamed to "Validation checks", `/unlock` in the instructions,
+  `/help`, a reply on a `-p` selector that matches nothing, change counts in
+  the per-project check titles, opt-in minimizing of outdated report comments
+  (`TFPR_MINIMIZE_OUTDATED` repository variable, unset by default), and
+  stale-lock reclaim at acquire time so a lock whose holder PR is already
+  closed cannot hold a unit hostage. No caller or variable changes.
+  **Backport recommended**: the stale-lock reclaim closes a real operational
+  hole (a missed close event orphaned the unit lock until a manual
+  `/unlock`); the rest is comment UX a repository works fine without.
+  Validated on the reference tenant (nrit-alz-live PR #115 pre-release,
+  PR #116 on the tag).
+
 - The policy gate now ships with nothing active. `policy/governance.rego` and
   the `examples/policy/` folder are gone, replaced by a single
   `policy/tags.rego.example`. The gate globs `policy/*.rego`, which that name
