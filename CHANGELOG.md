@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.8.0` to `v1.9.0`. Outdated run
+  reports are now minimized by default with an Outdated banner linking to
+  the report that replaced them; only the latest report per unit reads at
+  full size. A repository that wants the old always-full-size trail sets
+  the `TFPR_MINIMIZE_OUTDATED` variable to `false`. **Backport optional**:
+  comment UX only, nothing breaks on v1.8.0.
 - The engine caller pins move from `v1.7.0` to `v1.8.0`. The digger comment
   aliases are gone: slash commands only (`/plan`, `/apply`, `/unlock`,
   `/help`); a digger-prefixed comment gets no reply. **Backport optional**:
