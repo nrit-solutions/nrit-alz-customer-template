@@ -14,6 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.7.0` to `v1.8.0`. The digger comment
+  aliases are gone: slash commands only (`/plan`, `/apply`, `/unlock`,
+  `/help`); a digger-prefixed comment gets no reply. **Backport optional**:
+  nothing breaks in a repository staying on v1.7.0, but operators used to
+  the aliases should know they end here.
 - The engine caller pins move from `v1.6.1` to `v1.7.0`. Comment-UX and
   locking release: one-line result headlines in the run report, the hook
   section renamed to "Validation checks", `/unlock` in the instructions,
