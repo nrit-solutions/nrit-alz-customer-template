@@ -233,6 +233,22 @@ checking against
 before you commit to a long purpose. Everything the foundation creates today
 sits at roughly half its limit.
 
+**Subscription names.** Good practice, not a requirement, and nothing enforces
+it. A landing zone subscription reads `<archetype>-<purpose>-<environment>`, for
+example `corp-demo-dev`: the archetype is the management group it sits under, the
+purpose is what the subscription is for, and the environment uses the same
+vocabulary as the `env` tag (`prod`, `staging`, `dev`). Platform subscriptions
+stay singular, `connectivity`, `management`, `identity`, `security`, for the same
+reason platform resources carry no environment: there is only ever one of each.
+
+A subscription display name, unlike a resource name, can be changed in place and
+nothing is destroyed. The AVM sub-vending module does it through
+`subscription_update_existing` and `subscription_display_name`, so it is a
+reviewed plan rather than a portal edit. Rename when the subscription's purpose
+actually changes, not to chase this convention, and expect an established tenant
+to be mixed. Keep the folder under `live/` matching the subscription name, but
+that folder is the state key, so read the runbook before moving one.
+
 Reference:
 [Define your naming convention](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)
 and
