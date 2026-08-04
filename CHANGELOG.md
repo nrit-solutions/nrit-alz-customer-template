@@ -26,6 +26,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.9.0` to `v1.9.1`. The patch carries
+  the urgent batch of the 2026-08-04 engine review: filtered runs (`-p`) no
+  longer write the merge gate, approval is re-checked at the top of the apply
+  job, the catalog token and plan files are cleaned up per job (relevant on
+  persistent runners), and the fallback Terragrunt is now 1.1.2 with a
+  checksum-verified, arch-aware install (minimum supported 0.91.3).
+  **Backport recommended**: the merge-gate fix closes a real bypass; validated
+  on nrit-alz-live.
 - The engine caller pins move from `v1.8.0` to `v1.9.0`. Outdated run
   reports are now minimized by default with an Outdated banner linking to
   the report that replaced them; only the latest report per unit reads at
