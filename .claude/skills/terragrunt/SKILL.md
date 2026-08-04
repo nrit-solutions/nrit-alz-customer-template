@@ -171,7 +171,7 @@ management group IDs. A Stacks variant replaces each leaf pair with a
     │               └── main.tf
     └── landingzones/
         └── corp/               # MG can hold >1 sub, so keep the sub level
-            └── corp-workload/
+            └── corp-payments-prod/  # <archetype>-<purpose>-<environment>
                 ├── subscription.hcl
                 ├── _global/    # region-agnostic (placement, budgets, RBAC)
                 │   ├── region.hcl   # nominal copy: root.hcl reads region.hcl always
