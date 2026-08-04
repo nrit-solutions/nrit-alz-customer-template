@@ -12,6 +12,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- The corp landing zone README told you to name a new subscription folder
+  `corp-workload/`, which has no environment segment and so breaks the
+  documented `<archetype>-<purpose>-<environment>` convention. The example is
+  now `corp-payments-prod/`, with the shape and the allowed environment values
+  stated inline. The same stale name in the two Terragrunt skill tree diagrams
+  is corrected, synced from `nrit-alz-platform-skills`. **Backport optional**:
+  documentation only, nothing deployed changes, but a stamped repository that
+  followed the old example has a subscription folder worth renaming. Read the
+  runbook before moving one: the folder is the state key.
+
 ### Changed
 
 - The engine caller pins move from `v1.8.0` to `v1.9.0`. Outdated run

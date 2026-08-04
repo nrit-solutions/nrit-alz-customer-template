@@ -106,7 +106,7 @@ live/
 │   └── security/
 └── landingzones/
     └── corp/                      # MG holds >1 sub, so keep the sub level
-        └── corp-workload/         # real sub name (adopted)
+        └── corp-payments-prod/    # <archetype>-<purpose>-<env>, the real sub name
             ├── subscription.hcl
             ├── _global/           # region-agnostic: placement, budgets, RBAC
             │   ├── region.hcl     # nominal copy (root.hcl reads region.hcl always)

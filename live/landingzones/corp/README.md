@@ -11,8 +11,10 @@ Azure Verified Modules at a pinned `version`, beside a thin `terragrunt.hcl` tha
 only generates the backend and providers and declares apply order. Nothing is
 sourced from a module catalog.
 
-To onboard a subscription, add a named subscription folder here (for example
-`corp-workload/`) with:
+To onboard a subscription, add a subscription folder here named after the
+subscription it maps to, `<archetype>-<purpose>-<environment>` (for example
+`corp-payments-prod/`; the environment segment uses the same vocabulary as the
+`env` tag, `prod`, `staging`, `dev`), with:
 
 - `subscription.hcl`: the subscription id, shared by the deployables below.
 - an `lz-vending` unit (region-agnostic, so under `_global/` with its own
