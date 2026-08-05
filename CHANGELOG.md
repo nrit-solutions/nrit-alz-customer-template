@@ -26,23 +26,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- The engine caller pins move from `v1.9.2` to `v1.9.3`. The patch closes a
-  silent failure: deleting a whole unit directory used to do nothing. Discovery
-  walks the branch's own tree, so a deleted unit was never discovered, never
-  planned and never destroyed, and with nothing selected the merge gate called
-  the pull request "No Terraform changes" and let it merge, leaving the live
-  resources and the state blob behind with no warning. Every run now also
-  discovers the base branch's tree and fails the gate when a unit is missing
-  here, naming it in a pull request comment. A rename, or a new `projects.yml`
+- The engine caller pins move from `v1.9.2` to `v1.11.0`. The v1.9.3 patch
+  closes a silent failure: deleting a whole unit directory used to do nothing.
+  Discovery walks the branch's own tree, so a deleted unit was never discovered,
+  never planned and never destroyed, and with nothing selected the merge gate
+  called the pull request "No Terraform changes" and let it merge, leaving the
+  live resources and the state blob behind with no warning. Every run now also
+  discovers the base branch's tree and reports a unit that is missing here,
+  naming it in a pull request comment. A rename, or a new `projects.yml`
   exclude, reads the same way and has the same effect.
 
-  Detection only: whether the engine should block, warn, or destroy is an open
-  decision, and the gate blocks until it is made.
+  v1.11.0 then settled what that report does. v1.9.3 failed the gate, and there
+  was no way to clear the failure except restoring the directory, so a
+  legitimate removal had no path to a green gate at all. The removal is now
+  reported and does not block, and the comment carries the commands to destroy
+  the unit by hand from a local checkout. The gate grants that pass only when
+  the removal accounts for every changed Terraform path, so removing one unit
+  while adding another still blocks on the one that was added.
 
   **Backport strongly recommended.** This is the failure mode most likely to
   lose a customer's resources quietly, and the gate cannot tell you about a
-  removal that already merged. Expect the first run after backporting to block
-  any open pull request that deletes a unit, which is the intended behaviour.
+  removal that already merged. After backporting, a pull request that deletes a
+  unit merges as before, but now says so and tells the author what is left to
+  clean up.
+
+- v1.10.0 rides along in the same bump. A command comment gets a single 👀
+  reaction instead of 👀 then 🚀 then 🎉 or 👎, and the apply output is filtered
+  down to the real actions the way the plan output already was.
+
+  One part of it matters beyond cosmetics. infracost used to leave the decision
+  about uploading run results to a remote Infracost Cloud organisation setting,
+  which in a customer's own account is not ours to control, and the breakdown it
+  would upload carries the commit sha, author name, author email and message.
+  The engine now sets that off itself instead of inheriting a default. Region
+  and SKU still reach the hosted pricing API to look up prices, which is the
+  accepted position and is unchanged. **Backport recommended for any stamped
+  repository that sets `TFPR_EXTRA_TOOLS` to include infracost.**
   Validated on nrit-alz-live.
 - The engine caller pins move from `v1.9.1` to `v1.9.2`. The patch carries the
   robustness batch of the 2026-08-04 engine review: one total size budget for
