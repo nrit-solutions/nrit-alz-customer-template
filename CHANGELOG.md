@@ -12,6 +12,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- The engine caller pins move from `v1.11.0` to `v1.11.1` in both workflows.
+  The plan matrix now runs in a called workflow, so its checks read
+  `tf-pr-ops / engine / plan / <label>` instead of
+  `tf-pr-ops / engine / plan (<label>)`, and a run that does not plan reports a
+  plain `tf-pr-ops / engine / plan` where it used to print an unexpanded name
+  template. The `help` and `unauthorized` jobs merged into `comment-reply`. The
+  `tf-pr-ops / merge-gate` status context, the required check, is unchanged, so
+  branch protection needs no edit. Existing customer repositories should
+  backport the two-line pin change per engagement.
+
 ### Fixed
 
 - The corp landing zone README told you to name a new subscription folder
