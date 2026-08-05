@@ -26,6 +26,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.9.1` to `v1.9.2`. The patch carries the
+  robustness batch of the 2026-08-04 engine review: one total size budget for
+  report comments so a large plan cannot lose the report to GitHub's 65536
+  character cap, leftover check runs completed as cancelled instead of hanging
+  `in_progress` forever, discovery de-duplicated into one implementation with
+  the bare-directory exclusion bug fixed, `tf_changed` extended to every
+  Terraform file type, and a sweep of smaller fixes including SHA-pinned
+  third-party actions and Dependabot.
+
+  Two changes are visible to users. `/apply` and `/unlock` now require write
+  permission on the repository rather than organisation membership alone, so a
+  stamped repo whose appliers hold membership without write must grant write
+  before they can apply again. And per-project check runs are renamed to carry
+  the run number (`plan (<label>) #128`); the two required statuses,
+  `tf-pr-ops / merge-gate` and `tf-pr-ops / approval`, are unchanged, so this
+  only matters if a stamped repo made a per-project check required in branch
+  protection.
+
+  **Backport recommended**: `tf_changed` and the comment size budget both close
+  ways a change could reach main unplanned or unreported. Check the two
+  behaviour changes above against the repo's collaborators and branch
+  protection before backporting. Validated on nrit-alz-live.
 - The engine caller pins move from `v1.9.0` to `v1.9.1`. The patch carries
   the urgent batch of the 2026-08-04 engine review: filtered runs (`-p`) no
   longer write the merge gate, approval is re-checked at the top of the apply
