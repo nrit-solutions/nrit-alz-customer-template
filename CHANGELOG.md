@@ -26,6 +26,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.9.2` to `v1.9.3`. The patch closes a
+  silent failure: deleting a whole unit directory used to do nothing. Discovery
+  walks the branch's own tree, so a deleted unit was never discovered, never
+  planned and never destroyed, and with nothing selected the merge gate called
+  the pull request "No Terraform changes" and let it merge, leaving the live
+  resources and the state blob behind with no warning. Every run now also
+  discovers the base branch's tree and fails the gate when a unit is missing
+  here, naming it in a pull request comment. A rename, or a new `projects.yml`
+  exclude, reads the same way and has the same effect.
+
+  Detection only: whether the engine should block, warn, or destroy is an open
+  decision, and the gate blocks until it is made.
+
+  **Backport strongly recommended.** This is the failure mode most likely to
+  lose a customer's resources quietly, and the gate cannot tell you about a
+  removal that already merged. Expect the first run after backporting to block
+  any open pull request that deletes a unit, which is the intended behaviour.
+  Validated on nrit-alz-live.
 - The engine caller pins move from `v1.9.1` to `v1.9.2`. The patch carries the
   robustness batch of the 2026-08-04 engine review: one total size budget for
   report comments so a large plan cannot lose the report to GitHub's 65536
