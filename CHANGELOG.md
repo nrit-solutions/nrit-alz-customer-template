@@ -14,6 +14,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.11.1` to `v1.11.2` in both workflows.
+  Drift issues no longer show the `/apply` and `/unlock` instructions block.
+  Those commands are only answered on a pull request, so on an issue they
+  started no run and posted no reply, which read as queued. The issue now says
+  to open a pull request instead, and to read the plan before acting on it.
+  Existing customer repositories should backport the two-line pin change.
+
 - The changelog reminder moves out of its own `changelog.yml` workflow and into
   the existing `lint.yml` pre-commit job as a step. Same trigger and same
   warning, one fewer workflow and one fewer check row on every pull request. It
