@@ -14,6 +14,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The changelog reminder moves out of its own `changelog.yml` workflow and into
+  the existing `lint.yml` pre-commit job as a step. Same trigger and same
+  warning, one fewer workflow and one fewer check row on every pull request. It
+  still only warns; the pre-commit hooks in that job are what fail. New stamps
+  get this automatically. Existing customer repositories should backport it if
+  the pull request surface matters to them, but nothing breaks if they do not:
+  the old workflow keeps working as it always did.
+
 - The engine caller pins move from `v1.11.0` to `v1.11.1` in both workflows.
   The plan matrix now runs in a called workflow, so its checks read
   `tf-pr-ops / engine / plan / <label>` instead of
