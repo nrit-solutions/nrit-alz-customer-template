@@ -14,6 +14,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.11.2` to `v1.12.0` in both workflows.
+  Project discovery now runs a compiled part of the engine (`tfpr`), built in
+  the run from the pinned engine source. Nothing changes in a consumer
+  repository: no new variables, tools, or permissions. Existing customer
+  repositories take this as a normal pin bump backport; verified on the
+  reference tenant with a full drift sweep on the new pin.
+
 - The engine caller pins move from `v1.11.1` to `v1.11.2` in both workflows.
   Drift issues no longer show the `/apply` and `/unlock` instructions block.
   Those commands are only answered on a pull request, so on an issue they
