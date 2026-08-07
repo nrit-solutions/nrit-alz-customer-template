@@ -14,6 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.14.0` to `v1.15.0` in both workflows.
+  The per-project check runs on comment-triggered plans and applies
+  (creation, completion, and the leftover sweep) now go through the compiled
+  engine part (`tfpr`). Requests to GitHub are identical to before; nothing
+  changes in a consumer repository. Existing customer repositories take this
+  as a normal pin bump backport; verified on the reference tenant with a
+  comment-path plan (checks created and completed by the compiled engine)
+  and a full drift sweep on the new pin.
+
 - The engine caller pins move from `v1.13.0` to `v1.14.0` in both workflows.
   The pull-request comment surface now goes through the compiled engine part
   (`tfpr`): the run reports, the outdated-report sweep, and the moved-head
