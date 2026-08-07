@@ -14,6 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.13.0` to `v1.14.0` in both workflows.
+  The pull-request comment surface now goes through the compiled engine part
+  (`tfpr`): the run reports, the outdated-report sweep, and the moved-head
+  verification before any project code runs. Requests to GitHub are identical
+  to before; nothing changes in a consumer repository. Existing customer
+  repositories take this as a normal pin bump backport; verified on the
+  reference tenant with a two-run smoke at the engine sha and a full drift
+  sweep on the new pin.
+
 - The engine caller pins move from `v1.12.0` to `v1.13.0` in both workflows.
   The run report on pull requests and drift issues is now rendered by the
   same compiled engine part (`tfpr`) that already does discovery, with output
