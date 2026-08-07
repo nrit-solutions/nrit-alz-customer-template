@@ -14,6 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.15.0` to `v1.16.0` in both workflows.
+  The two commit statuses the engine owns, the merge gate and the
+  informational approval status, are now written by the compiled engine part
+  (`tfpr`), decision table unchanged; a failed review-decision lookup now
+  errors instead of reporting as no-reviews-required. Nothing changes in a
+  consumer repository. Verified on the reference tenant with a comment-path
+  plan (gate flipped to blocked by the compiled writer) and a full drift
+  sweep on the new pin.
+
 - The engine caller pins move from `v1.14.0` to `v1.15.0` in both workflows.
   The per-project check runs on comment-triggered plans and applies
   (creation, completion, and the leftover sweep) now go through the compiled
