@@ -14,6 +14,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.16.0` to `v1.17.0` in both workflows.
+  The last GitHub-facing script families (command authorization, the /apply
+  approval gate, the reactions, the unlock confirmation, the drift-issue
+  reporter) run compiled, and the shell fallbacks for everything ported
+  earlier are retired. Behaviour is unchanged and nothing changes in a
+  consumer repository. Verified on the reference tenant with a comment-path
+  plan and a full drift sweep on the new pin.
+
 - The engine caller pins move from `v1.15.0` to `v1.16.0` in both workflows.
   The two commit statuses the engine owns, the merge gate and the
   informational approval status, are now written by the compiled engine part
