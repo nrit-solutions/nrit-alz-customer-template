@@ -14,6 +14,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v1.17.0` to `v2.0.0` in both workflows.
+  The major carries two caller changes, both included here: the permissions
+  ceiling gains `actions: write`, and `workflow_dispatch` declares and
+  forwards four engine-set dispatch inputs. A pull request plan now runs as
+  a thin dispatcher, so every per-unit check on the PR is engine-named
+  (`plan / <label> #<run>`); the merge-gate and approval status contexts
+  are unchanged, so rulesets need no edit. Existing customer repositories
+  need this backported: the caller edits are required, a bare pin bump is
+  not enough. Verified on the reference tenant with a dispatched
+  pull_request plan, a comment-path plan, the lock release on close, and a
+  full drift sweep.
+
 - The engine caller pins move from `v1.16.0` to `v1.17.0` in both workflows.
   The last GitHub-facing script families (command authorization, the /apply
   approval gate, the reactions, the unlock confirmation, the drift-issue

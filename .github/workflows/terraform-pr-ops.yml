@@ -6,7 +6,6 @@ name: tf-pr-ops
 
 on:
   pull_request:
-    # closed lets the engine release the PR's cross-PR unit locks.
     types: [opened, synchronize, reopened, closed]
   issue_comment:
     types: [created]
@@ -18,6 +17,16 @@ on:
         default: plan
       project:
         required: false
+      # Set by the engine when it dispatches a pull_request plan back through
+      # this workflow; never set them by hand.
+      pr_number:
+        required: false
+      head_sha:
+        required: false
+      dispatch_run_id:
+        required: false
+      dispatch_run_number:
+        required: false
 
 # The caller grants the ceiling of permissions the reusable workflow's jobs use.
 permissions:
@@ -26,12 +35,17 @@ permissions:
   checks: write
   statuses: write
   id-token: write
+  actions: write # the pull_request path dispatches its plan work
 
 jobs:
   engine:
-    uses: nrit-solutions/nrit-tf-pr-ops/.github/workflows/terraform-pr-ops.yml@v1.17.0
+    uses: nrit-solutions/nrit-tf-pr-ops/.github/workflows/terraform-pr-ops.yml@v2.0.0
     with:
       command: ${{ inputs.command || 'plan' }}
       project: ${{ inputs.project || '' }}
-      engine_ref: v1.17.0   # must match the uses: ref above
+      pr_number: ${{ inputs.pr_number || '' }}
+      head_sha: ${{ inputs.head_sha || '' }}
+      dispatch_run_id: ${{ inputs.dispatch_run_id || '' }}
+      dispatch_run_number: ${{ inputs.dispatch_run_number || '' }}
+      engine_ref: v2.0.0 # must match the uses: ref above
     secrets: inherit
