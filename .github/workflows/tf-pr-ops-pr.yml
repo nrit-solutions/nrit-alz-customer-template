@@ -53,10 +53,14 @@ jobs:
 
   # The closed/unlock path is exempt from the lint gate: a PR closed with
   # failing lint still releases its locks.
+  # The template repository itself never dispatches: it holds no
+  # infrastructure and no engine credentials. Stamped repositories are not
+  # templates, so this never skips a customer repo.
   dispatch:
     needs: pre-commit
     if: >-
       !cancelled() &&
+      github.event.repository.is_template != true &&
       (github.event.action == 'closed' || needs.pre-commit.result == 'success')
     runs-on: ubuntu-latest
     steps:
