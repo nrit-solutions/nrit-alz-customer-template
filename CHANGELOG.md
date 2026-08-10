@@ -14,6 +14,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine moves from `v2.1.0` to `v3.0.2`, the v3 PR surface. The single
+  `terraform-pr-ops.yml` caller and `lint.yml` are replaced by the
+  three-file set: `tf-pr-ops-pr.yml` (the repository's pre-commit hooks as
+  the first job, gating a `dispatch` job that runs the engine's dispatch
+  composite action; the changelog reminder moves with it), `tf-pr-ops.yml`
+  (comment commands and dispatched work), and `drift.yml` (pin bump only).
+  Every engine-authored row on a PR carries the `tf-pr-ops /` prefix under
+  the checks App identity; the merge gate and approval are App check runs
+  instead of commit statuses, names unchanged, so a ruleset requiring
+  `tf-pr-ops / merge-gate` by name needs no edit. **Backport required** for
+  existing customer repositories: replace the two old workflow files with
+  the three new ones and rename any `TF_PR_OPS_*` repository variables to
+  `TFPR_*` (five: `DISABLE_LOCKS`, `ALLOW_UNREVIEWED_APPLY`,
+  `PLAN_ENVIRONMENT`, `APPLY_ENVIRONMENT`, `UNLOCK_ENVIRONMENT`). The
+  checks App is now required for the merge gate to carry the engine
+  identity; provisioning it joins onboarding
+  (nrit-alz-bootstrap#19).
+
 - The engine caller pins move from `v2.0.0` to `v2.1.0` in both workflows.
   The minor adds the optional dedicated checks App: when a stamped
   repository carries `TFPR_CHECKS_APP_CLIENT_ID` and
