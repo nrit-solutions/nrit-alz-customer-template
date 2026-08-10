@@ -14,6 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.0.2` to `v3.0.3` in all three workflows:
+  the removed-unit PR comment now reflows instead of rendering
+  hard-wrapped fixed-width lines. Pin bump only; backport by bumping the
+  same pins.
+
 - The engine moves from `v2.1.0` to `v3.0.2`, the v3 PR surface. The single
   `terraform-pr-ops.yml` caller and `lint.yml` are replaced by the
   three-file set: `tf-pr-ops-pr.yml` (the repository's pre-commit hooks as
