@@ -14,6 +14,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine caller pins move from `v2.0.0` to `v2.1.0` in both workflows.
+  The minor adds the optional dedicated checks App: when a stamped
+  repository carries `TFPR_CHECKS_APP_CLIENT_ID` and
+  `TFPR_CHECKS_APP_PRIVATE_KEY` (the `tf-pr-ops` App, Checks read/write,
+  installed on the repo), per-unit checks render under the App's heading
+  instead of an arbitrary workflow's. Unset, nothing changes, so existing
+  customer repositories can take this as a plain pin bump; wiring the App
+  into the bootstrap is tracked separately. Verified on the reference
+  tenant (App-owned check on a draft PR, drift sweep on the new pin).
+
 - The engine caller pins move from `v1.17.0` to `v2.0.0` in both workflows.
   The major carries two caller changes, both included here: the permissions
   ceiling gains `actions: write`, and `workflow_dispatch` declares and
