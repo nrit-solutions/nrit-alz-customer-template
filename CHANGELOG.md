@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.0.3` to `v3.0.4` in all three workflows:
+  the apply job completes its per-unit checks with the checks App token,
+  so a successful apply renders as a completed check. Pin bump only.
+
 - The engine pins move from `v3.0.2` to `v3.0.3` in all three workflows:
   the removed-unit PR comment now reflows instead of rendering
   hard-wrapped fixed-width lines. Pin bump only; backport by bumping the
