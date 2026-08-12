@@ -64,7 +64,7 @@ jobs:
       (github.event.action == 'closed' || needs.pre-commit.result == 'success')
     runs-on: ubuntu-latest
     steps:
-      - uses: nrit-solutions/nrit-tf-pr-ops/.github/actions/dispatch@v3.1.1
+      - uses: nrit-solutions/nrit-tf-pr-ops/.github/actions/dispatch@v3.2.0
         with:
           checks-app-client-id: ${{ vars.TFPR_CHECKS_APP_CLIENT_ID }}
           checks-app-private-key: ${{ secrets.TFPR_CHECKS_APP_PRIVATE_KEY }}
