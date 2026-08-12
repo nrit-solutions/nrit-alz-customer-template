@@ -64,8 +64,12 @@ jobs:
       (github.event.action == 'closed' || needs.pre-commit.result == 'success')
     runs-on: ubuntu-latest
     steps:
-      - uses: nrit-solutions/nrit-tf-pr-ops/.github/actions/dispatch@v3.0.6
+      - uses: nrit-solutions/nrit-tf-pr-ops/.github/actions/dispatch@v3.1.0
         with:
           checks-app-client-id: ${{ vars.TFPR_CHECKS_APP_CLIENT_ID }}
           checks-app-private-key: ${{ secrets.TFPR_CHECKS_APP_PRIVATE_KEY }}
           allow-unreviewed-apply: ${{ vars.TFPR_ALLOW_UNREVIEWED_APPLY }}
+          # Lets the action download the prebuilt tfpr for its pinned tag
+          # instead of building from source. Optional; empty builds.
+          engine-app-client-id: ${{ vars.CATALOG_APP_CLIENT_ID }}
+          engine-app-private-key: ${{ secrets.CATALOG_APP_PRIVATE_KEY }}
