@@ -14,6 +14,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.0.5` to `v3.0.6` in all three workflows:
+  the engine pages through the check-run listing instead of reading one
+  page, so a pull request with more than 100 check runs on one commit no
+  longer ends up with a stuck per-unit check, a missed leftover sweep, or
+  a duplicated merge-gate row. Existing customer repositories should
+  backport the pin bump.
+
 - The engine pins move from `v3.0.4` to `v3.0.5` in all three workflows:
   the changed-file diff is quote-proof (non-ASCII and quoted paths no
   longer bypass change detection and the merge gate), renames plan both
