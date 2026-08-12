@@ -14,6 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.2.0` to `v3.2.1` in all three workflows:
+  unit lock reclaim and release are now conditional on the lock row's
+  ETag, so two pull requests racing to reclaim a closed PR's lock can no
+  longer both report acquired and apply the same unit. Lock row keys
+  change format; a lock held across the bump is invisible to the new
+  engine until its PR closes, and `/unlock` covers leftovers. The caller
+  contract is unchanged, so existing customer repositories backport this
+  as a plain pin bump, ideally with no open PRs holding unit locks.
+
 - The engine pins move from `v3.1.1` to `v3.2.0` in all three workflows,
   the Go port release: event parsing, the changed-file diff, the
   removed-unit check, the project runner and the ordered apply walk now
