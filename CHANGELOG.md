@@ -14,6 +14,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.0.4` to `v3.0.5` in all three workflows:
+  the changed-file diff is quote-proof (non-ASCII and quoted paths no
+  longer bypass change detection and the merge gate), renames plan both
+  the source and destination unit, the diff targets the pinned head SHA,
+  and fork pull requests are rejected explicitly. Pin bump only; existing
+  customer repositories should backport it.
+
+- `check-repo-invariants.sh` reads git paths NUL-separated (synced from
+  the platform-skills tooling bundle): a unit holding a non-ASCII path
+  was falsely blocked as "not a unit", and the generated-file and secret
+  checks silently skipped such files. Backport with the pin bump.
+
 - The engine pins move from `v3.0.3` to `v3.0.4` in all three workflows:
   the apply job completes its per-unit checks with the checks App token,
   so a successful apply renders as a completed check. Pin bump only.
