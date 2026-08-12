@@ -14,7 +14,8 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 if [ "$#" -gt 0 ]; then
   files=$(printf '%s\n' "$@")
 else
-  files=$(git ls-files)
+  # -z, or git quotes non-ASCII paths and every path test below misses them.
+  files=$(git ls-files -z | tr '\0' '\n')
 fi
 
 status=0
@@ -77,7 +78,7 @@ while IFS= read -r dir; do
     "  Discovery skips it entirely and nothing is ever planned or applied."
   [ -f "$dir/.terraform.lock.hcl" ] || missing_locks="$missing_locks $dir"
 done <<EOF
-$(git ls-files 'live/*.tf' | sed 's|/[^/]*$||' | sort -u)
+$(git ls-files -z 'live/*.tf' | tr '\0' '\n' | sed 's|/[^/]*$||' | sort -u)
 EOF
 
 if [ -n "$missing_locks" ]; then
