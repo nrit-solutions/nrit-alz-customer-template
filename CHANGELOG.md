@@ -14,6 +14,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.0.6` to `v3.1.1` in all three workflows,
+  the performance release: engine jobs download a prebuilt, checksummed
+  tfpr binary from the release instead of compiling it per job, and the
+  drift, comment, and lock paths drop redundant API round-trips. The PR
+  caller passes the engine app credentials to the dispatch action so its
+  job uses the prebuilt binary too; the inputs are optional and empty
+  values build from source. Existing customer repositories should
+  backport the pin bump and the two new dispatch-action inputs together.
+  Do not pin v3.1.0: its within-job provider cache fails init on units
+  whose lock files carry no linux h1 hashes, and v3.1.1 backs it out.
+
 - The engine pins move from `v3.0.5` to `v3.0.6` in all three workflows:
   the engine pages through the check-run listing instead of reading one
   page, so a pull request with more than 100 check runs on one commit no
