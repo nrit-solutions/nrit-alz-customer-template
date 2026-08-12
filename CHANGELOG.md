@@ -14,6 +14,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.1.1` to `v3.2.0` in all three workflows,
+  the Go port release: event parsing, the changed-file diff, the
+  removed-unit check, the project runner and the ordered apply walk now
+  run inside the tfpr binary instead of shell scripts. The removed-unit
+  check skips itself when the diff cannot have removed a unit, plan
+  reports render from the plan's own output (warnings now reach the
+  report), and an empty plan on the apply path skips the apply. The
+  caller contract is unchanged, so existing customer repositories
+  backport this as a plain pin bump.
+
 - The engine pins move from `v3.0.6` to `v3.1.1` in all three workflows,
   the performance release: engine jobs download a prebuilt, checksummed
   tfpr binary from the release instead of compiling it per job, and the
