@@ -14,6 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.2.2` to `v3.3.1` in all four callers.
+  What changes for operators: apply refuses a unit whose plan changed
+  since the reviewed plan (`/apply --force` overrides), units whose
+  reviewed plan shows no changes are skipped during apply, the apply job
+  installs the `TFPR_EXTRA_TOOLS` gate tools, and superseded reports and
+  check rows are outdated per command instead of globally. No caller
+  contract change: backporting is the pin edit alone, and an
+  un-backported repository keeps working on its old pins.
+
 - The drift caller grants `pull-requests: read`: v3.2.2's lock-sweep job
   reads holder PR state, and a called job requesting an ungranted
   permission fails the whole drift run at startup. Existing customer
