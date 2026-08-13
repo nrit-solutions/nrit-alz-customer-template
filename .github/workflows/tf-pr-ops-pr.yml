@@ -3,10 +3,12 @@
 # action knows its own ref.
 name: tf-pr-ops
 
+# The closed event lives in tf-pr-ops-unlock.yml: splitting it out keeps a
+# merged PR's checks list free of a skipped pre-commit row and a duplicate
+# dispatch row from the unlock run.
 on:
   pull_request:
-    # closed dispatches an unlock so the PR's cross-PR unit locks release.
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
@@ -22,7 +24,6 @@ jobs:
   # --no-verify) is caught before it reaches main. The changelog reminder
   # rides along as a step: it warns, only the hooks fail.
   pre-commit:
-    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -51,20 +52,15 @@ jobs:
 
       - run: pre-commit run --all-files --show-diff-on-failure --color=always
 
-  # The closed/unlock path is exempt from the lint gate: a PR closed with
-  # failing lint still releases its locks.
   # The template repository itself never dispatches: it holds no
   # infrastructure and no engine credentials. Stamped repositories are not
   # templates, so this never skips a customer repo.
   dispatch:
     needs: pre-commit
-    if: >-
-      !cancelled() &&
-      github.event.repository.is_template != true &&
-      (github.event.action == 'closed' || needs.pre-commit.result == 'success')
+    if: github.event.repository.is_template != true
     runs-on: ubuntu-latest
     steps:
-      - uses: nrit-solutions/nrit-tf-pr-ops/.github/actions/dispatch@v3.2.1
+      - uses: nrit-solutions/nrit-tf-pr-ops/.github/actions/dispatch@v3.2.2
         with:
           checks-app-client-id: ${{ vars.TFPR_CHECKS_APP_CLIENT_ID }}
           checks-app-private-key: ${{ secrets.TFPR_CHECKS_APP_PRIVATE_KEY }}
