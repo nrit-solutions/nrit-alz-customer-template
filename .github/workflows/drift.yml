@@ -12,6 +12,7 @@ permissions:
   contents: read
   issues: write
   id-token: write
+  pull-requests: read    # the lock sweep reads holder PR state
 
 jobs:
   engine:
