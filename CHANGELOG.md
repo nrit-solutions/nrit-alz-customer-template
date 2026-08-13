@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The drift caller grants `pull-requests: read`: v3.2.2's lock-sweep job
+  reads holder PR state, and a called job requesting an ungranted
+  permission fails the whole drift run at startup. Existing customer
+  repositories on v3.2.2 need this one line backported or their nightly
+  drift fails at startup. New stamps get it automatically.
+
 - The engine pins move from `v3.2.1` to `v3.2.2`, the audit sweep release,
   and the closed-event unlock moves to a new `tf-pr-ops-unlock.yml`
   workflow (the PR caller drops `closed` and its exemptions), so merged
