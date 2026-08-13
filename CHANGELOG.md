@@ -14,6 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.2.1` to `v3.2.2`, the audit sweep release,
+  and the closed-event unlock moves to a new `tf-pr-ops-unlock.yml`
+  workflow (the PR caller drops `closed` and its exemptions), so merged
+  PRs stop showing a skipped pre-commit row and a duplicate dispatch row.
+  Existing customer repositories should backport the whole set together
+  (bump the three pins, add `tf-pr-ops-unlock.yml`, re-sync
+  `tf-pr-ops-pr.yml`); an un-backported combined caller keeps working,
+  it just keeps the two noise rows. New stamps get it automatically.
+
 - The engine pins move from `v3.2.0` to `v3.2.1` in all three workflows:
   unit lock reclaim and release are now conditional on the lock row's
   ETag, so two pull requests racing to reclaim a closed PR's lock can no
