@@ -36,7 +36,7 @@ permissions:
 
 jobs:
   engine:
-    uses: nrit-solutions/nrit-tf-pr-ops/.github/workflows/terraform-pr-ops.yml@v3.2.2
+    uses: nrit-solutions/nrit-tf-pr-ops/.github/workflows/terraform-pr-ops.yml@v3.3.1
     with:
       command: ${{ inputs.command || 'plan' }}
       project: ${{ inputs.project || '' }}
@@ -44,5 +44,5 @@ jobs:
       head_sha: ${{ inputs.head_sha || '' }}
       dispatch_run_id: ${{ inputs.dispatch_run_id || '' }}
       dispatch_run_number: ${{ inputs.dispatch_run_number || '' }}
-      engine_ref: v3.2.2 # must match the uses: ref above
+      engine_ref: v3.3.1 # must match the uses: ref above
     secrets: inherit
