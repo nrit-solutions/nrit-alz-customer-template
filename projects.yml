@@ -6,6 +6,12 @@ terragrunt:
   root: live
   include_dependents: true
 
+# Terraform-pattern paths that belong to no unit on purpose; without this the
+# merge gate fails a PR that changes them (v3.4.0 unattributed-path check).
+gate_ignore:
+  - ".tflint.hcl"
+  - ".claude/**"
+
 # Policy, scan, and cost gates on every plan (and drift). All start report-only,
 # so they surface findings in the run comment / drift issue without blocking the
 # merge gate: conftest runs whatever matches policy/*.rego and nothing is active

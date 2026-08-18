@@ -14,6 +14,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.3.1` to `v3.4.0` in all four callers.
+  What changes for operators: the merge gate fails when a changed
+  Terraform path belongs to no selected unit, and `projects.yml` gains
+  `gate_ignore:` naming the paths that belong to no unit on purpose
+  (`.tflint.hcl` and the bundled `.claude/**` skill templates). The
+  release also adds the `tfpr surface-audit` operator command. Backport:
+  existing customer repositories should take the pins and add a matching
+  `gate_ignore:` for their own stray Terraform-pattern paths in the same
+  PR; an un-backported repository keeps working on its old pin.
+
 - The engine pins move from `v3.2.2` to `v3.3.1` in all four callers.
   What changes for operators: apply refuses a unit whose plan changed
   since the reviewed plan (`/apply --force` overrides), units whose
