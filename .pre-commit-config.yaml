@@ -1,10 +1,10 @@
 # Install once with `pre-commit install`. The same hooks run on every pull
-# request via .github/workflows/lint.yml, so a commit made without them is
-# caught there rather than reaching main.
+# request in the pre-commit job of .github/workflows/tf-pr-ops-pr.yml, so a
+# commit made without them is caught there rather than reaching main.
 #
 # Every tool the hooks call (terraform, terragrunt, tflint, checkov, and
-# pre-commit itself) is pinned in mise.toml, so local runs and the lint
-# workflow use identical versions.
+# pre-commit itself) is pinned in mise.toml, so local runs and the CI job
+# use identical versions.
 minimum_pre_commit_version: "3.5.0"
 
 repos:
