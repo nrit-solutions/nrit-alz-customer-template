@@ -1,0 +1,84 @@
+# Are the self-hosted runners picking up work at all?
+#
+# When runner scale-up breaks (a bad scaler credential, a broken KEDA rule,
+# a registry the job cannot pull from), workflow jobs do not fail: they sit
+# queued forever and nothing alerts. The 2026-08-23 outage was only noticed
+# because someone happened to be watching a dispatched run. This canary runs
+# on a GitHub-hosted runner, deliberately outside the machinery it checks,
+# and asks one question: is any workflow run stuck in the queue longer than
+# a healthy wait?
+#
+# On alarm it opens an issue (once; the open issue is the alarm) and closes
+# it again on the first healthy pass. The schedule includes a pass shortly
+# after the nightly drift run, the natural canary load.
+name: runner-canary
+
+on:
+  schedule:
+    - cron: "7 7,13,19 * * *"
+  workflow_dispatch:
+    inputs:
+      stale_minutes:
+        description: Age in minutes before a queued run counts as stuck
+        required: false
+        default: "30"
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Look for runs stuck in the queue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STALE_MINUTES: ${{ inputs.stale_minutes || '30' }}
+          TITLE: "Self-hosted runners are not picking up queued jobs"
+        run: |
+          set -euo pipefail
+          now=$(date -u +%s)
+          stale=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs?status=queued&per_page=100" \
+            --jq '[.workflow_runs[] | {name, html_url, created_at}]' \
+            | jq --argjson now "$now" --argjson min "$STALE_MINUTES" \
+                '[ .[] | select((($now - (.created_at | fromdateiso8601)) / 60) > $min) ]')
+          count=$(jq length <<<"$stale")
+          existing=$(gh issue list --state open --search "\"$TITLE\" in:title" \
+            --json number --jq '.[0].number // empty')
+
+          {
+            echo "## Runner canary"
+            echo
+            echo "queued runs older than ${STALE_MINUTES} minutes: ${count}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$count" -gt 0 ]; then
+            {
+              echo
+              jq -r '.[] | "- [\(.name)](\(.html_url)) queued since \(.created_at)"' <<<"$stale"
+            } >> "$GITHUB_STEP_SUMMARY"
+            if [ -n "$existing" ]; then
+              echo "alarm already open: #$existing" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            {
+              echo "The runner canary found workflow runs stuck in the queue longer than ${STALE_MINUTES} minutes, which means the self-hosted runners are not scaling up:"
+              echo
+              jq -r '.[] | "- [\(.name)](\(.html_url)) queued since \(.created_at)"' <<<"$stale"
+              echo
+              echo "Where to look, in order:"
+              echo
+              echo "1. Container App Job executions: \`az containerapp job execution list -g <runners-rg> -n <job-name>\` — no recent executions means the KEDA scaler is not firing (check the runners GitHub App key and ids in the job's scale rule); executions that start and fail point at the image pull or runner registration instead."
+              echo "2. The runner registration auth and its rotation procedure: the runner section of the nrit-alz-bootstrap README."
+              echo "3. The 2026-08-23 incident record in the bootstrap changelog, which walks this exact failure."
+              echo
+              echo "This issue closes itself on the canary's first healthy pass."
+            } | gh issue create --title "$TITLE" --body-file - >> "$GITHUB_STEP_SUMMARY"
+          else
+            if [ -n "$existing" ]; then
+              gh issue close "$existing" --comment "Runner canary: the queue is healthy again; no run has waited longer than ${STALE_MINUTES} minutes."
+              echo "closed alarm issue #$existing" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
