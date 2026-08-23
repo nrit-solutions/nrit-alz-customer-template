@@ -45,8 +45,10 @@ jobs:
             | jq --argjson now "$now" --argjson min "$STALE_MINUTES" \
                 '[ .[] | select((($now - (.created_at | fromdateiso8601)) / 60) > $min) ]')
           count=$(jq length <<<"$stale")
-          existing=$(gh issue list --state open --search "\"$TITLE\" in:title" \
-            --json number --jq '.[0].number // empty')
+          # No checkout on purpose, so every gh issue call needs the repo said
+          # explicitly; without it gh looks for a local git remote and dies.
+          existing=$(gh issue list -R "$GITHUB_REPOSITORY" --state open \
+            --search "\"$TITLE\" in:title" --json number --jq '.[0].number // empty')
 
           {
             echo "## Runner canary"
@@ -75,10 +77,10 @@ jobs:
               echo "3. The 2026-08-23 incident record in the bootstrap changelog, which walks this exact failure."
               echo
               echo "This issue closes itself on the canary's first healthy pass."
-            } | gh issue create --title "$TITLE" --body-file - >> "$GITHUB_STEP_SUMMARY"
+            } | gh issue create -R "$GITHUB_REPOSITORY" --title "$TITLE" --body-file - >> "$GITHUB_STEP_SUMMARY"
           else
             if [ -n "$existing" ]; then
-              gh issue close "$existing" --comment "Runner canary: the queue is healthy again; no run has waited longer than ${STALE_MINUTES} minutes."
+              gh issue close "$existing" -R "$GITHUB_REPOSITORY" --comment "Runner canary: the queue is healthy again; no run has waited longer than ${STALE_MINUTES} minutes."
               echo "closed alarm issue #$existing" >> "$GITHUB_STEP_SUMMARY"
             fi
           fi
