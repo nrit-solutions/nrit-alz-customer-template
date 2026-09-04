@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   engine:
-    uses: nrit-solutions/nrit-tf-pr-ops/.github/workflows/drift.yml@v3.4.0
+    uses: nrit-solutions/nrit-tf-pr-ops/.github/workflows/drift.yml@v4.0.0
     with:
-      engine_ref: v3.4.0   # must match the uses: ref above
+      engine_ref: v4.0.0   # must match the uses: ref above
     secrets: inherit

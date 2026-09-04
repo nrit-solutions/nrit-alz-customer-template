@@ -14,6 +14,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v3.4.0` to `v4.0.0` in all four callers, and
+  the two dispatch callers pass `ENGINE_APP_CLIENT_ID` and
+  `ENGINE_APP_PRIVATE_KEY` instead of the `CATALOG_APP_*` pair. Caller
+  contract change: v4.0.0 reads the renamed variable and secret, which the
+  bootstrap sets from `engine_app_client_id` and
+  `TF_VAR_engine_app_private_key`. Backport: existing customer repositories
+  take the pins and the two caller edits in one PR, right after their
+  bootstrap re-apply renames the variable and secret; between the two, a
+  run in reusable mode fails at "Check engine credentials".
+
 - The engine pins move from `v3.3.1` to `v3.4.0` in all four callers.
   What changes for operators: the merge gate fails when a changed
   Terraform path belongs to no selected unit, and `projects.yml` gains
