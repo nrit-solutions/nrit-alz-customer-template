@@ -190,7 +190,7 @@ generate blocks are a hard error and nothing is generated.
 **Modules.** Source public Azure Verified Modules from the registry, with an
 explicit exact `version`. No `~>` on a module version, no git sources, no local
 module directories. Set `enable_telemetry = false`. There is no private module
-catalog: every unit sources a public module directly, and the only custom content
+source: every unit sources a public module directly, and the only custom content
 is the policy library vendored under `live/_foundation/landing-zones/lib/`.
 
 `Azure/naming/azurerm` is the one registry module here that is not an Azure

@@ -9,7 +9,7 @@ subscription is onboarded.
 Units here follow the same shape as the foundation: a `main.tf` calling public
 Azure Verified Modules at a pinned `version`, beside a thin `terragrunt.hcl` that
 only generates the backend and providers and declares apply order. Nothing is
-sourced from a module catalog.
+sourced from a private repository.
 
 To onboard a subscription, add a subscription folder here named after the
 subscription it maps to, `<archetype>-<purpose>-<environment>` (for example

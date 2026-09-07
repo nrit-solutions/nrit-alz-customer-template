@@ -31,9 +31,9 @@ this whole tree, including the two caller workflows. The apply also creates:
 - the state storage account and container (Entra ID auth only, firewalled),
 - the plan and apply identities with federated credentials,
 - the gated `plan` and `apply` GitHub environments,
-- the `AZURE_*` and `BACKEND_*` repository variables, `RUNNER_LABEL`, and (when a
-  client id is supplied) `CATALOG_APP_CLIENT_ID` plus the `CATALOG_APP_PRIVATE_KEY`
-  secret,
+- the `AZURE_*` and `BACKEND_*` repository variables, `RUNNER_LABEL`, and (when
+  the client ids are supplied) the `ENGINE_APP_*` and `TFPR_CHECKS_APP_*`
+  variable and secret pairs,
 - the `require-approved-pr-to-main` ruleset (the apply gate),
 - the self-hosted runner (when `network_posture = self_hosted_private`).
 
@@ -130,12 +130,11 @@ That is an org-wide setting on the NRIT source repository, so it is set once and
 already holds for later customers. Without it the `uses:` reference fails to
 resolve and the first pull request never starts.
 
-The workflow also has to check the engine repository out, and `git` needs a
-credential for `github.com/nrit-solutions` to do it. The workflow mints a GitHub
-App token from `CATALOG_APP_CLIENT_ID` (variable) and `CATALOG_APP_PRIVATE_KEY`
-(secret) and rewrites the git URL, so confirm both are set (the bootstrap sets
-them when a client id is supplied). The names are historical: the App token is
-for the private engine checkout, not for a module catalog.
+The workflow also has to check the engine repository out, which needs a
+credential for `github.com/nrit-solutions`. The workflow mints a GitHub App
+token from `ENGINE_APP_CLIENT_ID` (variable) and `ENGINE_APP_PRIVATE_KEY`
+(secret), so confirm both are set (the bootstrap sets them when a client id is
+supplied).
 
 Set the cost gate: add the `INFRACOST_API_KEY` secret. It is the only part the
 bootstrap does not set. The bootstrap already sets the `TFPR_EXTRA_TOOLS`
