@@ -14,6 +14,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v4.0.0` to `v5.0.0` in all four callers, and
+  every `uses:` line references the public entrypoint repository
+  `nrit-solutions/tf-pr-ops` instead of the private `nrit-tf-pr-ops`. Caller
+  contract change: the engine core stays private and is checked out by the
+  jobs with the engine App token, so the variables and secrets do not change.
+  The PR caller pins the mise CLI at 2026.9.2. The template itself becomes
+  public under Apache-2.0: `LICENSE` carries that text, `CODEOWNERS` is a
+  commented example, and `ONBOARDING.md` is written for an operator in any
+  organisation. Existing customer repositories need the caller change
+  backported; the rest is optional.
+
 - The engine pins move from `v3.4.0` to `v4.0.0` in all four callers, and
   the two dispatch callers pass `ENGINE_APP_CLIENT_ID` and
   `ENGINE_APP_PRIVATE_KEY` instead of the `CATALOG_APP_*` pair. Caller

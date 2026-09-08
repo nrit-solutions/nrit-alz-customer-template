@@ -1,5 +1,5 @@
-# Code owners for client infrastructure-live repos generated from this
-# template. The team below exists only in the NRIT organisation, so replace it
-# or delete this file during onboarding. See ONBOARDING.md step 5.
-
-*       @nrit-solutions/platform-engineering
+# Code owners for this infrastructure-live repository. Uncomment and point at
+# a team that exists in your organisation. Owner review is enforced only when
+# the bootstrap sets require_code_owner_review = true in its ruleset.
+#
+# *       @<org>/<platform-team>

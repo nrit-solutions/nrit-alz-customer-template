@@ -3,15 +3,17 @@
 A GitHub template repository. The bootstrap generates a new customer
 infrastructure-live repository from it, one per customer. Each generated
 repository holds the Terragrunt configuration for a Cloud Adoption Framework
-landing zone under `live/`, and it is operated by the `nrit-tf-pr-ops`
-comment-ops engine consumed as a reusable workflow: plan and apply run from pull
+landing zone under `live/`, and it is operated by the NRIT comment-ops engine
+consumed as a reusable workflow from `nrit-solutions/tf-pr-ops`: plan and apply run from pull
 request comments, and a daily job reports drift.
 
 This is the only repository that ends up in customer hands. The comment-ops
 engine (`nrit-tf-pr-ops`) and the bootstrap that creates the backend, identities,
 and runner (`nrit-alz-bootstrap`) stay separate repositories under NRIT control.
 A generated repository is created by the bootstrap and consumes the engine at a
-pinned version. That is its only dependency on a private NRIT repository. Every
+pinned version through the public entrypoint repository `nrit-solutions/tf-pr-ops`;
+the private engine core behind it is reached with an engine App key NRIT issues
+per organisation. That is its only dependency on NRIT. Every
 unit, foundation and workload alike, is plain Terraform on public Azure Verified
 Modules, and the custom policy library is vendored under
 `live/_foundation/landing-zones/lib/`.
@@ -30,9 +32,10 @@ A change is a pull request:
    merges. It stays red if the PR changed Terraform but no unit was selected, so an
    unapplied new or removed unit cannot merge green.
 
-The engine is not stored here. The two workflows in `.github/workflows/` call the
-`nrit-tf-pr-ops` reusable workflows at a pinned tag, matched by the `engine_ref`
-input. Read the current version from those two files rather than from prose.
+The engine is not stored here. The four workflows in `.github/workflows/` call
+the reusable workflows and the dispatch action in `nrit-solutions/tf-pr-ops` at a
+pinned tag, matched by the `engine_ref` input. Read the current version from those
+files rather than from prose.
 Vendoring the engine into the repository is a documented escape hatch for a fully
 self-contained repository; see `ONBOARDING.md`.
 

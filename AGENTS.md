@@ -14,7 +14,8 @@ Anything specific to this repository lives in the files it points at:
 An infrastructure-live repository for one Azure tenant. It holds Terragrunt
 configuration for a Cloud Adoption Framework (CAF) landing zone under `live/`,
 and it is operated by the `nrit-tf-pr-ops` comment-ops engine, consumed as a
-pinned reusable GitHub Actions workflow.
+pinned reusable GitHub Actions workflow from the public `nrit-solutions/tf-pr-ops`
+repository.
 
 Two things drive most of the rules below:
 

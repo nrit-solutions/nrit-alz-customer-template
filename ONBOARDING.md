@@ -1,7 +1,8 @@
 # Onboarding checklist
 
 This document walks through standing up a new customer landing zone from this
-template. Steps 1 to 5 are run once by NRIT; the rest are the normal pull
+template. Steps 1 to 5 are run once by the operator (NRIT, or the MSP running
+the platform in its own GitHub organisation); the rest are the normal pull
 request flow.
 
 ## Prerequisites
@@ -14,10 +15,15 @@ request flow.
   A connectivity subscription too if the customer runs a hub; it is optional and
   can be added later
 - GitHub organisation for the customer repository
-- A GitHub token with `repo` and `admin:org` scope, for the operator only
+- A GitHub token with `repo` and `admin:org` scope in the organisation that
+  receives the repository, for the operator only. The bootstrap creates the
+  approver team and the ruleset there; nothing is needed on the NRIT organisation
+- The engine App credentials for your organisation (client id and private key).
+  Inside nrit-solutions this is the `nrit-engine-reader` App; any other
+  organisation gets its own App from NRIT
 - A point of contact at the customer for identity and networking decisions
 
-## Step 1: Run the bootstrap (NRIT)
+## Step 1: Run the bootstrap
 
 The repository, state backend, OIDC identities, environments, the approved-PR
 ruleset, and the self-hosted runner are created by the Terraform bootstrap in
@@ -92,9 +98,9 @@ Three kinds of version are pinned in this repository:
   Keep the `platform/alz` ref the same in both units. Pin AVM module versions with
   the `version` argument in each unit's `main.tf`. See
   [Versions and upgrades](https://docs.nrit.cloud/reference/versions/).
-- **The engine.** The two workflows in `.github/workflows/` call the
-  `nrit-tf-pr-ops` reusable workflows, pinned at an exact version with a matching
-  `engine_ref`. There is no separate pipeline version, and there is no moving tag:
+- **The engine.** The four workflows in `.github/workflows/` call the reusable
+  workflows and the dispatch action published in `nrit-solutions/tf-pr-ops`,
+  pinned at an exact version with a matching `engine_ref`. There is no separate pipeline version, and there is no moving tag:
   an upgrade is always a commit. To move to a new engine release, bump both pins
   together (the `uses:` ref and `engine_ref`) in each caller file.
 - **Providers.** Generate a `.terraform.lock.hcl` for every unit and commit them:
@@ -119,22 +125,15 @@ Three kinds of version are pinned in this repository:
 
 ## Step 4: Grant access, set the cost gate, and require the merge gate
 
-This repository reaches one private NRIT repository: the caller workflows use the
-`nrit-tf-pr-ops` reusable workflows. The org must allow Actions access to it:
-
-```sh
-gh api -X PUT repos/nrit-solutions/nrit-tf-pr-ops/actions/permissions/access -f access_level=organization
-```
-
-That is an org-wide setting on the NRIT source repository, so it is set once and
-already holds for later customers. Without it the `uses:` reference fails to
-resolve and the first pull request never starts.
-
-The workflow also has to check the engine repository out, which needs a
-credential for `github.com/nrit-solutions`. The workflow mints a GitHub App
-token from `ENGINE_APP_CLIENT_ID` (variable) and `ENGINE_APP_PRIVATE_KEY`
-(secret), so confirm both are set (the bootstrap sets them when a client id is
-supplied).
+The caller workflows reference the public entrypoint repository
+`nrit-solutions/tf-pr-ops`, which any organisation can call. The engine core
+they run is private: every job checks it out at the pinned version with a
+GitHub App token minted from `ENGINE_APP_CLIENT_ID` (variable) and
+`ENGINE_APP_PRIVATE_KEY` (secret). The App is issued by NRIT per organisation
+and installed on the NRIT organisation, so nothing is installed on yours.
+Confirm both values are set (the bootstrap sets them when a client id is
+supplied); without them the first pull request fails at the dispatch step with a
+message naming the missing variable.
 
 Set the cost gate: add the `INFRACOST_API_KEY` secret. It is the only part the
 bootstrap does not set. The bootstrap already sets the `TFPR_EXTRA_TOOLS`
@@ -161,25 +160,17 @@ deliberately; it must then set the repository variable
 variable unset everywhere else. If `/apply` is refused with a message about the
 repository requiring no reviews, this is the setting it means.
 
-## Step 5: Set the code owners and settle the licence
+## Step 5: Set the code owners
 
-Two files ship from the template with NRIT values that mean nothing in the
-customer's organisation. Both need a decision here.
-
-`.github/CODEOWNERS` assigns every path to `@nrit-solutions/platform-engineering`.
-That team does not exist in the customer's organisation, so GitHub reports the
-file as invalid and the owners never apply. Replace the team with one that exists
-in the customer's organisation, or delete the file if the customer wants no code
-owners. Code owners are not enforced today: the bootstrap sets
+`.github/CODEOWNERS` ships as a commented example. Point it at a team that
+exists in the customer's organisation, or delete the file if the customer wants
+no code owners. Code owners are not enforced today: the bootstrap sets
 `require_code_owner_review = false` in its `github.tf`. Turn that on in the
 customer's tfvars if the customer wants owner review required before merge.
 
-`LICENSE` is a placeholder. It says the binding terms live in the partnership
-agreement and that the text must be replaced before external distribution. This
-repository is the one artefact the customer keeps, so the placeholder reaches
-them unless someone acts. Replace it with the licence text agreed in the
-partnership agreement, or confirm with the agreement owner that the placeholder
-is acceptable for this customer. Do not write licence terms here.
+`LICENSE` is Apache-2.0, the licence the template is published under. It covers
+this repository's files only; the engine core and the service around it are
+governed by the agreement with NRIT, not by this file.
 
 ## Step 6: First plan
 
@@ -199,10 +190,10 @@ propagation.
 
 ## Escape hatch: vendoring the engine
 
-The callers consume `nrit-tf-pr-ops` as a reusable workflow, so the engine is not
-stored in this repository. If a customer needs a fully self-contained repository
-(no external workflow reference), vendor the engine instead: copy the
-`nrit-tf-pr-ops` `.github/workflows/`, `.github/actions/setup-tools/`, and
-`scripts/` in at a tag, and the `post_plan` hooks keep working because
-`$TFPR_ENGINE_DIR` defaults to the workspace in vendored mode. See the
-`nrit-tf-pr-ops` README for the vendored-mode contract.
+The callers consume the engine as a reusable workflow, so it is not stored in
+this repository. If a customer needs a fully self-contained repository (no
+external workflow reference), vendor the engine instead: copy the private core's
+`.github/workflows/`, `.github/actions/`, `scripts/`, and Go sources in at a tag,
+and the `post_plan` hooks keep working because `$TFPR_ENGINE_DIR` defaults to the
+workspace in vendored mode. This needs read access to the core, which NRIT grants
+per agreement; the core README carries the vendored-mode contract.
