@@ -43,6 +43,8 @@ jobs:
       # checkov, and pre-commit itself, at the pinned versions
       - uses: jdx/mise-action@v4.2.3
         with:
+          # Pinned: the action's latest can name a release whose assets do not exist yet.
+          version: 2026.9.2
           cache: true
 
       - uses: actions/cache@v6.1.0
@@ -60,7 +62,7 @@ jobs:
     if: github.event.repository.is_template != true
     runs-on: ubuntu-latest
     steps:
-      - uses: nrit-solutions/nrit-tf-pr-ops/.github/actions/dispatch@v4.0.0
+      - uses: nrit-solutions/tf-pr-ops/.github/actions/dispatch@v5.0.0
         with:
           checks-app-client-id: ${{ vars.TFPR_CHECKS_APP_CLIENT_ID }}
           checks-app-private-key: ${{ secrets.TFPR_CHECKS_APP_PRIVATE_KEY }}
