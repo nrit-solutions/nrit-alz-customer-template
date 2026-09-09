@@ -14,6 +14,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v5.0.0` to `v5.1.0` in all four callers. No
+  caller contract change: the release is three fixes and one feature that
+  lives in the engine repository only. What changes for operators: plans
+  that import resources are counted as changes, so `/apply` lands them and
+  the check-run titles carry the import count (`Plan: 1 to import, 0 to
+  add, ...`, `Resources: 1 imported, 0 added, ...`); the apply job receives
+  `INFRACOST_API_KEY`, so the cost gate runs on apply instead of noting a
+  missing key; and the apply job starts on one `apply_allowed` output of
+  the resolve job. The self-test identity and the re-enabled drift sweep
+  apply to the engine repository itself, not to customer repositories.
+  Existing customer repositories need not act; backporting is the pin edit
+  alone, and an un-backported repository keeps working on its old pins.
+
 - The engine pins move from `v4.0.0` to `v5.0.0` in all four callers, and
   every `uses:` line references the public entrypoint repository
   `nrit-solutions/tf-pr-ops` instead of the private `nrit-tf-pr-ops`. Caller
