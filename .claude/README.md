@@ -46,7 +46,7 @@ Both servers receive **queries**, not your Terraform code:
   module and provider metadata.
 
 Neither is sent the contents of `live/`, your state, or your plan output. If your
-organisation restricts outbound calls from developer machines, review both before
+organization restricts outbound calls from developer machines, review both before
 enabling, and delete `.mcp.json` if either is not acceptable.
 
 ## Turning it off

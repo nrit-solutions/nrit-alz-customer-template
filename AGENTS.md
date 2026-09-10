@@ -126,8 +126,8 @@ still needs a `region.hcl`, which is why `_global/` folders carry one.
 
 **Offline by design.** Every coordinate falls back to a placeholder through
 `get_env`, so the tree generates with no Azure access. Validating offline takes
-one more step, because Terragrunt auto-initialises before it validates: a plain
-`terragrunt validate` inits the real azurerm backend and fails to authorise
+one more step, because Terragrunt auto-initializes before it validates: a plain
+`terragrunt validate` inits the real azurerm backend and fails to authorize
 against the placeholder tenant. Run `init -backend=false` first, then validate
 with auto-init disabled. The Commands section has the exact pair.
 
@@ -154,7 +154,7 @@ failed.
 
 The first PR to plan a unit holds a cross-PR lock on it until that PR merges or
 closes. Another PR touching the same unit gets a `🔒 Locked by another PR`
-report. That is expected behaviour, not a bug. `/unlock` on the owning PR
+report. That is expected behavior, not a bug. `/unlock` on the owning PR
 force-releases.
 
 **Approvals.** `/apply` is gated on this repository's required reviews, read from
@@ -347,8 +347,8 @@ conftest test <plan.json> -p policy/                    # if you have a plan JSO
 
 The init and the validate are a pair, in that order. `init -backend=false`
 populates the run directory without touching Azure. `TG_NO_AUTO_INIT` then stops
-Terragrunt initialising again, which is what would configure the real backend.
-Drop the variable and validate fails on authorisation instead of on your code.
+Terragrunt initializing again, which is what would configure the real backend.
+Drop the variable and validate fails on authorization instead of on your code.
 Skip the init and it fails saying the modules are not installed. That second
 error is the honest one: run the init, do not drop the variable.
 

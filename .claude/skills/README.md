@@ -8,7 +8,7 @@ them up automatically.
 These are reference material for an agent, not code that runs. Nothing here is
 executed by CI.
 
-| Skill | Source | Licence | What it covers |
+| Skill | Source | License | What it covers |
 | --- | --- | --- | --- |
 | `terragrunt` | NRIT Solutions | Proprietary, provided with this repository | Terragrunt 1.0: the CLI and its deprecations, HCL blocks, built-in functions, Stacks, best practices, an Azure/ALZ layer, and ready-to-copy templates for `root.hcl`, the hierarchy files, and a unit |
 | `terraform-style-guide` | [hashicorp/agent-skills](https://github.com/hashicorp/agent-skills) | MPL-2.0, see `terraform-style-guide/LICENSE` | HashiCorp's official Terraform style conventions for writing and reviewing HCL |
