@@ -13,7 +13,7 @@ and runner (`nrit-alz-bootstrap`) stay separate repositories under NRIT control.
 A generated repository is created by the bootstrap and consumes the engine at a
 pinned version through the public entrypoint repository `nrit-solutions/tf-pr-ops`;
 the private engine core behind it is reached with an engine App key NRIT issues
-per organisation. That is its only dependency on NRIT. Every
+per organization. That is its only dependency on NRIT. Every
 unit, foundation and workload alike, is plain Terraform on public Azure Verified
 Modules, and the custom policy library is vendored under
 `live/_foundation/landing-zones/lib/`.

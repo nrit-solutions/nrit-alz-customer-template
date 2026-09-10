@@ -35,7 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   The PR caller pins the mise CLI at 2026.9.2. The template itself becomes
   public under Apache-2.0: `LICENSE` carries that text, `CODEOWNERS` is a
   commented example, and `ONBOARDING.md` is written for an operator in any
-  organisation. Existing customer repositories need the caller change
+  organization. Existing customer repositories need the caller change
   backported; the rest is optional.
 
 - The engine pins move from `v3.4.0` to `v4.0.0` in all four callers, and
@@ -184,7 +184,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   The last GitHub-facing script families (command authorization, the /apply
   approval gate, the reactions, the unlock confirmation, the drift-issue
   reporter) run compiled, and the shell fallbacks for everything ported
-  earlier are retired. Behaviour is unchanged and nothing changes in a
+  earlier are retired. Behavior is unchanged and nothing changes in a
   consumer repository. Verified on the reference tenant with a comment-path
   plan and a full drift sweep on the new pin.
 
@@ -298,7 +298,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   down to the real actions the way the plan output already was.
 
   One part of it matters beyond cosmetics. infracost used to leave the decision
-  about uploading run results to a remote Infracost Cloud organisation setting,
+  about uploading run results to a remote Infracost Cloud organization setting,
   which in a customer's own account is not ours to control, and the breakdown it
   would upload carries the commit sha, author name, author email and message.
   The engine now sets that off itself instead of inheriting a default. Region
@@ -309,14 +309,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The engine caller pins move from `v1.9.1` to `v1.9.2`. The patch carries the
   robustness batch of the 2026-08-04 engine review: one total size budget for
   report comments so a large plan cannot lose the report to GitHub's 65536
-  character cap, leftover check runs completed as cancelled instead of hanging
+  character cap, leftover check runs completed as canceled instead of hanging
   `in_progress` forever, discovery de-duplicated into one implementation with
   the bare-directory exclusion bug fixed, `tf_changed` extended to every
   Terraform file type, and a sweep of smaller fixes including SHA-pinned
   third-party actions and Dependabot.
 
   Two changes are visible to users. `/apply` and `/unlock` now require write
-  permission on the repository rather than organisation membership alone, so a
+  permission on the repository rather than organization membership alone, so a
   stamped repo whose appliers hold membership without write must grant write
   before they can apply again. And per-project check runs are renamed to carry
   the run number (`plan (<label>) #128`); the two required statuses,
@@ -326,7 +326,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
   **Backport recommended**: `tf_changed` and the comment size budget both close
   ways a change could reach main unplanned or unreported. Check the two
-  behaviour changes above against the repo's collaborators and branch
+  behavior changes above against the repo's collaborators and branch
   protection before backporting. Validated on nrit-alz-live.
 - The engine caller pins move from `v1.9.0` to `v1.9.1`. The patch carries
   the urgent batch of the 2026-08-04 engine review: filtered runs (`-p`) no
@@ -499,7 +499,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Under the default include, two same-named generate blocks are a hard error and
   nothing is generated. Confirmed by removing the attribute on terragrunt 1.0.7.
   The rationale in `live/root.hcl` was already correct. Backport: optional,
-  comment only, no behaviour change.
+  comment only, no behavior change.
 
 ### Added
 
@@ -581,8 +581,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   in `live/_foundation/region.hcl` (it feeds the `env` tag, and the tag policy
   allows prod, staging, and dev only) and `tenant_root_id` in `live/tenant.hcl`.
 - ONBOARDING step 5 makes `.github/CODEOWNERS` and `LICENSE` explicit decisions.
-  The CODEOWNERS team exists only in the NRIT organisation, so GitHub reports the
-  file as invalid in the customer's; the licence is a self-declared placeholder
+  The CODEOWNERS team exists only in the NRIT organization, so GitHub reports the
+  file as invalid in the customer's; the license is a self-declared placeholder
   that otherwise ships to the customer untouched.
 
 ### Changed

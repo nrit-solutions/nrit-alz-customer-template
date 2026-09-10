@@ -2,7 +2,7 @@
 
 This document walks through standing up a new customer landing zone from this
 template. Steps 1 to 5 are run once by the operator (NRIT, or the MSP running
-the platform in its own GitHub organisation); the rest are the normal pull
+the platform in its own GitHub organization); the rest are the normal pull
 request flow.
 
 ## Prerequisites
@@ -14,13 +14,13 @@ request flow.
 - A management subscription (it holds the shared state backend and the runner).
   A connectivity subscription too if the customer runs a hub; it is optional and
   can be added later
-- GitHub organisation for the customer repository
-- A GitHub token with `repo` and `admin:org` scope in the organisation that
+- GitHub organization for the customer repository
+- A GitHub token with `repo` and `admin:org` scope in the organization that
   receives the repository, for the operator only. The bootstrap creates the
-  approver team and the ruleset there; nothing is needed on the NRIT organisation
-- The engine App credentials for your organisation (client id and private key).
+  approver team and the ruleset there; nothing is needed on the NRIT organization
+- The engine App credentials for your organization (client id and private key).
   Inside nrit-solutions this is the `nrit-engine-reader` App; any other
-  organisation gets its own App from NRIT
+  organization gets its own App from NRIT
 - A point of contact at the customer for identity and networking decisions
 
 ## Step 1: Run the bootstrap
@@ -126,11 +126,11 @@ Three kinds of version are pinned in this repository:
 ## Step 4: Grant access, set the cost gate, and require the merge gate
 
 The caller workflows reference the public entrypoint repository
-`nrit-solutions/tf-pr-ops`, which any organisation can call. The engine core
+`nrit-solutions/tf-pr-ops`, which any organization can call. The engine core
 they run is private: every job checks it out at the pinned version with a
 GitHub App token minted from `ENGINE_APP_CLIENT_ID` (variable) and
-`ENGINE_APP_PRIVATE_KEY` (secret). The App is issued by NRIT per organisation
-and installed on the NRIT organisation, so nothing is installed on yours.
+`ENGINE_APP_PRIVATE_KEY` (secret). The App is issued by NRIT per organization
+and installed on the NRIT organization, so nothing is installed on yours.
 Confirm both values are set (the bootstrap sets them when a client id is
 supplied); without them the first pull request fails at the dispatch step with a
 message naming the missing variable.
@@ -154,7 +154,7 @@ A repository that requires no approving reviews is a special case. GitHub report
 no review decision at all, which the engine refuses rather than treats as consent:
 an empty decision is indistinguishable from a ruleset that was removed, so
 allowing it would let the apply gate disappear with no signal. A single-writer
-organisation cannot self-approve on GitHub and so sets the count to 0
+organization cannot self-approve on GitHub and so sets the count to 0
 deliberately; it must then set the repository variable
 `TF_PR_OPS_ALLOW_UNREVIEWED_APPLY` to `true` to allow `/apply`. Leave that
 variable unset everywhere else. If `/apply` is refused with a message about the
@@ -163,12 +163,12 @@ repository requiring no reviews, this is the setting it means.
 ## Step 5: Set the code owners
 
 `.github/CODEOWNERS` ships as a commented example. Point it at a team that
-exists in the customer's organisation, or delete the file if the customer wants
+exists in the customer's organization, or delete the file if the customer wants
 no code owners. Code owners are not enforced today: the bootstrap sets
 `require_code_owner_review = false` in its `github.tf`. Turn that on in the
 customer's tfvars if the customer wants owner review required before merge.
 
-`LICENSE` is Apache-2.0, the licence the template is published under. It covers
+`LICENSE` is Apache-2.0, the license the template is published under. It covers
 this repository's files only; the engine core and the service around it are
 governed by the agreement with NRIT, not by this file.
 

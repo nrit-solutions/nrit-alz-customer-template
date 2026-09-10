@@ -1,5 +1,5 @@
 # Code owners for this infrastructure-live repository. Uncomment and point at
-# a team that exists in your organisation. Owner review is enforced only when
+# a team that exists in your organization. Owner review is enforced only when
 # the bootstrap sets require_code_owner_review = true in its ruleset.
 #
 # *       @<org>/<platform-team>

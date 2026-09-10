@@ -88,7 +88,7 @@ remote_state {
 #   ERROR  Detected generate blocks with the same name: [provider]
 # and generates nothing. Verified on Terragrunt 1.0.7. Note this contradicts the
 # HCL blocks doc page, which describes a child block silently overriding the
-# parent; trust the observed behaviour and keep the attribute.
+# parent; trust the observed behavior and keep the attribute.
 generate "provider" {
   path      = "providers.tf"
   if_exists = "overwrite_terragrunt"
