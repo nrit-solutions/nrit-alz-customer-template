@@ -14,6 +14,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v5.1.0` to `v6.0.1` in all four callers, with
+  the v6 caller contract: the ops caller declares and forwards a `context`
+  workflow_dispatch input and no longer needs `actions: read`. What changes
+  for operators: `/apply` no longer re-runs the plan-stage gates (conftest,
+  checkov, infracost) on the plan it re-takes and says so in a one-line
+  note in the apply report; a push starts the plan directly instead of
+  through a resolve job; the runner reuses cached tool installs and
+  Terraform providers across runs. The flat `steps:` block in
+  `projects.yml` now means the plan stage only, which is what it always did
+  here, so it needs no edit. Existing customer repositories must backport
+  the caller changes before they move to v6: an undeclared `context` input
+  makes the dispatch API reject every push.
+- Every foundation unit carries a committed `.terraform.lock.hcl` with the
+  `darwin_arm64` and `linux_amd64` provider hashes, which the engine's
+  provider cache needs to serve cached packages on the runner. Existing
+  repositories generate theirs with `terraform providers lock
+  -platform=darwin_arm64 -platform=linux_amd64` per unit.
+- The PR lint gate runs the hooks on the files the PR changed instead of the
+  whole tree; the repository invariants hook still scans everything.
+- New `runner-egress-check.yml` (dispatch only): probes the endpoints the
+  plan path depends on from the self-hosted runner and reports which are
+  reachable. Optional for existing repositories.
+
 - The engine pins move from `v5.0.0` to `v5.1.0` in all four callers. No
   caller contract change: the release is three fixes and one feature that
   lives in the engine repository only. What changes for operators: plans
