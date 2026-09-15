@@ -26,11 +26,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   here, so it needs no edit. Existing customer repositories must backport
   the caller changes before they move to v6: an undeclared `context` input
   makes the dispatch API reject every push.
-- Every foundation unit carries a committed `.terraform.lock.hcl` with the
-  `darwin_arm64` and `linux_amd64` provider hashes, which the engine's
-  provider cache needs to serve cached packages on the runner. Existing
-  repositories generate theirs with `terraform providers lock
-  -platform=darwin_arm64 -platform=linux_amd64` per unit.
+- Lock files must carry the `linux_amd64` provider hashes as well as the
+  authoring machine's: the engine's provider cache serves a cached package
+  on the runner only when the lock file holds that platform's hash. The
+  template still ships no lock files; onboarding now generates them with
+  `providers lock -platform=darwin_arm64 -platform=linux_amd64` after the
+  `init`, and `AGENTS.md` and the README say the same for provider bumps.
+  Existing repositories run that command once per unit and commit the diff.
 - The PR lint gate runs the hooks on the files the PR changed instead of the
   whole tree; the repository invariants hook still scans everything.
 - New `runner-egress-check.yml` (dispatch only): probes the endpoints the
