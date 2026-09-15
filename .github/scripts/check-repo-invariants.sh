@@ -85,8 +85,10 @@ if [ -n "$missing_locks" ]; then
   warn "warning: no .terraform.lock.hcl in:"
   for d in $missing_locks; do warn "  $d"; done
   warn "  Provider versions float between runs, so the plan you review can" \
-    "  differ from what applies. Generate one per unit and commit it:" \
+    "  differ from what applies. Generate one per unit, with the runner's" \
+    "  platform hashes so the engine's provider cache can serve it, and commit it:" \
     "    terragrunt --working-dir <unit> init -backend=false" \
+    "    TG_NO_AUTO_INIT=true terragrunt --working-dir <unit> run -- providers lock -platform=darwin_arm64 -platform=linux_amd64" \
     "  A newly stamped repository does this once, during onboarding."
 fi
 
