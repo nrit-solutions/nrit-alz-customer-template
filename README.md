@@ -25,9 +25,11 @@ A change is a pull request:
 1. Open a PR touching a unit. Every impacted unit is planned automatically.
 2. Review the plan posted as a comment, including the policy, security, and cost
    gate output (that panel expands automatically when a gate reports a finding).
-3. Comment `/apply` to apply the changed units in dependency order, after the
-   required approvals. The engine reacts to your comment as it works: 👀 seen,
-   🚀 running, 🎉 done (or 👎 on failure).
+3. Comment `/apply` to apply the impacted units in dependency order, once the
+   repository's required reviews are in (the engine reads GitHub's review
+   decision). The engine adds a 👀 reaction when it accepts the command and 😕
+   when it refuses it; the outcome lands in the report comment, the per-unit
+   checks, and the merge gate.
 4. The `tf-pr-ops / merge-gate` check goes green once applied, and the PR
    merges. It stays red if the PR changed Terraform but no unit was selected, so an
    unapplied new or removed unit cannot merge green.

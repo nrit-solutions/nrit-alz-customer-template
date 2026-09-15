@@ -149,8 +149,9 @@ with auto-init disabled. The Commands section has the exact pair.
 8. Merge once `tf-pr-ops / merge-gate` is green.
 
 Comment commands: `/plan`, `/plan -p <label>`, `/apply`, `/apply -p <label>`,
-`/unlock`. The engine reacts to your comment: 👀 seen, 🚀 running, 🎉 done, 👎
-failed.
+`/unlock`. The engine adds a 👀 reaction when it accepts your comment and 😕
+when it refuses it; the outcome is in the report comment, the per-unit checks,
+and the merge gate, not in further reactions.
 
 The first PR to plan a unit holds a cross-PR lock on it until that PR merges or
 closes. Another PR touching the same unit gets a `🔒 Locked by another PR`
