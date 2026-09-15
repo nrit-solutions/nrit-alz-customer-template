@@ -32,10 +32,16 @@ A change is a pull request:
    merges. It stays red if the PR changed Terraform but no unit was selected, so an
    unapplied new or removed unit cannot merge green.
 
-The engine is not stored here. The four workflows in `.github/workflows/` call
-the reusable workflows and the dispatch action in `nrit-solutions/tf-pr-ops` at a
-pinned tag, matched by the `engine_ref` input. Read the current version from those
-files rather than from prose.
+The engine is not stored here. Four caller workflows in `.github/workflows/`
+(`tf-pr-ops-pr.yml`, `tf-pr-ops-unlock.yml`, `tf-pr-ops.yml`, `drift.yml`) call
+the dispatch action and the reusable workflows in `nrit-solutions/tf-pr-ops` at
+one pinned tag; the two reusable-workflow callers also pass it as `engine_ref`.
+Read the current version from those files rather than from prose. Two more
+workflows watch the self-hosted runners rather than the infrastructure:
+`runner-canary.yml` runs on a schedule from a GitHub-hosted runner and opens an
+issue when jobs sit queued longer than a healthy wait, and
+`runner-egress-check.yml` is dispatch-only and reports which endpoints the plan
+path can reach from the runner.
 Vendoring the engine into the repository is a documented escape hatch for a fully
 self-contained repository; see `ONBOARDING.md`.
 
@@ -55,8 +61,8 @@ with a `terragrunt.hcl`).
 ├── .mcp.json                    # MCP servers: Microsoft Learn, Terraform registry
 ├── .claude/                     # agent skills + what the tooling does (README)
 ├── .pre-commit-config.yaml      # commit hooks; .tflint.hcl and .checkov.yaml configure them
-├── .github/                     # caller workflows (engine), changelog + lint checks, hook script
-├── policy/                      # active conftest policies (the policy gate)
+├── .github/                     # caller and runner workflows, invariants script, CODEOWNERS, PR template
+├── policy/                      # conftest policies for the policy gate (ships one .example, none active)
 └── live/
     ├── root.hcl                 # backend + providers + shared locals contract
     ├── tenant.hcl               # tenant id + root MG id (must sit at live/ root)
@@ -92,8 +98,11 @@ for how units share values without reading each other's outputs.
 ## Gates
 
 Every plan (and every drift plan) runs a conftest policy check, a checkov security
-scan, and an infracost cost estimate. They start
-advisory. See [the gates page](https://docs.nrit.cloud/operations/gates/).
+scan, and an infracost cost estimate, listed as the plan-stage steps in
+`projects.yml`. They start advisory: `policy/` ships only `tags.rego.example`,
+checkov runs in soft-fail, and infracost reports. An apply runs no gates: the
+plan already passed them and the engine refuses to apply a plan that differs
+from the reviewed one. See [the gates page](https://docs.nrit.cloud/operations/gates/).
 
 ## Onboarding
 
@@ -109,8 +118,11 @@ linters included, so local runs and CI use identical versions.
 On commit the hooks format HCL and Terraform, run tflint and checkov over the
 changed units, and check the repository invariants (no generated `backend.tf`,
 `providers.tf`, or `context.tf` committed, no state, no stack leaves, no
-Terraform outside a unit). The `lint` workflow runs the same hooks on every pull
-request and fails, so a commit made with `--no-verify` is caught there.
+Terraform outside a unit). The `pre-commit` job of `tf-pr-ops-pr.yml` runs the
+same hooks on the files every pull request changes and gates the dispatch, so a
+commit made with `--no-verify` is caught before any plan runs. A changelog
+reminder rides along in that job and warns, without failing, when a PR changes
+code but not `CHANGELOG.md`.
 
 Each unit's `.terraform.lock.hcl` is committed once generated, and that is what
 actually pins the provider versions; the `~>` constraints in the generated
