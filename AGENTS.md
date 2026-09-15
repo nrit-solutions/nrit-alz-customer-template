@@ -371,7 +371,7 @@ deploys to, and `gh` must be the account that should be acting here.
 | What | Pinned in | Rule |
 | --- | --- | --- |
 | Terraform, Terragrunt | `mise.toml` | The engine auto-detects it. No workflow edit needed |
-| The engine | both files in `.github/workflows/` | The `uses:` ref and `engine_ref` must match, in `terraform-pr-ops.yml` and `drift.yml` |
+| The engine | the four caller files in `.github/workflows/` | Every `uses:` ref at the same tag; in `tf-pr-ops.yml` and `drift.yml` the `engine_ref` input must match it |
 | AVM modules | each unit's `main.tf` | Exact `version` |
 | ALZ and AMBA libraries | `library_references` in the two foundation `terragrunt.hcl` files | Keep the `platform/alz` ref identical in both |
 | Providers | the `generate "provider"` blocks, then each unit's `.terraform.lock.hcl` | `~>` constraints in the generate block; the lock file is what actually pins |
@@ -382,9 +382,19 @@ and back out again, so it is the file that decides what plan and apply use, and
 both vendors say to commit it. Without one, every run re-resolves and `/apply`
 can run a different provider than the plan you reviewed.
 
-A new unit ships its own, from `init -backend=false`. To move a provider version,
-run `terragrunt --working-dir live/<unit> init -backend=false -upgrade` and commit
-the diff as its own PR. Never delete a lock file to make an error go away.
+A new unit ships its own lock file, and it must carry the runner platform's
+hashes, not only your machine's: the engine's provider cache verifies every
+cached package against the lock file on the runner, and a lock file written
+on a Mac alone misses the cache on every job. Generate it with both commands:
+
+```sh
+terragrunt --working-dir live/<unit> init -backend=false
+TG_NO_AUTO_INIT=true terragrunt --working-dir live/<unit> run -- providers lock -platform=darwin_arm64 -platform=linux_amd64
+```
+
+To move a provider version, run the `init` with `-upgrade`, then the same
+`providers lock` command, and commit the diff as its own PR. Never delete a
+lock file to make an error go away.
 
 A repository stamped from the template starts with none, on purpose: a lock file
 records the versions resolved when it was written, so shipping pre-generated ones

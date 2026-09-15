@@ -120,5 +120,6 @@ start every customer on whatever resolved the day the template was last touched.
 Onboarding step 3 generates them against the customer's own tree, and the
 invariants check warns, without blocking, until it has. To move a provider
 version afterwards, run
-`terragrunt --working-dir live/<unit> init -backend=false -upgrade` and commit
-the diff as its own PR.
+`terragrunt --working-dir live/<unit> init -backend=false -upgrade`, then the
+`providers lock` command from onboarding so the `linux_amd64` hashes the
+runner's provider cache needs are kept, and commit the diff as its own PR.

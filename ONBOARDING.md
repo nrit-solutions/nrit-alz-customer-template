@@ -108,8 +108,14 @@ Three kinds of version are pinned in this repository:
   ```sh
   for u in live/_foundation/*/; do
     terragrunt --working-dir "$u" init -backend=false
+    TG_NO_AUTO_INIT=true terragrunt --working-dir "$u" run -- providers lock -platform=darwin_arm64 -platform=linux_amd64
   done
   ```
+
+  The second command adds the `linux_amd64` hashes: the engine's provider
+  cache verifies every cached package against the lock file on the runner,
+  so a lock file written on a Mac alone misses the cache on every job. Put
+  your own platform in place of `darwin_arm64` if it differs.
 
   The template deliberately ships none. A lock file records the exact provider
   versions resolved at the moment it is written, so a pre-generated one would
