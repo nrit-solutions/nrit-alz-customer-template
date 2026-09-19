@@ -14,6 +14,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v6.0.1` to `v6.1.0` in all four callers. No
+  caller contract change. What changes for operators: a per-unit check's
+  "View more details" link opens the job that ran the unit (the plan
+  matrix job, or the ordered apply job) instead of the run overview, so
+  the live log is one click from the merge box. Existing customer
+  repositories need not act; backporting is the pin edit alone.
+
 - The engine pins move from `v5.1.0` to `v6.0.1` in all four callers, with
   the v6 caller contract: the ops caller declares and forwards a `context`
   workflow_dispatch input and no longer needs `actions: read`. What changes
