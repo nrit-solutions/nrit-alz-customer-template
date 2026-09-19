@@ -200,6 +200,12 @@ Verified Module. It is allowed, under Naming below, for a generated name. The
 exact `version` rule still applies; `enable_telemetry` does not, because the
 module has no such variable.
 
+Where no AVM module exists, a plain resource is fine, with one exception:
+manage Event Grid event subscriptions with `azapi_resource`, not the
+`azurerm` resources. The `azurerm` ones read a subscription back through the
+`getFullUrl` action, which the read-only plan identity cannot call, so every
+plan after the first apply fails with 403. azapi reads with a plain GET.
+
 **Naming.** Follow the Cloud Adoption Framework component order. Whether the name
 carries an environment depends on where the unit sits in the tree.
 
