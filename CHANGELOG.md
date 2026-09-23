@@ -14,6 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v6.1.0` to `v6.2.0` in all four callers. No
+  caller contract change. What changes for operators: the plan and apply
+  jobs of one pull request share a concurrency group, so a push during an
+  apply queues its plan until the apply finishes and then plans the new
+  head, and the new head's plan checks open with the title "Waiting for
+  apply #N on <sha>" (linking the apply job) until their plan starts.
+  Existing customer repositories need not act; backporting is the pin
+  edit alone.
+
 - The engine pins move from `v6.0.1` to `v6.1.0` in all four callers. No
   caller contract change. What changes for operators: a per-unit check's
   "View more details" link opens the job that ran the unit (the plan
