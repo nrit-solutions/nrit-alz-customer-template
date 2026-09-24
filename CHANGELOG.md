@@ -14,6 +14,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v6.2.0` to `v6.3.0` in all four callers. No
+  caller contract change. What changes for operators: the plan and apply
+  jobs stream terraform and terragrunt output to the job log, one foldable
+  group per command, so a check's "View more details" link opens a log
+  that holds the full plan or apply output. Existing customer repositories
+  need not act; backporting is the pin edit alone.
+
 - The engine pins move from `v6.1.0` to `v6.2.0` in all four callers. No
   caller contract change. What changes for operators: the plan and apply
   jobs of one pull request share a concurrency group, so a push during an
