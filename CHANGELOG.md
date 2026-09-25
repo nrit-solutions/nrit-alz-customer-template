@@ -14,6 +14,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v6.3.0` to `v6.4.0` in all four callers. No
+  caller contract change. What changes for operators: each unit's check
+  carries a run summary (trigger, change table, gate counts) in its
+  details, and the drift sweep posts a `tf-pr-ops / drift (<unit>)` check
+  run per unit on the main commit it planned, through the checks App.
+  Drift issues stay. Existing customer repositories need not act;
+  backporting is the pin edit alone.
+
 - The engine pins move from `v6.2.0` to `v6.3.0` in all four callers. No
   caller contract change. What changes for operators: the plan and apply
   jobs stream terraform and terragrunt output to the job log, one foldable
