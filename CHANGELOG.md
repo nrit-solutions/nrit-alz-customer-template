@@ -14,6 +14,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v6.4.0` to `v6.4.1` in all four callers, and
+  the ops and drift callers pass `ENGINE_APP_PRIVATE_KEY`,
+  `TFPR_CHECKS_APP_PRIVATE_KEY` and `INFRACOST_API_KEY` by name instead of
+  `secrets: inherit`. GitHub honours `inherit` only when the caller and the
+  reusable workflow share an organization, so a repository generated in any
+  organization other than nrit-solutions ran every dispatched plan, apply
+  and drift job with the engine key empty (nrit-tf-pr-ops#298). Existing
+  customer repositories outside nrit-solutions must copy the new `secrets:`
+  block into `tf-pr-ops.yml` and `drift.yml`; those inside nrit-solutions
+  keep working either way.
+
 - The engine pins move from `v6.3.0` to `v6.4.0` in all four callers. No
   caller contract change. What changes for operators: each unit's check
   carries a run summary (trigger, change table, gate counts) in its
