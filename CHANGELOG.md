@@ -14,6 +14,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The AMBA resource group gets one tag set shared with the AMBA policy:
+  the governance tags plus `_deployed_by_amba`, passed both as the
+  `amba_resources` module `tags` and as the policy default
+  `amba_alz_resource_group_tags` (`ALZMonitorResourceGroupTags` on the AMBA
+  assignments). AMBA's remediation re-creates the group with that
+  parameter's tags, so Terraform and AMBA now agree. The previous no-tags
+  workaround relied on azapi leaving null tags unmanaged, which no longer
+  holds from azapi 2.13: a new repository's amba unit flip-flopped against
+  AMBA on every drift cycle (#76). Onboarding now sets `businessunit` in
+  `amba/main.tf` as well as in `management-resources/main.tf`.
+  Backport: yes for every existing customer repository, same edit to
+  `live/_foundation/amba/main.tf`; the plan is amba only, in place (the
+  group's and the AMBA identity's tags, and the AMBA assignments' tag
+  parameter). Proven on nrit-alz-live#265 and the cross-org sandbox.
+
 - The engine pins move from `v6.4.0` to `v6.4.1` in all four callers, and
   the ops and drift callers pass `ENGINE_APP_PRIVATE_KEY`,
   `TFPR_CHECKS_APP_PRIVATE_KEY` and `INFRACOST_API_KEY` by name instead of
