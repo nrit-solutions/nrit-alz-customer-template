@@ -6,6 +6,21 @@ locals {
   amba_user_assigned_managed_identity_name = "uami-amba-${local.context.location_short}"
   amba_action_group_email                  = "alerts@example.com"
 
+  # AMBA's remediation re-creates this RG with the ALZMonitorResourceGroupTags
+  # policy parameter, replacing its tag set, so Terraform and the policy must
+  # carry the same tags or they overwrite each other on every cycle.
+  amba_resource_group_tags = {
+    businessunit        = "changeme"
+    env                 = local.context.environment
+    costcenter          = "platform"
+    app                 = "alz-platform-foundation"
+    opsteam             = "platform-team"
+    criticality         = "mission-critical"
+    confidentiality     = "confidential"
+    "managed-by"        = "terraform"
+    "_deployed_by_amba" = "true"
+  }
+
   # The action group email is an Array policy parameter, so it is wrapped in a
   # list (a scalar passes plan but fails apply with InvalidPolicyParameterType).
   amba_policy_default_values_raw = {
@@ -14,6 +29,7 @@ locals {
     amba_alz_resource_group_location             = local.context.location
     amba_alz_user_assigned_managed_identity_name = local.amba_user_assigned_managed_identity_name
     amba_alz_action_group_email                  = [local.amba_action_group_email]
+    amba_alz_resource_group_tags                 = local.amba_resource_group_tags
   }
   amba_policy_default_values = { for key, value in local.amba_policy_default_values_raw : key => jsonencode({ value = value }) }
 }
@@ -27,7 +43,7 @@ module "amba_resources" {
   resource_group_name                 = local.amba_resource_group_name
   user_assigned_managed_identity_name = local.amba_user_assigned_managed_identity_name
   enable_telemetry                    = false
-  # No tags: AMBA policy remediation redeploys this RG and stamps _deployed_by_amba, stripping any tags Terraform sets, so managing them here drifts every cycle. Leave the RG AMBA-owned (azapi leaves a null tags attribute unmanaged).
+  tags                                = local.amba_resource_group_tags
 }
 
 module "amba_policy" {
