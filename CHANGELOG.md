@@ -14,6 +14,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v7.0.2` to `v7.1.0` in all four callers. No
+  caller workflow change. Operator-visible: in the per-unit PR comment, a
+  warned or failed hook row shows its status word in colour, the line under
+  the headline renders at body size instead of small text, and each opened
+  row's body starts one line down. Gate verdicts are now lowercase without a
+  full stop (nrit-tf-pr-ops#319, #320, #321).
+
 - The engine pins move from `v6.4.1` to `v7.0.2` in all four callers. No
   caller workflow change. Breaking for `projects.yml`: each hook is now a
   mapping with a `name`, a `run` and an optional `on_failure`, and discovery
