@@ -102,7 +102,7 @@ for how units share values without reading each other's outputs.
 Every plan (and every drift plan) runs a conftest policy check, a checkov security
 scan, and an infracost cost estimate, listed as the plan-stage steps in
 `projects.yml`. They start advisory: `policy/` ships only `tags.rego.example`,
-checkov runs in soft-fail, and infracost reports. An apply runs no gates: the
+checkov warns without blocking, and infracost reports. An apply runs no gates: the
 plan already passed them and the engine refuses to apply a plan that differs
 from the reviewed one. See [the gates page](https://docs.nrit.cloud/operations/gates/).
 

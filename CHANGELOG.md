@@ -14,6 +14,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v6.4.1` to `v7.0.2` in all four callers. No
+  caller workflow change. Breaking for `projects.yml`: each hook is now a
+  mapping with a `name`, a `run` and an optional `on_failure`, and discovery
+  refuses the old command string. The three `post_plan` hooks are named
+  `Policy check (conftest)`, `Security scan (checkov)` and
+  `Cost estimate (infracost)`; checkov's `CHECKOV_SOFT_FAIL=1` becomes
+  `on_failure: warn`, so a failed scan shows as an open warning row and does
+  not block. What changes for operators: the per-unit PR comment has a new
+  layout (one headline, collapsed rows per step in run order, instructions
+  last), long output continues in follow-up comments, and the gate rows
+  render as compact lists (nrit-tf-pr-ops#301). Existing customer
+  repositories must migrate `projects.yml` in the same change as the pin
+  bump; the migration needs v7.0.1 or later, and v7.0.2 lets that
+  `projects.yml`-only PR pass the merge gate.
+
 - The AMBA resource group gets one tag set shared with the AMBA policy:
   the governance tags plus `_deployed_by_amba`, passed both as the
   `amba_resources` module `tags` and as the policy default
