@@ -454,7 +454,7 @@ through `$TFPR_ENGINE_DIR`.
 | Gate | Tool | Config | Default |
 | --- | --- | --- | --- |
 | Policy | conftest | `policy/*.rego` | None active until you add one |
-| Security | checkov | `CHECKOV_SOFT_FAIL=1` in `projects.yml` | Advisory |
+| Security | checkov | `on_failure: warn` in `projects.yml` | Advisory |
 | Cost | infracost | engine script, needs `INFRACOST_API_KEY` | Informational, always exits 0 |
 
 The policy gate ships with nothing active. `policy/tags.rego.example` is a
@@ -463,7 +463,7 @@ not match, so it reports "no policies found" and passes. Drop the `.example`
 suffix to turn it on, after reading what it denies.
 
 To enforce policy, add a `deny` rule. To enforce security, drop
-`CHECKOV_SOFT_FAIL`. Do that deliberately, after triaging the report-only
+`on_failure: warn` from the checkov hook. Do that deliberately, after triaging the report-only
 findings, never as a side effect of another change.
 
 A rule that matches no resource is the failure mode to watch for. It reports a
