@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v7.1.0` to `v7.2.0` in all four callers. No
+  caller workflow change. Operator-visible: when apply is blocked because the
+  repository requires no reviews, the `tf-pr-ops / approval` row now reads
+  "Apply blocked: add a review ruleset or set TFPR_ALLOW_UNREVIEWED_APPLY",
+  and a PR that plans no unit gets no approval row (nrit-tf-pr-ops#327).
+
 - The engine pins move from `v7.0.2` to `v7.1.0` in all four callers. No
   caller workflow change. Operator-visible: in the per-unit PR comment, a
   warned or failed hook row shows its status word in colour, the line under
