@@ -14,6 +14,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v7.2.0` to `v7.3.2` in all four callers. No
+  caller workflow change. Operator-visible: a unit's check row shows live
+  progress while it runs (`Initializing`, `Planning: N resources
+  refreshed`, `Running <hook>`, `Applying: N changes done`), with an opt-in
+  log tail in the check text via the `TFPR_CHECK_LIVE_LOG=true` repository
+  variable (nrit-tf-pr-ops#331). A failed run's report leads with a one-line
+  error headline and an Error section that shows the diagnostic once; a lock
+  refusal names the holder PR once and reads as plain text
+  (nrit-tf-pr-ops#330).
+
 - The engine pins move from `v7.1.0` to `v7.2.0` in all four callers. No
   caller workflow change. Operator-visible: when apply is blocked because the
   repository requires no reviews, the `tf-pr-ops / approval` row now reads
