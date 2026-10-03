@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v7.3.2` to `v7.3.3` in all four callers. No caller
+  workflow change. A lock refusal now says what holds the lock and what to do:
+  "PR #n has an unapplied plan for this unit and holds its lock until it is
+  merged or closed. To continue, apply and merge that PR, or comment `/unlock`
+  on it to release the lock. Then comment `/plan` here."
+
 - The engine pins move from `v7.2.0` to `v7.3.2` in all four callers. No
   caller workflow change. Operator-visible: a unit's check row shows live
   progress while it runs (`Initializing`, `Planning: N resources
