@@ -14,6 +14,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pins move from `v7.3.3` to `v7.4.1` in all four callers. No caller
+  workflow change. A failed report reads "Plan (unit) failed: <first error>
+  (and N more errors)" and shows up to three errors; notices use one label
+  style and no GitHub API values; the removed-unit report suggests a destroy
+  PR that keeps only `terragrunt.hcl` instead of a local destroy. Existing
+  customer repositories can take it at their next bump; nothing breaks without it.
+
 - The engine pins move from `v7.3.2` to `v7.3.3` in all four callers. No caller
   workflow change. A lock refusal now says what holds the lock and what to do:
   "PR #n has an unapplied plan for this unit and holds its lock until it is
