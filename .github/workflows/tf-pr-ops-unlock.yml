@@ -19,9 +19,4 @@ jobs:
     if: github.event.repository.is_template != true
     runs-on: ubuntu-latest
     steps:
-      - uses: nrit-solutions/tf-pr-ops/.github/actions/dispatch@v7.4.1
-        with:
-          # Lets the action download the prebuilt tfpr for its pinned tag
-          # instead of building from source. Optional; empty builds.
-          engine-app-client-id: ${{ vars.ENGINE_APP_CLIENT_ID }}
-          engine-app-private-key: ${{ secrets.ENGINE_APP_PRIVATE_KEY }}
+      - uses: nrit-solutions/tf-pr-ops/.github/actions/dispatch@v8.0.0
