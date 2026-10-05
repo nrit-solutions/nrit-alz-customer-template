@@ -14,6 +14,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine moves from `v7.4.1` to `v8.0.0` (nrit-tf-pr-ops#348). Pull request
+  runs execute the branch's own workflow file, so they no longer hold a secret
+  or write a check: the dispatch action only dispatches the ops caller on the
+  default branch, which resolves the pull request and writes every check. The
+  ops caller's dispatch inputs `head_sha`, `dispatch_run_id`,
+  `dispatch_run_number` and `context` become the `before_sha` and
+  `trigger_actor` hints; the dispatch action takes no inputs; the PR caller
+  drops `pull-requests: write` and `checks: write`. New stamps need the
+  bootstrap with default-branch environments and the checks App key on them.
+  Backport required for existing repositories (security fix), in two pull
+  requests because dispatched runs use the ops caller on main: first the ops
+  and drift callers, then the PR and unlock callers. Then re-apply the
+  bootstrap, which limits the environments and moves the key off the
+  repository.
+
 - The engine pins move from `v7.3.3` to `v7.4.1` in all four callers. No caller
   workflow change. A failed report reads "Plan (unit) failed: <first error>
   (and N more errors)" and shows up to three errors; notices use one label
