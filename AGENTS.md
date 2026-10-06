@@ -112,7 +112,7 @@ nothing to gate, and it can merge green having deployed nothing.
 | Generated file | Holds |
 | --- | --- |
 | `backend.tf` | The azurerm backend. Entra ID auth, no account keys. State key is the path |
-| `providers.tf` | Default `azurerm` + `azapi`, pinned to the unit's subscription and tenant |
+| `providers.tf` | Default `azurerm` + `azapi` + `azuread`. `azurerm` and `azapi` are pinned to the unit's subscription and tenant, `azuread` to its tenant |
 | `context.tf` | `local.context`, the hierarchy values |
 
 `local.context` is the only supported way to read hierarchy values in `main.tf`:
@@ -184,9 +184,9 @@ block saying what the unit owns, which providers it needs, and why it has its ow
 state. Match that style.
 
 **Overriding providers.** A unit that needs a provider set other than
-`azurerm` + `azapi` declares its own `generate "provider"` and must set
-`merge_strategy = "deep"` on its include. Without the deep merge, two same-named
-generate blocks are a hard error and nothing is generated.
+`azurerm` + `azapi` + `azuread` declares its own `generate "provider"` and must
+set `merge_strategy = "deep"` on its include. Without the deep merge, two
+same-named generate blocks are a hard error and nothing is generated.
 `_foundation/landing-zones` and `_foundation/amba` are the worked examples.
 
 **Modules.** Source public Azure Verified Modules from the registry, with an

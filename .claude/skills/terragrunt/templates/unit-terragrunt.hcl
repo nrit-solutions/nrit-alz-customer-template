@@ -23,8 +23,8 @@
 # (A) Plain-TF unit, the common case — inherit everything from root
 # =============================================================================
 # expose = true is required: it publishes include.root.locals.* to this unit.
-# root.hcl generates backend.tf, providers.tf (azurerm + azapi) and context.tf
-# into the unit, so main.tf reads hierarchy values as local.context.*.
+# root.hcl generates backend.tf, providers.tf (azurerm + azapi + azuread) and
+# context.tf into the unit, so main.tf reads hierarchy values as local.context.*.
 include "root" {
   path   = find_in_parent_folders("root.hcl")
   expose = true
