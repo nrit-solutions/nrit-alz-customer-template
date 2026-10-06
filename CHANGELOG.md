@@ -14,6 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The default provider set that `live/root.hcl` generates now includes
+  `hashicorp/azuread` (`~> 3.10`), configured with the unit's tenant, next to
+  `azurerm` and `azapi`. Units that need Entra ID resources no longer declare
+  their own provider block. `_foundation/landing-zones` and `_foundation/amba`
+  keep their own blocks and do not get azuread. Existing customer repositories
+  need not act. To backport, copy the provider block and regenerate every
+  unit's `.terraform.lock.hcl` for both platforms; the only lock change is
+  the added azuread entry.
+
 - The engine moves from `v7.4.1` to `v8.0.0` (nrit-tf-pr-ops#348). Pull request
   runs execute the branch's own workflow file, so they no longer hold a secret
   or write a check: the dispatch action only dispatches the ops caller on the
