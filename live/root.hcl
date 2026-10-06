@@ -7,7 +7,8 @@
 # What lives here:
 #   - the remote state backend (Azure Storage, Entra ID auth, no account keys)
 #   - the locals every unit reads: tenant, subscription, location
-#   - the default provider block: azurerm + azapi, the set most units need.
+#   - the default provider block: azurerm + azapi + azuread, the set most
+#     units need.
 #     A unit needing a different set (the landing-zones unit uses alz + azapi;
 #     the amba unit adds alz) declares its own generate "provider" and sets
 #     merge_strategy = "deep" on its include, so its block overrides this one.
@@ -73,11 +74,12 @@ remote_state {
   }
 }
 
-# Default providers: azurerm + azapi, pinned to the unit's own subscription and
-# tenant. The two units that need the alz provider (landing-zones, amba) declare
-# their own generate "provider", which shallow-merges over this one. That only
-# works because each of them sets merge_strategy = "deep" on its include; without
-# it, two same-named generate blocks are a hard error (see the note above).
+# Default providers: azurerm + azapi + azuread, pinned to the unit's own
+# subscription and tenant. The two units that need the alz provider
+# (landing-zones, amba) declare their own generate "provider", which
+# shallow-merges over this one. That only works because each of them sets
+# merge_strategy = "deep" on its include; without it, two same-named generate
+# blocks are a hard error (see the note above).
 generate "provider" {
   path      = "providers.tf"
   if_exists = "overwrite_terragrunt"
@@ -87,6 +89,10 @@ generate "provider" {
         azapi = {
           source  = "Azure/azapi"
           version = "~> 2.4"
+        }
+        azuread = {
+          source  = "hashicorp/azuread"
+          version = "~> 3.10"
         }
         azurerm = {
           source  = "hashicorp/azurerm"
@@ -106,6 +112,10 @@ generate "provider" {
       subscription_id            = "${local.subscription_id}"
       tenant_id                  = "${local.tenant_id}"
       skip_provider_registration = true
+    }
+
+    provider "azuread" {
+      tenant_id = "${local.tenant_id}"
     }
   EOF
 }
