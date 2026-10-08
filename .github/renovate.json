@@ -15,15 +15,41 @@
   ],
   "packageRules": [
     {
-      "description": "One pull request per engine release, covering all four callers",
+      "description": "A minor or patch engine release: one pull request for all four callers",
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["/\\/tf-pr-ops$/"],
       "groupName": "tf-pr-ops engine",
-      "separateMajorMinor": false,
       "commitMessageTopic": "the tf-pr-ops engine",
       "labels": ["engine-bump"],
       "prBodyNotes": [
-        "Read the engine release notes before merging. A major release can need a caller edit beyond the version bump."
+        "Read the engine release notes before merging."
+      ]
+    },
+    {
+      "description": "A major engine release, step 1: the ops and drift callers, because a dispatched run uses the ops caller on main",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["/\\/tf-pr-ops$/"],
+      "matchUpdateTypes": ["major"],
+      "matchFileNames": [".github/workflows/tf-pr-ops.yml", ".github/workflows/drift.yml"],
+      "groupName": "tf-pr-ops engine major (1 of 2, ops and drift callers)",
+      "groupSlug": "tf-pr-ops-engine-major-1-ops-drift",
+      "commitMessageTopic": "the tf-pr-ops engine ops and drift callers",
+      "prBodyNotes": [
+        "Step 1 of 2 of a major engine bump. Read the release notes: a major can need caller edits beyond the version, and they go in this pull request. Merge this one first; step 2 moves the PR and unlock callers."
+      ]
+    },
+    {
+      "description": "A major engine release, step 2: the PR and unlock callers, after step 1 is on main",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["/\\/tf-pr-ops$/"],
+      "matchUpdateTypes": ["major"],
+      "matchFileNames": [".github/workflows/tf-pr-ops-pr.yml", ".github/workflows/tf-pr-ops-unlock.yml"],
+      "groupName": "tf-pr-ops engine major (2 of 2, PR and unlock callers)",
+      "groupSlug": "tf-pr-ops-engine-major-2-pr-unlock",
+      "commitMessageTopic": "the tf-pr-ops engine PR and unlock callers",
+      "rebaseWhen": "behind-base-branch",
+      "prBodyNotes": [
+        "Step 2 of 2 of a major engine bump. Merge step 1 (the ops and drift callers) first. Until it is on main, the pre-commit job here fails the engine pin check on purpose; Renovate rebases this branch once step 1 merges, and the check passes."
       ]
     }
   ]

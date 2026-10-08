@@ -27,6 +27,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Renovate splits a major engine release into two pull requests: the ops and
+  drift callers first (step 1 of 2), then the PR and unlock callers (step 2 of
+  2), which Renovate rebases once step 1 is on main. A minor or patch release
+  stays one pull request for all four callers. Until step 1 merges, the step 2
+  pull request fails the engine pin check on purpose. Not yet run against a
+  real repository: the proof is the sandbox onboarding rehearsal
+  (nrit-alz-platform-internal-docs#26). Existing customer repositories may copy
+  the file.
+
 - The engine pin check allows the first half of a two-PR engine bump: the ops
   and drift callers ahead of the PR and unlock callers. Every other mix still
   fails, with an error that explains the order. Synced from

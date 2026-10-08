@@ -40,10 +40,11 @@ The engine is not stored here. Four caller workflows in `.github/workflows/`
 (`tf-pr-ops-pr.yml`, `tf-pr-ops-unlock.yml`, `tf-pr-ops.yml`, `drift.yml`) call
 the dispatch action and the reusable workflows in `nrit-solutions/tf-pr-ops` at
 one pinned tag. The `uses:` ref is the whole pin. Read the current version from
-those files rather than from prose. Renovate (`.github/renovate.json`) opens one
-pull request per engine release that bumps all four together, once the Renovate
-GitHub App is installed on the repository, and the invariants check fails a
-commit whose callers name different releases. Two more
+those files rather than from prose. Once the Renovate GitHub App is installed on
+the repository, Renovate (`.github/renovate.json`) opens one pull request per
+minor or patch engine release that bumps all four together, and two for a major:
+the ops and drift callers first, then the PR and unlock callers. The invariants
+check fails any other mix of releases. Two more
 workflows watch the self-hosted runners rather than the infrastructure:
 `runner-canary.yml` runs on a schedule from a GitHub-hosted runner and opens an
 issue when jobs sit queued longer than a healthy wait, and
