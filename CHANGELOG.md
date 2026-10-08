@@ -17,8 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `.github/renovate.json`: a Renovate regex manager on the engine pins. Each
   engine release opens one pull request that bumps the `uses:` ref in all four
   callers, majors included, with a note to read the release notes first. It
-  needs the Renovate GitHub App on the repository. Existing customer
-  repositories may copy the file.
+  needs the Renovate GitHub App on the repository. Not yet run against a real
+  repository: the proof is the sandbox onboarding rehearsal
+  (nrit-alz-platform-internal-docs#26). Existing customer repositories may copy
+  the file.
 - The repository invariants check fails a commit whose engine callers name
   different releases. The script is shared with nrit-alz-platform-skills.
   Existing customer repositories may copy the script.
@@ -46,7 +48,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   lose the `changeme` and `alerts@example.com` placeholders. A tree without
   `customer.hcl` no longer renders. Existing customer repositories need not
   act. To backport, write `live/customer.hcl` with the values they carry today
-  and port these files; every unit should then plan with no changes.
+  and port these files; every unit should then plan with no changes. The
+  reference repository has no `customer.hcl`, so the proof is the sandbox
+  onboarding rehearsal (nrit-alz-platform-internal-docs#26), the first stamp
+  with a bootstrap-written file.
 - `.github/CODEOWNERS` gives `.github/` and `projects.yml` to a platform team,
   matching the bootstrap ruleset's `require_code_owner_review`, which now
   defaults to true. Onboarding replaces the `@<org>/<platform-team>`
