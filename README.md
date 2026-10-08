@@ -68,7 +68,7 @@ with a `terragrunt.hcl`).
 ├── .mcp.json                    # MCP servers: Microsoft Learn, Terraform registry
 ├── .claude/                     # agent skills + what the tooling does (README)
 ├── .pre-commit-config.yaml      # commit hooks; .tflint.hcl and .checkov.yaml configure them
-├── .github/                     # caller and runner workflows, invariants script, CODEOWNERS, PR template, Renovate
+├── .github/                     # caller and runner workflows, invariants script, PR template, Renovate; CODEOWNERS from the bootstrap
 ├── policy/                      # conftest policies for the policy gate (ships one .example, none active)
 └── live/
     ├── root.hcl                 # backend + providers + shared locals contract
