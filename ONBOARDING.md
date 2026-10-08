@@ -15,9 +15,11 @@ request flow.
   A connectivity subscription too if the customer runs a hub; it is optional and
   can be added later
 - GitHub organization for the customer repository
-- A GitHub token with `repo` and `admin:org` scope in the organization that
-  receives the repository, for the operator only. The bootstrap creates the
-  approver team and the ruleset there; nothing is needed on the NRIT organization
+- The operator's bootstrap GitHub App, installed on the organization that
+  receives the repository, and its private key. The bootstrap authenticates as
+  it to create the repository, the approver team, and the ruleset there. One
+  App serves every customer of the operator; the bootstrap's
+  `scripts/create-github-app.sh -p bootstrap` creates it in one click
 - An MSP license and an entitlement for the customer's tenant and GitHub
   organization, for `/apply` (see Step 4)
 - A point of contact at the customer for identity and networking decisions
@@ -40,7 +42,8 @@ this whole tree, including the four caller workflows. The apply also creates:
   the client id is supplied) the `TFPR_CHECKS_APP_*` variable and secret pair,
 - the `TFPR_LICENSE` and `TFPR_ENTITLEMENT` repository variables (set by the
   bootstrap onboarding script),
-- `live/customer.hcl`, written once into the new repository (see Step 2),
+- `live/customer.hcl` and `.github/CODEOWNERS`, each written once into the new
+  repository (see Steps 2 and 5),
 - the `require-approved-pr-to-main` ruleset (the apply gate), with code owner
   review required by default,
 - the self-hosted runner (when `network_posture = self_hosted_private`).
@@ -178,14 +181,15 @@ reviews, this is the setting it means.
 
 ## Step 5: Set the code owners
 
-`.github/CODEOWNERS` gives `.github/` and `projects.yml` to a platform team:
-the engine callers, the gate hooks, and the invariants script that guards them.
-The bootstrap's ruleset requires code owner review by default
-(`require_code_owner_review`). Replace `@<org>/<platform-team>` with a team that
-exists in the customer's organization and has write access. Until then GitHub
-cannot resolve the owner and skips the line, so those paths need no owner
-review. Check the file on the repository's code page: GitHub flags an owner it
-cannot resolve there. A single-writer organization sets
+The bootstrap writes `.github/CODEOWNERS` once, when it creates the repository.
+It gives `.github/` and `projects.yml` to the apply approvers team the
+bootstrap creates (`<customer_name>-alz-apply-approvers`): the engine callers,
+the gate hooks, and the invariants script that guards them. The
+repository owns the file from then on, and a bootstrap re-run never overwrites
+it. The bootstrap's ruleset requires code owner review by default
+(`require_code_owner_review`). Check the file on the repository's code page:
+GitHub flags an owner it cannot resolve there, and skips that line, so the path
+would need no owner review. A single-writer organization sets
 `require_code_owner_review = false` in its tfvars, because nobody can approve
 their own pull request.
 
