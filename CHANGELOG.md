@@ -53,10 +53,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   onboarding rehearsal (nrit-alz-platform-internal-docs#26), the first stamp
   with a bootstrap-written file.
 - The template no longer ships `.github/CODEOWNERS`. The bootstrap writes it
-  once when it creates the repository, owning `.github/` and `projects.yml`
-  for the platform team, which matches its ruleset's
-  `require_code_owner_review` (default true). A shipped file would make that
-  write fail. Existing customer repositories keep their file. The proof is the
+  once when it creates the repository (nrit-alz-bootstrap#52), giving
+  `.github/` and `projects.yml` to its apply approvers team, which matches its
+  ruleset's `require_code_owner_review` (default true). A shipped file would
+  make that write fail. Existing customer repositories keep their file. The proof is the
   sandbox onboarding rehearsal (nrit-alz-platform-internal-docs#26).
 - `ONBOARDING.md` lists the operator's bootstrap GitHub App as the
   prerequisite instead of a `repo` and `admin:org` token.

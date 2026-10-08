@@ -182,8 +182,9 @@ reviews, this is the setting it means.
 ## Step 5: Set the code owners
 
 The bootstrap writes `.github/CODEOWNERS` once, when it creates the repository.
-It gives `.github/` and `projects.yml` to the platform team: the engine
-callers, the gate hooks, and the invariants script that guards them. The
+It gives `.github/` and `projects.yml` to the apply approvers team the
+bootstrap creates (`<customer_name>-alz-apply-approvers`): the engine callers,
+the gate hooks, and the invariants script that guards them. The
 repository owns the file from then on, and a bootstrap re-run never overwrites
 it. The bootstrap's ruleset requires code owner review by default
 (`require_code_owner_review`). Check the file on the repository's code page:
