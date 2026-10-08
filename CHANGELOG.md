@@ -27,6 +27,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine pin check allows the first half of a two-PR engine bump: the ops
+  and drift callers ahead of the PR and unlock callers. Every other mix still
+  fails, with an error that explains the order. Synced from
+  nrit-alz-platform-skills v1.7.0.
+
 - The engine pins move from `v8.1.0` to `v9.0.0` in all four callers
   (nrit-tf-pr-ops#350). The ops and drift callers drop the `engine_ref` input
   and the `ENGINE_APP_PRIVATE_KEY` secret: each job installs the engine runtime

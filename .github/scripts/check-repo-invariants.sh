@@ -83,14 +83,33 @@ EOF
 
 # The callers run the engine's workflow YAML and its runtime from the ref they
 # name, so callers on different engine releases dispatch work to each other
-# across a contract change.
-engine_refs=$(git ls-files -z '.github/workflows/*.yml' '.github/workflows/*.yaml' |
-  xargs -0 grep -hoE 'uses:[[:space:]]*[^[:space:]]+/tf-pr-ops/[^@[:space:]]+@[^[:space:]#]+' 2>/dev/null |
-  sed 's/.*@//' | sort -u)
-if [ "$(printf '%s' "$engine_refs" | grep -c .)" -gt 1 ]; then
-  fail "The engine callers in .github/workflows/ pin different engine refs:" \
-    "$(printf '%s\n' "$engine_refs" | sed 's/^/  /')" \
-    "  Every tf-pr-ops uses: ref must name the same release. Bump them together."
+# across a contract change. The one allowed split is the first half of a
+# two-PR bump: the ops and drift callers (reusable workflows) ahead of the PR
+# and unlock callers (the dispatch action), because a dispatched run uses the
+# ops caller on main.
+engine_refs_of() {
+  git ls-files -z '.github/workflows/*.yml' '.github/workflows/*.yaml' |
+    xargs -0 grep -hoE "uses:[[:space:]]*[^[:space:]]+/tf-pr-ops/\\.github/$1/[^@[:space:]]+@[^[:space:]#]+" 2>/dev/null |
+    sed 's/.*@//' | sort -u
+}
+workflow_refs=$(engine_refs_of workflows)
+action_refs=$(engine_refs_of actions)
+engine_pin_error=""
+if [ "$(printf '%s' "$workflow_refs" | grep -c .)" -gt 1 ]; then
+  engine_pin_error="the ops and drift callers differ"
+elif [ "$(printf '%s' "$action_refs" | grep -c .)" -gt 1 ]; then
+  engine_pin_error="the PR and unlock callers differ"
+elif [ -n "$workflow_refs" ] && [ -n "$action_refs" ] &&
+  [ "$workflow_refs" != "$action_refs" ] &&
+  [ "$(printf '%s\n%s\n' "$workflow_refs" "$action_refs" | sort -V | tail -n 1)" != "$workflow_refs" ]; then
+  engine_pin_error="the PR and unlock callers are ahead of the ops and drift callers"
+fi
+if [ -n "$engine_pin_error" ]; then
+  fail "The engine callers in .github/workflows/ pin conflicting releases: $engine_pin_error." \
+    "  ops and drift (reusable workflows): $(printf '%s' "$workflow_refs" | tr '\n' ' ')" \
+    "  PR and unlock (dispatch action):    $(printf '%s' "$action_refs" | tr '\n' ' ')" \
+    "  Bump all four together, or for a two-PR bump move the ops and drift" \
+    "  callers first and the PR and unlock callers in the next pull request."
 fi
 
 if [ -n "$missing_locks" ]; then
