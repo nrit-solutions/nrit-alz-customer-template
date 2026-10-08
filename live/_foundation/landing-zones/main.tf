@@ -1,7 +1,5 @@
-# parent_resource_id used to come from the authenticated session, so it could
-# not be wrong. It now comes from tenant.hcl, which falls back to a placeholder
-# when AZURE_TENANT_ID is unset, so fail the plan rather than parent the whole
-# hierarchy under a management group that does not exist.
+# parent_resource_id comes from customer.hcl, a hand-editable file, so fail the
+# plan rather than parent the whole hierarchy under a placeholder.
 data "azapi_client_config" "current" {
   lifecycle {
     precondition {
@@ -9,7 +7,7 @@ data "azapi_client_config" "current" {
         ["", "00000000-0000-0000-0000-000000000000"],
         local.context.tenant_root_id,
       )
-      error_message = "tenant_root_id is unset or still the placeholder. It defaults to tenant_id in live/tenant.hcl, so this usually means AZURE_TENANT_ID is not exported. Export AZURE_TENANT_ID, or set tenant_root_id in live/tenant.hcl to the customer's existing intermediate management group id."
+      error_message = "tenant_root_id in live/customer.hcl is empty or the all-zero placeholder. Set it to the management group the hierarchy goes under: the tenant id for the tenant root group, or the plain name of an existing intermediate management group."
     }
   }
 }

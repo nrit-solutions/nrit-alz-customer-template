@@ -6,7 +6,8 @@
 #
 # What lives here:
 #   - the remote state backend (Azure Storage, Entra ID auth, no account keys)
-#   - the locals every unit reads: tenant, subscription, location
+#   - the locals every unit reads: tenant, subscription, location, and the
+#     customer values from customer.hcl
 #   - the default provider block: azurerm + azapi + azuread, the set most
 #     units need.
 #     A unit needing a different set (the landing-zones unit uses alz + azapi;
@@ -18,18 +19,26 @@
 # AZURE_* and BACKEND_* Action variables the bootstrap set). Each get_env falls
 # back to a placeholder so the tree still generates and validates fully offline
 # (init -backend=false) with no Azure access.
+#
+# customer.hcl is written once by the bootstrap when it creates the repository,
+# and the repository owns it from then on. The template ships without it.
 
 locals {
+  customer_vars     = read_terragrunt_config(find_in_parent_folders("customer.hcl"))
   tenant_vars       = read_terragrunt_config(find_in_parent_folders("tenant.hcl"))
   subscription_vars = read_terragrunt_config(find_in_parent_folders("subscription.hcl"))
   region_vars       = read_terragrunt_config(find_in_parent_folders("region.hcl"))
 
   tenant_id       = local.tenant_vars.locals.tenant_id
-  tenant_root_id  = local.tenant_vars.locals.tenant_root_id
   subscription_id = local.subscription_vars.locals.subscription_id
   location        = local.region_vars.locals.location
   location_short  = local.region_vars.locals.location_short
   environment     = local.region_vars.locals.environment
+
+  # Changing it after the first apply moves the whole hierarchy: a migration, not an edit.
+  tenant_root_id          = local.customer_vars.locals.tenant_root_id
+  business_unit           = local.customer_vars.locals.business_unit
+  amba_action_group_email = local.customer_vars.locals.amba_action_group_email
 }
 
 # The hierarchy values, generated into every unit so main.tf can read them as
@@ -41,12 +50,14 @@ generate "context" {
   contents  = <<-EOF
     locals {
       context = {
-        tenant_id       = "${local.tenant_id}"
-        tenant_root_id  = "${local.tenant_root_id}"
-        subscription_id = "${local.subscription_id}"
-        location        = "${local.location}"
-        location_short  = "${local.location_short}"
-        environment     = "${local.environment}"
+        tenant_id               = "${local.tenant_id}"
+        tenant_root_id          = "${local.tenant_root_id}"
+        business_unit           = "${local.business_unit}"
+        amba_action_group_email = "${local.amba_action_group_email}"
+        subscription_id         = "${local.subscription_id}"
+        location                = "${local.location}"
+        location_short          = "${local.location_short}"
+        environment             = "${local.environment}"
       }
     }
   EOF
@@ -76,10 +87,8 @@ remote_state {
 
 # Default providers: azurerm + azapi + azuread, pinned to the unit's own
 # subscription and tenant. The two units that need the alz provider
-# (landing-zones, amba) declare their own generate "provider", which
-# shallow-merges over this one. That only works because each of them sets
-# merge_strategy = "deep" on its include; without it, two same-named generate
-# blocks are a hard error (see the note above).
+# (landing-zones, amba) declare their own generate "provider" and set
+# merge_strategy = "deep" on their include, so their block overrides this one.
 generate "provider" {
   path      = "providers.tf"
   if_exists = "overwrite_terragrunt"

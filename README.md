@@ -3,20 +3,22 @@
 A GitHub template repository. The bootstrap generates a new customer
 infrastructure-live repository from it, one per customer. Each generated
 repository holds the Terragrunt configuration for a Cloud Adoption Framework
-landing zone under `live/`, and it is operated by the NRIT comment-ops engine
-consumed as a reusable workflow from `nrit-solutions/tf-pr-ops`: plan and apply run from pull
-request comments, and a daily job reports drift.
+landing zone under `live/`, and it is operated by the tf-pr-ops comment-ops
+engine, consumed as a reusable workflow from `nrit-solutions/tf-pr-ops`: plan and
+apply run from pull request comments, and a daily job reports drift.
 
 This is the only repository that ends up in customer hands. The comment-ops
 engine (`nrit-tf-pr-ops`) and the bootstrap that creates the backend, identities,
 and runner (`nrit-alz-bootstrap`) stay separate repositories under NRIT control.
 A generated repository is created by the bootstrap and consumes the engine at a
-pinned version through the public entrypoint repository `nrit-solutions/tf-pr-ops`;
-the private engine core behind it is reached with an engine App key NRIT issues
-per organization. That is its only dependency on NRIT. Every
-unit, foundation and workload alike, is plain Terraform on public Azure Verified
-Modules, and the custom policy library is vendored under
-`live/_foundation/landing-zones/lib/`.
+pinned version from the public repository `nrit-solutions/tf-pr-ops`. Each job
+installs the engine runtime of that release from there, so no engine credential
+is needed. `/apply` needs a license: the repository variables `TFPR_LICENSE` and
+`TFPR_ENTITLEMENT`, which the bootstrap onboarding script sets. Without them
+plan, drift, and `/unlock` still work and `/apply` is refused; see
+[License](https://docs.nrit.cloud/operations/license/). Every unit, foundation
+and workload alike, is plain Terraform on public Azure Verified Modules, and the
+custom policy library is vendored under `live/_foundation/landing-zones/lib/`.
 
 ## How changes are made
 
@@ -37,8 +39,11 @@ A change is a pull request:
 The engine is not stored here. Four caller workflows in `.github/workflows/`
 (`tf-pr-ops-pr.yml`, `tf-pr-ops-unlock.yml`, `tf-pr-ops.yml`, `drift.yml`) call
 the dispatch action and the reusable workflows in `nrit-solutions/tf-pr-ops` at
-one pinned tag; the two reusable-workflow callers also pass it as `engine_ref`.
-Read the current version from those files rather than from prose. Two more
+one pinned tag. The `uses:` ref is the whole pin. Read the current version from
+those files rather than from prose. Renovate (`.github/renovate.json`) opens one
+pull request per engine release that bumps all four together, once the Renovate
+GitHub App is installed on the repository, and the invariants check fails a
+commit whose callers name different releases. Two more
 workflows watch the self-hosted runners rather than the infrastructure:
 `runner-canary.yml` runs on a schedule from a GitHub-hosted runner and opens an
 issue when jobs sit queued longer than a healthy wait, and
@@ -63,11 +68,12 @@ with a `terragrunt.hcl`).
 ├── .mcp.json                    # MCP servers: Microsoft Learn, Terraform registry
 ├── .claude/                     # agent skills + what the tooling does (README)
 ├── .pre-commit-config.yaml      # commit hooks; .tflint.hcl and .checkov.yaml configure them
-├── .github/                     # caller and runner workflows, invariants script, CODEOWNERS, PR template
+├── .github/                     # caller and runner workflows, invariants script, CODEOWNERS, PR template, Renovate
 ├── policy/                      # conftest policies for the policy gate (ships one .example, none active)
 └── live/
     ├── root.hcl                 # backend + providers + shared locals contract
-    ├── tenant.hcl               # tenant id + root MG id (must sit at live/ root)
+    ├── tenant.hcl               # tenant id (must sit at live/ root)
+    ├── customer.hcl             # root MG id, region, business unit, AMBA inbox; written by the bootstrap
     ├── _foundation/             # tenant-wide governance, deployed first
     │   ├── management-resources/#   Log Analytics, DCRs, monitoring identity
     │   ├── landing-zones/       #   MG hierarchy + base policy + subscription placement
@@ -120,7 +126,7 @@ linters included, so local runs and CI use identical versions.
 On commit the hooks format HCL and Terraform, run tflint and checkov over the
 changed units, and check the repository invariants (no generated `backend.tf`,
 `providers.tf`, or `context.tf` committed, no state, no stack leaves, no
-Terraform outside a unit). The `pre-commit` job of `tf-pr-ops-pr.yml` runs the
+Terraform outside a unit, every engine caller on the same release). The `pre-commit` job of `tf-pr-ops-pr.yml` runs the
 same hooks on the files every pull request changes and gates the dispatch, so a
 commit made with `--no-verify` is caught before any plan runs. A changelog
 reminder rides along in that job and warns, without failing, when a PR changes

@@ -81,6 +81,18 @@ done <<EOF
 $(git ls-files -z 'live/*.tf' | tr '\0' '\n' | sed 's|/[^/]*$||' | sort -u)
 EOF
 
+# The callers run the engine's workflow YAML and its runtime from the ref they
+# name, so callers on different engine releases dispatch work to each other
+# across a contract change.
+engine_refs=$(git ls-files -z '.github/workflows/*.yml' '.github/workflows/*.yaml' |
+  xargs -0 grep -hoE 'uses:[[:space:]]*[^[:space:]]+/tf-pr-ops/[^@[:space:]]+@[^[:space:]#]+' 2>/dev/null |
+  sed 's/.*@//' | sort -u)
+if [ "$(printf '%s' "$engine_refs" | grep -c .)" -gt 1 ]; then
+  fail "The engine callers in .github/workflows/ pin different engine refs:" \
+    "$(printf '%s\n' "$engine_refs" | sed 's/^/  /')" \
+    "  Every tf-pr-ops uses: ref must name the same release. Bump them together."
+fi
+
 if [ -n "$missing_locks" ]; then
   warn "warning: no .terraform.lock.hcl in:"
   for d in $missing_locks; do warn "  $d"; done

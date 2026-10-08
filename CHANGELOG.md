@@ -12,7 +12,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- `.github/renovate.json`: a Renovate regex manager on the engine pins. Each
+  engine release opens one pull request that bumps the `uses:` ref in all four
+  callers, majors included, with a note to read the release notes first. It
+  needs the Renovate GitHub App on the repository. Not yet run against a real
+  repository: the proof is the sandbox onboarding rehearsal
+  (nrit-alz-platform-internal-docs#26). Existing customer repositories may copy
+  the file.
+- The repository invariants check fails a commit whose engine callers name
+  different releases. The script is shared with nrit-alz-platform-skills.
+  Existing customer repositories may copy the script.
+
 ### Changed
+
+- The engine pins move from `v8.1.0` to `v9.0.0` in all four callers
+  (nrit-tf-pr-ops#350). The ops and drift callers drop the `engine_ref` input
+  and the `ENGINE_APP_PRIVATE_KEY` secret: each job installs the engine runtime
+  of the release its `uses:` ref names, and no engine App exists any more.
+  `/apply` needs the repository variables `TFPR_LICENSE` and
+  `TFPR_ENTITLEMENT`, which the bootstrap onboarding script sets; without them
+  plan, drift and `/unlock` still work and `/apply` is refused. Backport
+  required for existing repositories, in two pull requests because dispatched
+  runs use the ops caller on main: first the ops and drift callers, then the PR
+  and unlock callers. Set the two license variables before the first `/apply`
+  on v9.
+- `live/customer.hcl` replaces the hand-edited customer values (#84). The
+  bootstrap writes it once when it creates the repository, with
+  `tenant_root_id`, `location`, `location_short`, `business_unit` and
+  `amba_action_group_email`, and the repository owns it from then on. The
+  template ships without it. `root.hcl` reads it and adds `business_unit` and
+  `amba_action_group_email` to `local.context`; `_foundation/region.hcl` takes
+  its region from it; `tenant.hcl` keeps only `tenant_id`; the foundation units
+  lose the `changeme` and `alerts@example.com` placeholders. A tree without
+  `customer.hcl` no longer renders. Existing customer repositories need not
+  act. To backport, write `live/customer.hcl` with the values they carry today
+  and port these files; every unit should then plan with no changes. The
+  reference repository has no `customer.hcl`, so the proof is the sandbox
+  onboarding rehearsal (nrit-alz-platform-internal-docs#26), the first stamp
+  with a bootstrap-written file.
+- `.github/CODEOWNERS` gives `.github/` and `projects.yml` to a platform team,
+  matching the bootstrap ruleset's `require_code_owner_review`, which now
+  defaults to true. Onboarding replaces the `@<org>/<platform-team>`
+  placeholder. Existing customer repositories may backport.
+- `ONBOARDING.md` names the bootstrap-managed `TFPR_ALLOW_UNREVIEWED_APPLY`
+  (it said `TF_PR_OPS_ALLOW_UNREVIEWED_APPLY`, which the engine does not read)
+  and the bootstrap-managed Infracost key.
 
 - The default provider set that `live/root.hcl` generates now includes
   `hashicorp/azuread` (`~> 3.10`), configured with the unit's tenant, next to

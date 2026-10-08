@@ -1,6 +1,6 @@
 locals {
   tags = {
-    businessunit    = "changeme"
+    businessunit    = local.context.business_unit
     env             = local.context.environment
     costcenter      = "platform"
     app             = "alz-platform-foundation"

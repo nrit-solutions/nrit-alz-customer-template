@@ -1,0 +1,30 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["custom.regex"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Engine pins: the tf-pr-ops uses: ref in every caller workflow",
+      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      "matchStrings": [
+        "uses:\\s*(?<depName>[^\\s/]+/tf-pr-ops)/[^@\\s]+@(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-tags"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "One pull request per engine release, covering all four callers",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["/\\/tf-pr-ops$/"],
+      "groupName": "tf-pr-ops engine",
+      "separateMajorMinor": false,
+      "commitMessageTopic": "the tf-pr-ops engine",
+      "labels": ["engine-bump"],
+      "prBodyNotes": [
+        "Read the engine release notes before merging. A major release can need a caller edit beyond the version bump."
+      ]
+    }
+  ]
+}
