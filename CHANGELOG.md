@@ -23,6 +23,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   unit's `.terraform.lock.hcl` for both platforms; the only lock change is
   the added azuread entry.
 
+- The engine pins move from `v8.0.1` to `v8.1.0` in all four callers
+  (nrit-tf-pr-ops#360). No caller workflow change. A `/plan -p` or `/apply -p`
+  run now decides the merge gate from every impacted unit's newest row, so
+  applying unit by unit turns it green. Existing customer repositories may
+  backport by moving the four pins.
+
 - The engine pins move from `v8.0.0` to `v8.0.1` in all four callers
   (nrit-tf-pr-ops#357). No caller workflow change. The merge gate opens in
   progress with the command and unit count instead of "Waiting for plan", red
