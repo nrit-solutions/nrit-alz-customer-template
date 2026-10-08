@@ -378,7 +378,7 @@ deploys to, and `gh` must be the account that should be acting here.
 | What | Pinned in | Rule |
 | --- | --- | --- |
 | Terraform, Terragrunt | `mise.toml` | The engine auto-detects it. No workflow edit needed |
-| The engine | the four caller files in `.github/workflows/` | Every `uses:` ref at the same tag; in `tf-pr-ops.yml` and `drift.yml` the `engine_ref` input must match it |
+| The engine | the four caller files in `.github/workflows/` | Every `uses:` ref at the same tag. The `uses:` ref is the only engine pin |
 | AVM modules | each unit's `main.tf` | Exact `version` |
 | ALZ and AMBA libraries | `library_references` in the two foundation `terragrunt.hcl` files | Keep the `platform/alz` ref identical in both |
 | Providers | the `generate "provider"` blocks, then each unit's `.terraform.lock.hcl` | `~>` constraints in the generate block; the lock file is what actually pins |
@@ -410,9 +410,10 @@ Onboarding generates them once, against that customer's own tree. Until then the
 invariants check warns on every run.
 
 Engine tags are immutable `vX.Y.Z`. There is no moving `v1` tag, so an upgrade is
-always a commit here. Bump the `uses:` ref and `engine_ref` together: `engine_ref`
-picks the scripts and `uses:` picks the workflow YAML, and a skew runs new YAML
-against old scripts.
+always a commit here. Bump the `uses:` ref in all four callers in one commit.
+The `uses:` ref is the whole pin: each job installs the engine runtime (the
+`tfpr` binary and the gate scripts) from the release that ref names. There is no
+`engine_ref` input any more.
 
 Move one pin per PR so the plan diff stays readable. After bumping the
 `platform/alz` ref, re-sync
