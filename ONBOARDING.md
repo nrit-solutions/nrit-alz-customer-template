@@ -111,10 +111,12 @@ Three kinds of version are pinned in this repository:
   workflows and the dispatch action published in `nrit-solutions/tf-pr-ops`,
   pinned at an exact version. There is no separate pipeline version, and there
   is no moving tag: an upgrade is always a commit. To move to a new engine
-  release, bump the `uses:` ref in every caller file. Install the Renovate
-  GitHub App on the repository and `.github/renovate.json` opens that pull
-  request for each engine release, all four callers in one. The invariants
-  check fails a commit whose callers name different releases.
+  release, bump the `uses:` ref in every caller file. A major release goes in
+  two pull requests, the ops and drift callers first, because a dispatched run
+  uses the ops caller on main. Install the Renovate GitHub App on the
+  repository and `.github/renovate.json` opens those pull requests for each
+  engine release. The invariants check fails any mix of releases other than
+  the ops and drift callers ahead of the PR and unlock callers.
 - **Providers.** Generate a `.terraform.lock.hcl` for every unit and commit them:
 
   ```sh
