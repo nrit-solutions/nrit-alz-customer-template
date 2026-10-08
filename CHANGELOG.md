@@ -60,6 +60,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   sandbox onboarding rehearsal (nrit-alz-platform-internal-docs#26).
 - `ONBOARDING.md` lists the operator's bootstrap GitHub App as the
   prerequisite instead of a `repo` and `admin:org` token.
+- `AGENTS.md` is synced from nrit-alz-platform-skills v1.6.1: it names
+  `TFPR_ALLOW_UNREVIEWED_APPLY`, the variable the engine reads. Existing
+  customer repositories may copy it.
 - `ONBOARDING.md` names the bootstrap-managed `TFPR_ALLOW_UNREVIEWED_APPLY`
   (it said `TF_PR_OPS_ALLOW_UNREVIEWED_APPLY`, which the engine does not read)
   and the bootstrap-managed Infracost key.

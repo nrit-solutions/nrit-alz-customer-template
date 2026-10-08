@@ -160,10 +160,11 @@ force-releases.
 
 **Approvals.** `/apply` is gated on this repository's required reviews, read from
 GitHub's review decision. A repository that deliberately requires no approvals
-opts back in with the `TF_PR_OPS_ALLOW_UNREVIEWED_APPLY` variable; that is only
-appropriate for a single-writer repository, where the plan review is the gate.
-Check the repository's ruleset and that variable to know which applies here, and
-never set it to work around a review that is failing.
+opts back in with the `TFPR_ALLOW_UNREVIEWED_APPLY` variable, which the
+bootstrap sets from the approval settings; that is only appropriate for a
+single-writer repository, where the plan review is the gate. Check the
+repository's ruleset and that variable to know which applies here, and never set
+it to work around a review that is failing.
 
 If this repository is itself a GitHub template, the engine skips it: its own pull
 requests run no plans, and review is by eye.
