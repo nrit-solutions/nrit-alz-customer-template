@@ -12,6 +12,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- The engine pin check allows the first half of a two-PR engine bump: the ops
+  and drift callers ahead of the PR and unlock callers. Every other mix still
+  fails, with an error that explains the order. Synced from
+  nrit-alz-platform-skills v1.7.0.
+
 ### Added
 
 - `.github/renovate.json`: a Renovate regex manager on the engine pins. Each
