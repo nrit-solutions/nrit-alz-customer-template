@@ -1,5 +1,13 @@
-# Code owners for this infrastructure-live repository. Uncomment and point at
-# a team that exists in your organization. Owner review is enforced only when
-# the bootstrap sets require_code_owner_review = true in its ruleset.
+# Code owners for this infrastructure-live repository. The bootstrap's ruleset
+# requires code owner review by default (require_code_owner_review), so a pull
+# request touching a path below needs an approval from its owner.
 #
-# *       @<org>/<platform-team>
+# Replace @<org>/<platform-team> with a team that exists in this organization
+# and has write access. GitHub skips a line whose owner it cannot resolve, so
+# until then these paths need no owner review.
+
+# The engine callers, runner workflows, invariants script, and this file.
+/.github/       @<org>/<platform-team>
+
+# Engine discovery and the gate hooks.
+/projects.yml   @<org>/<platform-team>

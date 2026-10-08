@@ -4,13 +4,13 @@ locals {
 
   amba_resource_group_name                 = "rg-amba-${local.context.location_short}"
   amba_user_assigned_managed_identity_name = "uami-amba-${local.context.location_short}"
-  amba_action_group_email                  = "alerts@example.com"
+  amba_action_group_email                  = local.context.amba_action_group_email
 
   # AMBA's remediation re-creates this RG with the ALZMonitorResourceGroupTags
   # policy parameter, replacing its tag set, so Terraform and the policy must
   # carry the same tags or they overwrite each other on every cycle.
   amba_resource_group_tags = {
-    businessunit        = "changeme"
+    businessunit        = local.context.business_unit
     env                 = local.context.environment
     costcenter          = "platform"
     app                 = "alz-platform-foundation"

@@ -18,9 +18,8 @@ request flow.
 - A GitHub token with `repo` and `admin:org` scope in the organization that
   receives the repository, for the operator only. The bootstrap creates the
   approver team and the ruleset there; nothing is needed on the NRIT organization
-- The engine App credentials for your organization (client id and private key).
-  Inside nrit-solutions this is the `nrit-engine-reader` App; any other
-  organization gets its own App from NRIT
+- An MSP license and an entitlement for the customer's tenant and GitHub
+  organization, for `/apply` (see Step 4)
 - A point of contact at the customer for identity and networking decisions
 
 ## Step 1: Run the bootstrap
@@ -32,15 +31,18 @@ ruleset, and the self-hosted runner are created by the Terraform bootstrap in
 The bootstrap generates the customer repository *from this template* (its
 `github.tf` sets `template { owner, repository }` pointing at
 `nrit-solutions/nrit-alz-customer-template`), so the new repository starts with
-this whole tree, including the two caller workflows. The apply also creates:
+this whole tree, including the four caller workflows. The apply also creates:
 
 - the state storage account and container (Entra ID auth only, firewalled),
 - the plan and apply identities with federated credentials,
 - the gated `plan` and `apply` GitHub environments,
 - the `AZURE_*` and `BACKEND_*` repository variables, `RUNNER_LABEL`, and (when
-  the client ids are supplied) the `ENGINE_APP_*` and `TFPR_CHECKS_APP_*`
-  variable and secret pairs,
-- the `require-approved-pr-to-main` ruleset (the apply gate),
+  the client id is supplied) the `TFPR_CHECKS_APP_*` variable and secret pair,
+- the `TFPR_LICENSE` and `TFPR_ENTITLEMENT` repository variables (set by the
+  bootstrap onboarding script),
+- `live/customer.hcl`, written once into the new repository (see Step 2),
+- the `require-approved-pr-to-main` ruleset (the apply gate), with code owner
+  review required by default,
 - the self-hosted runner (when `network_posture = self_hosted_private`).
 
 ## Step 2: Set the customer-specific values
@@ -50,7 +52,25 @@ bootstrap set, so the pipeline needs no edits for them. The placeholders in
 `live/tenant.hcl` and `live/_foundation/subscription.hcl` are only used for local
 runs.
 
-The values to set for a new customer:
+The bootstrap writes `live/customer.hcl` once, from the customer's tfvars, and
+the repository owns it from then on: edit it here, and a bootstrap re-run never
+overwrites it. Check its values before the first plan:
+
+- `tenant_root_id`: the management group the ALZ hierarchy is created under, as
+  the plain name. The tenant root group's name is the tenant id, which is what
+  most customers want. For an existing intermediate management group, use its
+  name; the group must already exist. Get it right before the first apply:
+  changing it later moves the whole hierarchy and is destructive.
+- `location` and `location_short`: the foundation's primary region.
+  `live/_foundation/region.hcl` reads them, `root.hcl` generates a `context.tf`
+  into each unit from that, and the units read `local.context`, so this is the
+  only place the foundation region lives.
+- `business_unit`: the `businessunit` tag on the platform resources.
+- `amba_action_group_email`: a real monitored inbox. Azure Monitor Baseline
+  Alerts is mandatory in this baseline and every AMBA alert routes to this
+  address.
+
+The other values to set for a new customer:
 
 - `live/_foundation/landing-zones/main.tf`: `architecture_name` defaults to `nrit`,
   the only architecture the vendored library defines
@@ -62,25 +82,11 @@ The values to set for a new customer:
   subscription id when the customer has one; leave it empty when they do not and
   the foundation plans and applies without it. Placement is not permanent: set the
   id later and re-apply to move the subscription under the Connectivity MG.
-- `live/_foundation/management-resources/main.tf`: set the `businessunit` tag
-  (currently `changeme`) to the customer's short name.
-- `live/_foundation/amba/main.tf`: replace the `amba_action_group_email`
-  placeholder (`alerts@example.com`) with a real monitored inbox. Azure Monitor
-  Baseline Alerts is mandatory in the NRIT baseline and every AMBA alert routes to
-  this address.
-- `live/_foundation/region.hcl`: region defaults to `westeurope`; change only if
-  the customer specifies otherwise. Set `location` and `location_short` here and
-  nowhere else. `root.hcl` generates a `context.tf` into each unit from this file,
-  and the units read `local.context`, so this is the only place the region lives.
-  The same file sets `environment`, which defaults to `prod` and becomes the `env`
-  tag through `live/_foundation/management-resources/main.tf`. The tag policy
-  allows `prod`, `staging`, and `dev` only, so a foundation that is not the
-  customer's production estate must change it to one of those.
-- `live/tenant.hcl`: `tenant_root_id` is the management group the ALZ hierarchy is
-  created under. It defaults to the tenant root group, which is what most
-  customers want. Set it to an existing intermediate management group id when the
-  customer already has one, and do it before the first apply: changing it later
-  moves the whole hierarchy and is destructive.
+- `live/_foundation/region.hcl`: sets `environment`, which defaults to `prod`
+  and becomes the `env` tag through
+  `live/_foundation/management-resources/main.tf`. The tag policy allows `prod`,
+  `staging`, and `dev` only, so a foundation that is not the customer's
+  production estate must change it to one of those.
 
 The backend names are never edited here. They come from the `BACKEND_*` variables
 the bootstrap set. All subscriptions share that one state account (in the
@@ -100,9 +106,12 @@ Three kinds of version are pinned in this repository:
   [Versions and upgrades](https://docs.nrit.cloud/reference/versions/).
 - **The engine.** The four workflows in `.github/workflows/` call the reusable
   workflows and the dispatch action published in `nrit-solutions/tf-pr-ops`,
-  pinned at an exact version with a matching `engine_ref`. There is no separate pipeline version, and there is no moving tag:
-  an upgrade is always a commit. To move to a new engine release, bump both pins
-  together (the `uses:` ref and `engine_ref`) in each caller file.
+  pinned at an exact version. There is no separate pipeline version, and there
+  is no moving tag: an upgrade is always a commit. To move to a new engine
+  release, bump the `uses:` ref in every caller file. Install the Renovate
+  GitHub App on the repository and `.github/renovate.json` opens that pull
+  request for each engine release, all four callers in one. The invariants
+  check fails a commit whose callers name different releases.
 - **Providers.** Generate a `.terraform.lock.hcl` for every unit and commit them:
 
   ```sh
@@ -129,23 +138,23 @@ Three kinds of version are pinned in this repository:
   invariants check warns about it, without blocking, until the files exist. See
   `AGENTS.md` for how to move a provider version afterwards.
 
-## Step 4: Grant access, set the cost gate, and require the merge gate
+## Step 4: Check the license, set the cost gate, and require the merge gate
 
-The caller workflows reference the public entrypoint repository
-`nrit-solutions/tf-pr-ops`, which any organization can call. The engine core
-they run is private: every job checks it out at the pinned version with a
-GitHub App token minted from `ENGINE_APP_CLIENT_ID` (variable) and
-`ENGINE_APP_PRIVATE_KEY` (secret). The App is issued by NRIT per organization
-and installed on the NRIT organization, so nothing is installed on yours.
-Confirm both values are set (the bootstrap sets them when a client id is
-supplied); without them the first pull request fails at the dispatch step with a
-message naming the missing variable.
+The caller workflows use the reusable workflows in the public
+`nrit-solutions/tf-pr-ops` repository, and each job installs the engine runtime
+of the pinned release from there. No engine credential is needed.
 
-Set the cost gate: add the `INFRACOST_API_KEY` secret. It is the only part the
-bootstrap does not set. The bootstrap already sets the `TFPR_EXTRA_TOOLS`
-variable and its value includes `infracost` (`infracost` on a self-hosted runner,
-whose image already carries conftest and checkov; `conftest checkov infracost` on
-GitHub-hosted). Check the variable rather than editing it blindly.
+`/apply` needs a license. The bootstrap onboarding script sets the repository
+variables `TFPR_LICENSE` and `TFPR_ENTITLEMENT`. Confirm both are set and that
+`AZURE_TENANT_ID` holds the tenant the entitlement is bound to. Without them
+plan, drift, and `/unlock` still work and `/apply` is refused. See
+[License](https://docs.nrit.cloud/operations/license/) for what each message
+means and how to fix it.
+
+Set the cost gate. The bootstrap writes the `INFRACOST_API_KEY` secret and adds
+`infracost` to `TFPR_EXTRA_TOOLS` when its `infracost_api_key` input is set.
+Without a key, infracost is not installed and the cost section of the plan
+comment is skipped. Check the variable rather than editing it blindly.
 
 Make `tf-pr-ops / merge-gate` a required status check on the main branch.
 The bootstrap's `require-approved-pr-to-main` ruleset takes the check context from
@@ -161,18 +170,24 @@ no review decision at all, which the engine refuses rather than treats as consen
 an empty decision is indistinguishable from a ruleset that was removed, so
 allowing it would let the apply gate disappear with no signal. A single-writer
 organization cannot self-approve on GitHub and so sets the count to 0
-deliberately; it must then set the repository variable
-`TF_PR_OPS_ALLOW_UNREVIEWED_APPLY` to `true` to allow `/apply`. Leave that
-variable unset everywhere else. If `/apply` is refused with a message about the
-repository requiring no reviews, this is the setting it means.
+deliberately. The engine then applies only when the repository variable
+`TFPR_ALLOW_UNREVIEWED_APPLY` is `true`. The bootstrap sets it when the count is
+0 or the ruleset is turned off, and removes it otherwise, so do not set it by
+hand. If `/apply` is refused with a message about the repository requiring no
+reviews, this is the setting it means.
 
 ## Step 5: Set the code owners
 
-`.github/CODEOWNERS` ships as a commented example. Point it at a team that
-exists in the customer's organization, or delete the file if the customer wants
-no code owners. Code owners are not enforced today: the bootstrap sets
-`require_code_owner_review = false` in its `github.tf`. Turn that on in the
-customer's tfvars if the customer wants owner review required before merge.
+`.github/CODEOWNERS` gives `.github/` and `projects.yml` to a platform team:
+the engine callers, the gate hooks, and the invariants script that guards them.
+The bootstrap's ruleset requires code owner review by default
+(`require_code_owner_review`). Replace `@<org>/<platform-team>` with a team that
+exists in the customer's organization and has write access. Until then GitHub
+cannot resolve the owner and skips the line, so those paths need no owner
+review. Check the file on the repository's code page: GitHub flags an owner it
+cannot resolve there. A single-writer organization sets
+`require_code_owner_review = false` in its tfvars, because nobody can approve
+their own pull request.
 
 `LICENSE` is Apache-2.0, the license the template is published under. It covers
 this repository's files only; the engine core and the service around it are
@@ -181,7 +196,7 @@ governed by the agreement with NRIT, not by this file.
 ## Step 6: First plan
 
 Open a pull request with a trivial change (for example a comment in
-`live/tenant.hcl`) to trigger the plan. Review the output posted on the PR. To plan
+`live/customer.hcl`) to trigger the plan. Review the output posted on the PR. To plan
 the foundation, open a PR touching the `_foundation/` units.
 
 ## Step 7: First apply

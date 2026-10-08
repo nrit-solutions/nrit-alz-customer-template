@@ -5,8 +5,10 @@ infrastructure-live convention. Everything Terragrunt acts on lives here.
 
 `root.hcl` (at the root of this folder) sets the remote state backend and exposes
 the shared locals; each unit includes it and generates its own `backend.tf` and
-providers. `tenant.hcl` sits alongside `root.hcl` so
-`find_in_parent_folders("tenant.hcl")` resolves from every scope below it. The
+providers. `tenant.hcl` and `customer.hcl` sit alongside `root.hcl` so
+`find_in_parent_folders` resolves them from every scope below it. The bootstrap
+writes `customer.hcl` once, when it creates the repository; edit it here after
+that. The
 folder tree mirrors the CAF management group hierarchy, using management group IDs
 as folder names:
 
