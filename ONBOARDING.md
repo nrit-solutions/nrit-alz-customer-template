@@ -1,8 +1,8 @@
 # Onboarding checklist
 
 This document walks through standing up a new customer landing zone from this
-template. Steps 1 to 5 are run once by the operator (NRIT, or the MSP running
-the platform in its own GitHub organization); the rest are the normal pull
+template. Steps 1 to 5 are run once by the operator (the team running the
+platform from its own GitHub organization); the rest are the normal pull
 request flow.
 
 ## Prerequisites
@@ -101,7 +101,7 @@ only the deploy target, not the state location.
 Three kinds of version are pinned in this repository:
 
 - **Library and AVM versions.** The `landing-zones` unit reads the upstream ALZ
-  library at a pinned `ref` plus the NRIT library vendored under
+  library at a pinned `ref` plus the platform policy library vendored under
   `live/_foundation/landing-zones/lib/` (a local path, so it carries no `ref`).
   The `amba` unit reads the upstream ALZ and AMBA libraries, both at pinned refs.
   Keep the `platform/alz` ref the same in both units. Pin AVM module versions with
@@ -198,8 +198,9 @@ would need no owner review. A single-writer organization sets
 their own pull request.
 
 `LICENSE` is Apache-2.0, the license the template is published under. It covers
-this repository's files only; the engine core and the service around it are
-governed by the agreement with NRIT, not by this file.
+this repository's files only. The engine and its `/apply` license are covered
+by separate terms, not by this file; see
+[License](https://docs.nrit.cloud/operations/license/).
 
 ## Step 6: First plan
 
@@ -224,5 +225,7 @@ this repository. If a customer needs a fully self-contained repository (no
 external workflow reference), vendor the engine instead: copy the private core's
 `.github/workflows/`, `.github/actions/`, `scripts/`, and Go sources in at a tag,
 and the `post_plan` hooks keep working because `$TFPR_ENGINE_DIR` defaults to the
-workspace in vendored mode. This needs read access to the core, which NRIT grants
-per agreement; the core README carries the vendored-mode contract.
+workspace in vendored mode. This needs read access to the engine core, which the
+operator arranges; see
+[Vendored mode, the escape hatch](https://docs.nrit.cloud/setup/pr-ops-engine/#vendored-mode-the-escape-hatch)
+for the contract.

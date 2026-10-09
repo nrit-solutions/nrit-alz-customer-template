@@ -8,9 +8,8 @@ engine, consumed as a reusable workflow from `nrit-solutions/tf-pr-ops`: plan an
 apply run from pull request comments, and a daily job reports drift.
 
 This is the only repository that ends up in customer hands. The comment-ops
-engine (`nrit-tf-pr-ops`) and the bootstrap that creates the backend, identities,
-and runner (`nrit-alz-bootstrap`) stay separate repositories under NRIT control.
-A generated repository is created by the bootstrap and consumes the engine at a
+engine and the bootstrap that creates the backend, identities, and runner are
+separate repositories that stay with the platform operator. A generated repository is created by the bootstrap and consumes the engine at a
 pinned version from the public repository `nrit-solutions/tf-pr-ops`. Each job
 installs the engine runtime of that release from there, so no engine credential
 is needed. `/apply` needs a license: the repository variables `TFPR_LICENSE` and
@@ -97,7 +96,7 @@ uses.
 The `_foundation/` units are deployed first (the underscore sorts them to the top)
 and apply in dependency order: `management-resources`, then `landing-zones`, then
 `amba`. They use public Azure Verified Modules directly. The `landing-zones` unit reads the
-upstream ALZ library at a pinned ref plus the NRIT library vendored under its
+upstream ALZ library at a pinned ref plus the platform policy library vendored under its
 `lib/`; `amba` reads the upstream ALZ and AMBA libraries at pinned refs. See
 [The foundation units](https://docs.nrit.cloud/anatomy/foundation-units/) for the
 shape and the multi-region decision, and

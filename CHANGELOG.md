@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `README.md`, `ONBOARDING.md`, `.claude/skills/README.md`, the `local`
+  management group README, and a `landing-zones` comment no longer name the
+  platform vendor (#92). The license note and the vendoring escape hatch link
+  the docs site instead. Identifiers stay: the `nrit` architecture name, the
+  `uses:` refs, and repository names. Docs only; existing customer
+  repositories may copy the files over, no backport needed.
 - The four engine callers move to tf-pr-ops v9.1.0: exit and temporary
   entitlements in `TFPR_ENTITLEMENT` (nrit-tf-pr-ops#380). No caller change
   beyond the pin. Existing customer repositories take it through their
