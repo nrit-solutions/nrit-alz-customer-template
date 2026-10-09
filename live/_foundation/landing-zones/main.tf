@@ -156,7 +156,7 @@ locals {
   # ---------------------------------------------------------------------------
   # Recommended production hardening (reference, commented out).
   #
-  # NRIT's recommended settings to move a production landing zone from the soft
+  # The platform's recommended settings to move a production landing zone from the soft
   # AVM default posture to enforced. Do NOT enable everything at once: follow the
   # safe-deployment approach (platform docs: Azure Policy > Enforcement strategy).
   # Enable a wave scoped to sandbox or one region first with resource_selectors,

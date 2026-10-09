@@ -10,7 +10,7 @@ executed by CI.
 
 | Skill | Source | License | What it covers |
 | --- | --- | --- | --- |
-| `terragrunt` | NRIT Solutions | Proprietary, provided with this repository | Terragrunt 1.0: the CLI and its deprecations, HCL blocks, built-in functions, Stacks, best practices, an Azure/ALZ layer, and ready-to-copy templates for `root.hcl`, the hierarchy files, and a unit |
+| `terragrunt` | Platform operator | Proprietary, provided with this repository | Terragrunt 1.0: the CLI and its deprecations, HCL blocks, built-in functions, Stacks, best practices, an Azure/ALZ layer, and ready-to-copy templates for `root.hcl`, the hierarchy files, and a unit |
 | `terraform-style-guide` | [hashicorp/agent-skills](https://github.com/hashicorp/agent-skills) | MPL-2.0, see `terraform-style-guide/LICENSE` | HashiCorp's official Terraform style conventions for writing and reviewing HCL |
 
 ## How these relate to AGENTS.md
@@ -28,8 +28,8 @@ agent to read `AGENTS.md` before applying any default from it. If a skill and
 
 Both are copies. Nothing updates them automatically.
 
-- `terragrunt` comes from the NRIT platform skills repository. Ask NRIT for the
-  current version.
+- `terragrunt` comes from the platform skills repository. Ask the platform
+  operator for the current version.
 - `terraform-style-guide` comes from HashiCorp and can be refreshed with
   `npx skills add hashicorp/agent-skills --skill terraform-style-guide --copy`,
   keeping the `LICENSE` file alongside it.

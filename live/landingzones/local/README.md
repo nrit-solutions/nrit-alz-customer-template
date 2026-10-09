@@ -9,7 +9,7 @@ archetype, whose single assignment is `Enforce-ALDO-Services` (Azure Local
 disconnected operations). It is the home for Azure Local landing zones.
 
 Most customers never use it. The management group is still created, because the
-ALZ module needs a complete architecture and the NRIT library is the stock
+ALZ module needs a complete architecture and the platform library is the stock
 hierarchy plus one line; see `live/_foundation/landing-zones/lib/README.md`. This
 folder exists so every management group in the architecture has one.
 
