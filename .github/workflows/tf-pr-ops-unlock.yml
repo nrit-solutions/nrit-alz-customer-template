@@ -19,4 +19,4 @@ jobs:
     if: github.event.repository.is_template != true
     runs-on: ubuntu-latest
     steps:
-      - uses: nrit-solutions/tf-pr-ops/.github/actions/dispatch@v9.0.0
+      - uses: nrit-solutions/tf-pr-ops/.github/actions/dispatch@v9.1.0

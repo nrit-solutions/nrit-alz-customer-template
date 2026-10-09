@@ -12,6 +12,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- The four engine callers move to tf-pr-ops v9.1.0: exit and temporary
+  entitlements in `TFPR_ENTITLEMENT` (nrit-tf-pr-ops#380). No caller change
+  beyond the pin. Existing customer repositories take it through their
+  Renovate engine bump; no backport needed.
+
 ### Fixed
 
 - `amba` loads `platform/amba` 2026.06.2 from a vendored copy in
