@@ -115,7 +115,9 @@ Three kinds of version are pinned in this repository:
   two pull requests, the ops and drift callers first, because a dispatched run
   uses the ops caller on main. Install the Renovate GitHub App on the
   repository and `.github/renovate.json` opens those pull requests for each
-  engine release. The invariants check fails any mix of releases other than
+  engine release. After the install GitHub sends you to developer.mend.io to
+  onboard the organization: choose interactive mode. Silent mode opens no
+  pull requests. The invariants check fails any mix of releases other than
   the ops and drift callers ahead of the PR and unlock callers.
 - **Providers.** Generate a `.terraform.lock.hcl` for every unit and commit them:
 

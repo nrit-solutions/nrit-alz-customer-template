@@ -27,6 +27,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `ONBOARDING.md` step 3: after installing the Renovate App, onboard the
+  organization at developer.mend.io in interactive mode; silent mode opens no
+  pull requests (nrit-alz-platform-internal-docs#26). Docs only.
 - `AGENTS.md` synced from nrit-alz-platform-skills v1.7.1: it names
   `live/customer.hcl` and the `business_unit` and `amba_action_group_email`
   context keys, worded for repositories with and without the file. Docs only.
