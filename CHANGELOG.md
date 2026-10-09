@@ -12,6 +12,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `amba` loads `platform/amba` 2026.06.2 from a vendored copy in
+  `live/_foundation/amba/lib/`, with four policy sets' parameter
+  `allowedValues` narrowed to what their definitions accept. Azure now rejects
+  the stock sets (Azure/azure-monitor-baseline-alerts#936), so a new
+  customer's first foundation apply failed at `amba` (#97, found in
+  nrit-alz-platform-internal-docs#26). Proven on nrit-alz-live#338 and the
+  sandbox. Backport: every existing customer repository before it next
+  re-PUTs those sets or stands up a new environment; copy `lib/` and the
+  `custom_url` line. Revert to the upstream ref once #936 ships.
+
 ### Added
 
 - `.github/renovate.json`: a Renovate regex manager on the engine pins. Each

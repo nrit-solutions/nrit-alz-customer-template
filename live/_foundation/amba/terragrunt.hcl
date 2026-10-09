@@ -51,7 +51,8 @@ generate "provider" {
     provider "alz" {
       library_references = [
         { path = "platform/alz", ref = "2026.04.2" },
-        { path = "platform/amba", ref = "2026.06.2" },
+        # platform/amba 2026.06.2, vendored with a patch until Azure/azure-monitor-baseline-alerts#936 ships (lib/README.md).
+        { custom_url = "${get_terragrunt_dir()}/lib" },
       ]
     }
   EOF
