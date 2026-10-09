@@ -39,6 +39,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `AGENTS.md` synced from nrit-alz-platform-skills v1.7.2: a unit may carry
+  `lib/` when it vendors a policy library (the AMBA patch, #97), and the tree
+  shows `amba/lib/`. Docs only.
 - `ONBOARDING.md` step 3: after installing the Renovate App, onboard the
   organization at developer.mend.io in interactive mode; silent mode opens no
   pull requests (nrit-alz-platform-internal-docs#26). Docs only.
