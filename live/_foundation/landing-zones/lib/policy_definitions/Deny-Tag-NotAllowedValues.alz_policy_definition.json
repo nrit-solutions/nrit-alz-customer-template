@@ -10,7 +10,7 @@
         "AzureUSGovernment"
       ],
       "category": "Tags",
-      "source": "https://github.com/nrit-solutions",
+      "source": "https://docs.nrit.cloud/policy/",
       "version": "1.0.0"
     },
     "mode": "All",

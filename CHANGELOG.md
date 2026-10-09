@@ -14,6 +14,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The vendored policy library under `live/_foundation/landing-zones/lib/` no
+  longer names the platform vendor (#105): the `Enforce-Tag-Governance` set
+  and `Enforce-Tag-Gov` assignment descriptions, the `source` metadata of the
+  two custom definitions (now the docs site), the library metadata and its
+  README. The lib is byte-identical to nrit-alz-live's. Proven on
+  nrit-alz-live#345: in-place description and metadata updates only, plus the
+  module's two `time_sleep` pacing resources. Backport: optional, copy the
+  `lib/` folder over and apply `_foundation/landing-zones` through a PR.
 - `README.md`, `ONBOARDING.md`, `.claude/skills/README.md`, the `local`
   management group README, and a `landing-zones` comment no longer name the
   platform vendor (#92). The license note and the vendoring escape hatch link
