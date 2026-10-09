@@ -1,7 +1,7 @@
-# NRIT platform ALZ library
+# Platform ALZ library
 
 Custom Azure Landing Zones library, vendored into this repo and read by the `alz`
-provider (see `../terragrunt.hcl`, `library_references`). It layers NRIT additions on
+provider (see `../terragrunt.hcl`, `library_references`). It layers platform additions on
 top of the stock `platform/alz` library. All assets are JSON, matching the stock ALZ
 library (the tooling also accepts YAML if you ever need inline comments).
 
@@ -31,7 +31,7 @@ option.
 **On a library upgrade:** when you bump the `platform/alz` ref in `../terragrunt.hcl`,
 re-sync this file against the stock `alz` architecture at the new version (diff it,
 apply any hierarchy changes, keep `nrit_tags` on the root). Nothing here tracks the
-stock hierarchy automatically. The only intended NRIT delta is `nrit_tags` on the root.
+stock hierarchy automatically. The only intended platform delta is `nrit_tags` on the root.
 
 ## Placeholder resource IDs
 
