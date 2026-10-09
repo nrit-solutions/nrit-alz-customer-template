@@ -212,8 +212,8 @@ dependency order automatically: `management-resources`, then `landing-zones`, th
 `amba`. Every unit, foundation included, applies through the same comment-ops flow.
 Once applied, the merge gate turns green and the PR merges.
 
-Expect the first foundation apply to take sixty to ninety minutes due to policy
-propagation.
+The first foundation apply can take up to sixty to ninety minutes in a tenant
+with existing policy state. In an empty tenant it takes about fifteen.
 
 ## Escape hatch: vendoring the engine
 

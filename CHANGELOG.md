@@ -27,6 +27,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `.github/renovate.json` sets `prHourlyLimit` to 0. The sandbox rehearsal
+  (nrit-alz-platform-internal-docs#26) proved the split: one pull request for
+  a minor (all four callers), two for a major, step 2 failing the pin check
+  until step 1 merged. But `config:recommended` allows two new pull requests an
+  hour, so with a minor and a major pending at once, step 2 waited for the next
+  hour until it was forced from the dependency dashboard. Existing customer
+  repositories that copied the file may copy the line.
+- `ONBOARDING.md` step 7: the first foundation apply takes about fifteen
+  minutes in an empty tenant, up to sixty to ninety with existing policy state.
+  Docs only.
 - Renovate splits a major engine release into two pull requests: the ops and
   drift callers first (step 1 of 2), then the PR and unlock callers (step 2 of
   2), which Renovate rebases once step 1 is on main. A minor or patch release
