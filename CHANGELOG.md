@@ -27,6 +27,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `AGENTS.md` synced from nrit-alz-platform-skills v1.7.1: it names
+  `live/customer.hcl` and the `business_unit` and `amba_action_group_email`
+  context keys, worded for repositories with and without the file. Docs only.
 - `.github/renovate.json` sets `prHourlyLimit` to 0. The sandbox rehearsal
   (nrit-alz-platform-internal-docs#26) proved the split: one pull request for
   a minor (all four callers), two for a major, step 2 failing the pin check

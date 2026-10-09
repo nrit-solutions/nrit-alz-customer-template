@@ -72,7 +72,8 @@ the truth.
 ├── .github/workflows/           # thin callers into the nrit-tf-pr-ops engine
 └── live/                        # everything deployable
     ├── root.hcl                 # backend, providers, and the locals contract
-    ├── tenant.hcl               # tenant id + root management group id
+    ├── tenant.hcl               # tenant id (+ root management group id where there is no customer.hcl)
+    ├── customer.hcl             # root management group id, region, business unit, AMBA inbox (stamped repositories)
     ├── _foundation/             # tenant-wide governance, applied first
     │   ├── management-resources/#   Log Analytics, DCRs, AMA identity
     │   ├── landing-zones/       #   MG hierarchy, base policy, subscription placement
@@ -117,10 +118,15 @@ nothing to gate, and it can merge green having deployed nothing.
 
 `local.context` is the only supported way to read hierarchy values in `main.tf`:
 `tenant_id`, `tenant_root_id`, `subscription_id`, `location`, `location_short`,
-`environment`.
+`environment`. A repository with `live/customer.hcl` also has `business_unit`
+and `amba_action_group_email`.
 
 **The hierarchy files.** `tenant.hcl` sits at `live/`, and `subscription.hcl` and
-`region.hcl` sit at the level they describe. `find_in_parent_folders` only walks
+`region.hcl` sit at the level they describe. A repository the bootstrap
+created also has `live/customer.hcl`: the bootstrap writes it once with the
+root management group, the foundation region, the business unit and the AMBA
+inbox, and the repository owns it after that. Edit it there, never in
+`root.hcl`; `tenant_root_id` in it is a migration, not an edit, once applied. `find_in_parent_folders` only walks
 ancestors, so every unit must have all three above it. A region-agnostic unit
 still needs a `region.hcl`, which is why `_global/` folders carry one.
 
