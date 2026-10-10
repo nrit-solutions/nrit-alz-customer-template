@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The four engine callers move to tf-pr-ops v9.1.1: the cost row reads
+  skipped when no Infracost key is set, also without `infracost` in
+  `TFPR_EXTRA_TOOLS` (nrit-tf-pr-ops#379). No caller change beyond the pin.
+  Proven on nrit-alz-live#347 and the cross-org sandbox. Existing customer
+  repositories take it through their Renovate engine bump; no backport
+  needed.
 - The vendored policy library under `live/_foundation/landing-zones/lib/` no
   longer names the platform vendor (#105): the `Enforce-Tag-Governance` set
   and `Enforce-Tag-Gov` assignment descriptions, the `source` metadata of the
