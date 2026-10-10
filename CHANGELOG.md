@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The four engine callers move to tf-pr-ops v9.1.2: a plan that stops before
+  Terraform runs, for example on a tool install, completes its row as
+  "Failed" linked to the job instead of "Not run" (nrit-tf-pr-ops#260). No
+  caller change beyond the pin. Proven on nrit-alz-live#350. Existing customer
+  repositories take it through their Renovate engine bump; no backport
+  needed.
 - The four engine callers move to tf-pr-ops v9.1.1: the cost row reads
   skipped when no Infracost key is set, also without `infracost` in
   `TFPR_EXTRA_TOOLS` (nrit-tf-pr-ops#379). No caller change beyond the pin.
