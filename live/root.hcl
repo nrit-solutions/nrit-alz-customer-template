@@ -21,10 +21,18 @@
 # (init -backend=false) with no Azure access.
 #
 # customer.hcl is written once by the bootstrap when it creates the repository,
-# and the repository owns it from then on. The template ships without it.
+# and the repository owns it from then on. The template ships without it, so
+# its values fall back to placeholders; the landing-zones precondition rejects
+# the all-zero tenant_root_id, so an unstamped tree never deploys a hierarchy.
 
 locals {
-  customer_vars     = read_terragrunt_config(find_in_parent_folders("customer.hcl"))
+  customer_vars = read_terragrunt_config(find_in_parent_folders("customer.hcl", "customer.hcl"), {
+    locals = {
+      tenant_root_id          = "00000000-0000-0000-0000-000000000000"
+      business_unit           = "platform"
+      amba_action_group_email = "alerts@example.com"
+    }
+  })
   tenant_vars       = read_terragrunt_config(find_in_parent_folders("tenant.hcl"))
   subscription_vars = read_terragrunt_config(find_in_parent_folders("subscription.hcl"))
   region_vars       = read_terragrunt_config(find_in_parent_folders("region.hcl"))
@@ -50,14 +58,14 @@ generate "context" {
   contents  = <<-EOF
     locals {
       context = {
-        tenant_id               = "${local.tenant_id}"
-        tenant_root_id          = "${local.tenant_root_id}"
-        business_unit           = "${local.business_unit}"
-        amba_action_group_email = "${local.amba_action_group_email}"
-        subscription_id         = "${local.subscription_id}"
-        location                = "${local.location}"
-        location_short          = "${local.location_short}"
-        environment             = "${local.environment}"
+        tenant_id               = ${jsonencode(local.tenant_id)}
+        tenant_root_id          = ${jsonencode(local.tenant_root_id)}
+        business_unit           = ${jsonencode(local.business_unit)}
+        amba_action_group_email = ${jsonencode(local.amba_action_group_email)}
+        subscription_id         = ${jsonencode(local.subscription_id)}
+        location                = ${jsonencode(local.location)}
+        location_short          = ${jsonencode(local.location_short)}
+        environment             = ${jsonencode(local.environment)}
       }
     }
   EOF

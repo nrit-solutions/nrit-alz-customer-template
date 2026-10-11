@@ -53,6 +53,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- The unstamped template renders and validates offline again. Since the
+  `customer.hcl` port, `root.hcl` and `_foundation/region.hcl` required
+  `live/customer.hcl`, which the template does not ship, so every unit failed
+  with `ParentFileNotFoundError` before Terraform ran. Both now fall back to
+  placeholders when it is missing; the landing-zones precondition still
+  rejects the all-zero `tenant_root_id`. Stamped repositories have
+  `customer.hcl` and are unaffected: no backport needed.
+- `context.tf` values are written with `jsonencode`, so a `"` or `\` in
+  `business_unit` or `amba_action_group_email` no longer breaks every unit.
+  Optional backport: the same one-line change per value in `live/root.hcl`.
+- `ONBOARDING.md` names the vendored AMBA library instead of an upstream ref.
+
 - `amba` loads `platform/amba` 2026.06.2 from a vendored copy in
   `live/_foundation/amba/lib/`, with four policy sets' parameter
   `allowedValues` narrowed to what their definitions accept. Azure now rejects
