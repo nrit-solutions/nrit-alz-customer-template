@@ -72,7 +72,7 @@ the truth.
 ├── .github/workflows/           # thin callers into the nrit-tf-pr-ops engine
 └── live/                        # everything deployable
     ├── root.hcl                 # backend, providers, and the locals contract
-    ├── tenant.hcl               # tenant id (+ root management group id where there is no customer.hcl)
+    ├── tenant.hcl               # tenant id
     ├── customer.hcl             # root management group id, region, business unit, AMBA inbox (stamped repositories)
     ├── _foundation/             # tenant-wide governance, applied first
     │   ├── management-resources/#   Log Analytics, DCRs, AMA identity
@@ -119,8 +119,10 @@ nothing to gate, and it can merge green having deployed nothing.
 
 `local.context` is the only supported way to read hierarchy values in `main.tf`:
 `tenant_id`, `tenant_root_id`, `subscription_id`, `location`, `location_short`,
-`environment`. A repository with `live/customer.hcl` also has `business_unit`
-and `amba_action_group_email`.
+`environment`, `business_unit`, `amba_action_group_email`. Without
+`live/customer.hcl` (the unstamped template) the customer values are
+placeholders, and the landing-zones precondition rejects the all-zero
+`tenant_root_id`.
 
 **The hierarchy files.** `tenant.hcl` sits at `live/`, and `subscription.hcl` and
 `region.hcl` sit at the level they describe. A repository the bootstrap

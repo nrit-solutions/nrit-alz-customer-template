@@ -103,7 +103,9 @@ Three kinds of version are pinned in this repository:
 - **Library and AVM versions.** The `landing-zones` unit reads the upstream ALZ
   library at a pinned `ref` plus the platform policy library vendored under
   `live/_foundation/landing-zones/lib/` (a local path, so it carries no `ref`).
-  The `amba` unit reads the upstream ALZ and AMBA libraries, both at pinned refs.
+  The `amba` unit reads the upstream ALZ library at a pinned `ref` plus the AMBA
+  library vendored under `live/_foundation/amba/lib/`; its `README.md` says how
+  to return to the upstream ref.
   Keep the `platform/alz` ref the same in both units. Pin AVM module versions with
   the `version` argument in each unit's `main.tf`. See
   [Versions and upgrades](https://docs.nrit.cloud/reference/versions/).
