@@ -14,6 +14,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The four engine callers move to tf-pr-ops v10.1.0, the trust-hardening
+  release (nrit-tf-pr-ops#393): discovery runs without an identity and is
+  checked against the changed files with the default branch's reading map,
+  terraform and hooks get an allow-listed environment (the Infracost key is
+  forwarded through `extra_env` since #111), gate results come from the
+  engine, commands are refused on closed PRs, approval is tied to the head
+  commit and the reviewed plan lives in the check run. Existing customer
+  repositories take the pin through Renovate in two PRs (ops and drift, then
+  PR and unlock); nrit-alz-live did so in #355 and #356 after the sandbox
+  smoke (internal-docs rehearsals/2026-10-12-engine-v10-adversarial-smoke.md).
 - `projects.yml` forwards `INFRACOST_API_KEY` through `extra_env`. Engine v10
   runs terraform and hooks with an allow-listed environment, so the cost gate
   only sees the key when listed (nrit-tf-pr-ops#393). Existing customer
