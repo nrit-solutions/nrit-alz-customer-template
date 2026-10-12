@@ -14,6 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The four engine callers move to tf-pr-ops v10.1.1 (nrit-tf-pr-ops#414):
+  the runtime is built with Go 1.26.9, which closes the reachable standard
+  library vulnerabilities govulncheck reported at 1.26.8, and the engine's
+  CI now runs govulncheck before every release. No caller or behaviour
+  change.
 - The four engine callers move to tf-pr-ops v10.1.0, the trust-hardening
   release (nrit-tf-pr-ops#393): discovery runs without an identity and is
   checked against the changed files with the default branch's reading map,
