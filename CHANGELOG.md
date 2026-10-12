@@ -14,6 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The four engine callers move to tf-pr-ops v10.2.0 (nrit-tf-pr-ops#413):
+  the plan job and drift run `terraform plan` without the state lease, so
+  the bootstrap can drop the plan identity to Storage Blob Data Reader on
+  the state container. No caller change; the role change follows in the
+  bootstrap once this pin is in.
 - The four engine callers move to tf-pr-ops v10.1.1 (nrit-tf-pr-ops#414):
   the runtime is built with Go 1.26.9, which closes the reachable standard
   library vulnerabilities govulncheck reported at 1.26.8, and the engine's
