@@ -12,6 +12,13 @@ gate_ignore:
   - ".tflint.hcl"
   - ".claude/**"
 
+
+# Engine v10 runs terraform and hooks with an allow-listed environment. Names
+# listed here are forwarded on top of it; the cost gate needs the Infracost
+# key. Review additions like code: PR code in the plan job can read them.
+extra_env:
+  - INFRACOST_API_KEY
+
 # Policy, scan, and cost gates on every plan (and drift). All start report-only,
 # so they surface findings in the run comment / drift issue without blocking the
 # merge gate: conftest runs whatever matches policy/*.rego and nothing is active

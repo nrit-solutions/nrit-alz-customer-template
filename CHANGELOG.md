@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `projects.yml` forwards `INFRACOST_API_KEY` through `extra_env`. Engine v10
+  runs terraform and hooks with an allow-listed environment, so the cost gate
+  only sees the key when listed (nrit-tf-pr-ops#393). Existing customer
+  repositories add the same line before their v10 pin bump.
 - The toolchain moves to Terraform 1.16.5 and Terragrunt 1.1.6 in `mise.toml`
   (from 1.15.5 and 1.0.7), and the four engine callers move to tf-pr-ops
   v9.1.3, whose fallback toolchain matches (nrit-alz-platform-internal-docs#4).
