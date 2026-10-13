@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The four engine callers move to tf-pr-ops v10.2.1 (nrit-tf-pr-ops#199):
+  an apply walk no longer stops when one unit's gate status file cannot be
+  written; the unit counts as failed and the rest still run. No caller
+  change.
 - The four engine callers move to tf-pr-ops v10.2.0 (nrit-tf-pr-ops#413):
   the plan job and drift run `terraform plan` without the state lease, so
   the bootstrap can drop the plan identity to Storage Blob Data Reader on
