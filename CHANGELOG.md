@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The four engine callers move to tf-pr-ops v10.2.3 (nrit-tf-pr-ops#425): a
+  path `gate_ignore` names no longer counts as a Terraform change on its own,
+  so a pull request that only adds such files merges. No caller change.
+  Bootstrap issue numbers in this file now name nrit-alz-bootstrap-ops, the
+  private operator repository the bootstrap was renamed to when the public
+  nrit-alz-bootstrap was published.
 - `AGENTS.md` taken from nrit-alz-platform-skills v1.9.0: `environment` comes
   from `env.hcl`, and `region.hcl` carries only the location. The copies are
   byte-identical again.
@@ -200,7 +206,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   onboarding rehearsal (nrit-alz-platform-internal-docs#26), the first stamp
   with a bootstrap-written file.
 - The template no longer ships `.github/CODEOWNERS`. The bootstrap writes it
-  once when it creates the repository (nrit-alz-bootstrap#52), giving
+  once when it creates the repository (nrit-alz-bootstrap-ops#52), giving
   `.github/` and `projects.yml` to its apply approvers team, which matches its
   ruleset's `require_code_owner_review` (default true). A shipped file would
   make that write fail. Existing customer repositories keep their file. The proof is the
@@ -525,7 +531,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `PLAN_ENVIRONMENT`, `APPLY_ENVIRONMENT`, `UNLOCK_ENVIRONMENT`). The
   checks App is now required for the merge gate to carry the engine
   identity; provisioning it joins onboarding
-  (nrit-alz-bootstrap#19).
+  (nrit-alz-bootstrap-ops#19).
 
 - The engine caller pins move from `v2.0.0` to `v2.1.0` in both workflows.
   The minor adds the optional dedicated checks App: when a stamped
