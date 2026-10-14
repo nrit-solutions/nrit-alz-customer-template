@@ -13,9 +13,10 @@ Anything specific to this repository lives in the files it points at:
 
 An infrastructure-live repository for one Azure tenant. It holds Terragrunt
 configuration for a Cloud Adoption Framework (CAF) landing zone under `live/`,
-and it is operated by the `nrit-tf-pr-ops` comment-ops engine, consumed as a
-pinned reusable GitHub Actions workflow from the public `nrit-solutions/tf-pr-ops`
-repository.
+and it is operated by the `nrit-tf-pr-ops` comment-ops engine. Four caller files
+in `.github/workflows/` consume it at a pinned release from the public
+`nrit-solutions/tf-pr-ops` repository: two reusable workflows and a dispatch
+action.
 
 Two things drive most of the rules below:
 
@@ -52,7 +53,7 @@ Everything else lives in the public platform documentation
 | [Azure Policy](https://docs.nrit.cloud/policy/) | Customizing assignments, enforcement strategy, testing a policy change |
 | [Command reference](https://docs.nrit.cloud/reference/commands/) | Every comment command and what it posts |
 | [projects.yml schema](https://docs.nrit.cloud/reference/projects-yml/) | Discovery and hook configuration |
-| [Versions and upgrades](https://docs.nrit.cloud/reference/versions/) | The version statement for the platform |
+| [License](https://docs.nrit.cloud/operations/license/) | The license variables `/apply` needs, and every license state |
 | [Troubleshooting](https://docs.nrit.cloud/reference/troubleshooting/) | Failure modes and their fixes |
 
 The docs site describes the platform as the template ships it. This repository
@@ -69,7 +70,7 @@ the truth.
 ├── projects.yml                 # engine discovery config and post-plan gate hooks
 ├── policy/                      # conftest policies (the policy gate)
 │   └── tags.rego.example        #   a starter policy; drop .example to activate
-├── .github/workflows/           # thin callers into the nrit-tf-pr-ops engine
+├── .github/workflows/           # thin engine callers, plus the runner checks
 └── live/                        # everything deployable
     ├── root.hcl                 # backend, providers, and the locals contract
     ├── tenant.hcl               # tenant id
@@ -149,7 +150,7 @@ with auto-init disabled. The Commands section has the exact pair.
    an operator.
 4. Open a PR. Fill in `.github/pull_request_template.md` honestly, especially the
    list of impacted units and any pin that moved.
-5. The engine plans every impacted unit automatically and posts a run comment.
+5. The engine plans every impacted unit automatically and posts a report comment.
    `include_dependents: true` in `projects.yml` means dependents are planned too.
 6. Read the whole plan. Every delete and every replace. Read the gate panel.
 7. Satisfy whatever review this repository requires, then comment `/apply`. Units
@@ -157,14 +158,16 @@ with auto-init disabled. The Commands section has the exact pair.
    applying them against stale outputs.
 8. Merge once `tf-pr-ops / merge-gate` is green.
 
-Comment commands: `/plan`, `/plan -p <label>`, `/apply`, `/apply -p <label>`,
-`/unlock`. The engine adds a 👀 reaction when it accepts your comment and 😕
+Comment commands are `/plan`, `/apply`, `/unlock`, and `/help`, with
+`-p <label>` to select one unit. The
+[command reference](https://docs.nrit.cloud/reference/commands/) has every flag.
+The engine adds a 👀 reaction when it accepts your comment and 😕
 when it refuses it; the outcome is in the report comment, the per-unit checks,
 and the merge gate, not in further reactions.
 
 The first PR to plan a unit holds a cross-PR lock on it until that PR merges or
-closes. Another PR touching the same unit gets a `🔒 Locked by another PR`
-report. That is expected behavior, not a bug. `/unlock` on the owning PR
+closes. Another PR touching the same unit gets a report that names the owning PR.
+That is expected behavior, not a bug. `/unlock` on the owning PR
 force-releases.
 
 **Approvals.** `/apply` is gated on this repository's required reviews, read from
@@ -174,6 +177,11 @@ bootstrap sets from the approval settings; that is only appropriate for a
 single-writer repository, where the plan review is the gate. Check the
 repository's ruleset and that variable to know which applies here, and never set
 it to work around a review that is failing.
+
+**License.** `/apply` also needs the `TFPR_LICENSE` and `TFPR_ENTITLEMENT`
+repository variables, which the bootstrap onboarding script sets. Without them
+plan, drift, and `/unlock` still work and `/apply` is refused. Never edit either
+value by hand. See [License](https://docs.nrit.cloud/operations/license/).
 
 If this repository is itself a GitHub template, the engine skips it: its own pull
 requests run no plans, and review is by eye.
@@ -393,7 +401,7 @@ deploys to, and `gh` must be the account that should be acting here.
 | What | Pinned in | Rule |
 | --- | --- | --- |
 | Terraform, Terragrunt | `mise.toml` | The engine auto-detects it. No workflow edit needed |
-| The engine | the four caller files in `.github/workflows/` | Every `uses:` ref at the same tag. The `uses:` ref is the only engine pin |
+| The engine | the four caller files in `.github/workflows/` | Every `uses:` ref at the same tag, except during a two-PR bump. The `uses:` ref is the only engine pin |
 | AVM modules | each unit's `main.tf` | Exact `version` |
 | ALZ and AMBA libraries | `library_references` in the two foundation `terragrunt.hcl` files | Keep the `platform/alz` ref identical in both |
 | Providers | the `generate "provider"` blocks, then each unit's `.terraform.lock.hcl` | `~>` constraints in the generate block; the lock file is what actually pins |
@@ -425,10 +433,13 @@ Onboarding generates them once, against that customer's own tree. Until then the
 invariants check warns on every run.
 
 Engine tags are immutable `vX.Y.Z`. There is no moving `v1` tag, so an upgrade is
-always a commit here. Bump the `uses:` ref in all four callers in one commit.
-The `uses:` ref is the whole pin: each job installs the engine runtime (the
-`tfpr` binary and the gate scripts) from the release that ref names. There is no
-`engine_ref` input any more.
+always a commit here. Bump the `uses:` ref in all four callers in one commit. A
+release that changes the ops caller's inputs takes two PRs: the ops and drift
+callers first, then the PR and unlock callers, because a dispatched run uses the
+ops caller on `main`. The invariants check allows exactly that intermediate
+state. The release notes say which kind a release is. The `uses:` ref is the
+whole pin: each job installs the engine runtime (the `tfpr` binary and the gate
+scripts) from the release that ref names.
 
 Move one pin per PR so the plan diff stays readable. After bumping the
 `platform/alz` ref, re-sync
@@ -437,8 +448,8 @@ stock architecture at the new version and keep the custom tag archetype on the
 intermediate root. Nothing automates that. See
 `live/_foundation/landing-zones/lib/README.md`.
 
-`docs/reference/versions.md` on the public docs site is the version statement for
-the platform as the template ships it. Do not create a competing version table in
+[Versions and upgrades](https://docs.nrit.cloud/reference/versions/) is the
+version statement for the platform as the template ships it. Do not create a competing version table in
 this repository.
 
 ## Gates
@@ -450,12 +461,14 @@ tflint, checkov, and the repository invariants in
 `.github/scripts/check-repo-invariants.sh`.
 The invariants catch what the linters cannot: a generated `backend.tf`,
 `providers.tf`, or `context.tf` staged by hand (they carry resolved tenant and
-subscription ids), Terraform state, a `terragrunt.stack.hcl`, and a directory
-holding Terraform but no `terragrunt.hcl`. The last two are the silent failures:
-discovery skips them, so the PR plans nothing and merges green having deployed
-nothing. It also warns, without blocking, about a unit with no
-`.terraform.lock.hcl`. The `lint` workflow runs the identical hooks on every pull
-request and fails, so `--no-verify` buys nothing.
+subscription ids), Terraform state, a `terragrunt.stack.hcl`, a directory
+holding Terraform but no `terragrunt.hcl`, and engine callers pinned to
+different releases. The stack file and the stray Terraform are the silent
+failures: discovery skips them, so the PR plans nothing and merges green having
+deployed nothing. It also warns, without blocking, about a unit with no
+`.terraform.lock.hcl`. The `pre-commit` job in `tf-pr-ops-pr.yml` runs the
+identical hooks on the files every pull request changes, and a failure there
+stops the dispatch, so `--no-verify` buys nothing.
 
 Checkov at this layer sees only the module calls, not what the Azure Verified
 Modules expand to. `CKV_TF_1` is skipped in `.checkov.yaml`: registry sources
@@ -465,13 +478,15 @@ cannot carry a commit hash, and the exact `version` on every module call is what
 **On plan,** against the generated plan. Three checks run as `post_plan` hooks
 on every plan and every drift plan, where checkov can see inside the modules. They
 are configured in `projects.yml` and their scripts live in the engine, resolved
-through `$TFPR_ENGINE_DIR`.
+through `$TFPR_ENGINE_DIR`. The engine reads hooks and `extra_env` from
+`projects.yml` on `main`, so a PR that changes a hook does not run the change;
+the next PR does.
 
 | Gate | Tool | Config | Default |
 | --- | --- | --- | --- |
 | Policy | conftest | `policy/*.rego` | None active until you add one |
 | Security | checkov | `on_failure: warn` in `projects.yml` | Advisory |
-| Cost | infracost | engine script, needs `INFRACOST_API_KEY` | Informational, always exits 0 |
+| Cost | infracost | engine script, needs the `INFRACOST_API_KEY` secret, the key under `extra_env`, and `infracost` in `TFPR_EXTRA_TOOLS` | Informational, always exits 0 |
 
 The policy gate ships with nothing active. `policy/tags.rego.example` is a
 starter, not a running rule: the gate globs `policy/*.rego`, and that name does
@@ -508,7 +523,7 @@ both shapes and test a new rule against a plan you know should fail it.
 
 - [ ] `pre-commit run --all-files` clean (formatting, tflint, checkov, invariants)
 - [ ] `init -backend=false` then the offline `validate` pass for every changed unit
-- [ ] A new unit ships its `.terraform.lock.hcl`, generated by `init -backend=false`
+- [ ] A new unit ships its `.terraform.lock.hcl` with the runner platform's hashes, generated by the two commands under Version pins
 - [ ] Only `terragrunt.hcl`, `main.tf`, and `.terraform.lock.hcl` added, unless a `dependency` required more or the unit vendors a library under `lib/`
 - [ ] Every module version is exact, and `enable_telemetry = false`
 - [ ] No hardcoded region, and names derive from `local.context`
