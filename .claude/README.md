@@ -15,14 +15,14 @@ of it.
 `.mcp.json` declares two servers. Your agent will ask before connecting to them
 the first time.
 
-**`microsoft-learn`** — Microsoft's official documentation server
+`microsoft-learn` is Microsoft's official documentation server
 ([microsoftdocs/mcp](https://github.com/microsoftdocs/mcp)), reached over HTTPS at
 `https://learn.microsoft.com/api/mcp`. It answers from current Microsoft Learn
 content rather than the model's training data, which matters for Azure Policy,
 CAF and WAF guidance, and resource naming rules. No account, no token, no local
 install.
 
-**`terraform`** — HashiCorp's official registry server
+`terraform` is HashiCorp's official registry server
 ([hashicorp/terraform-mcp-server](https://github.com/hashicorp/terraform-mcp-server)),
 run locally as a container, pinned to `1.1.0`. It looks up modules, providers,
 and their inputs and outputs in the public Terraform Registry, which is how you
@@ -38,7 +38,7 @@ keep the token in your own environment rather than committing it here.
 
 ## What leaves the repository
 
-Both servers receive **queries**, not your Terraform code:
+Both servers receive queries:
 
 - `microsoft-learn` receives the documentation search terms your agent sends, and
   returns Microsoft Learn pages.
