@@ -6,8 +6,8 @@
 #
 # What lives here:
 #   - the remote state backend (Azure Storage, Entra ID auth, no account keys)
-#   - the locals every unit reads: tenant, subscription, location, and the
-#     customer values from customer.hcl
+#   - the locals every unit reads: tenant, subscription, location,
+#     environment, and the customer values from customer.hcl
 #   - the default provider block: azurerm + azapi + azuread, the set most
 #     units need.
 #     A unit needing a different set (the landing-zones unit uses alz + azapi;
@@ -36,12 +36,13 @@ locals {
   tenant_vars       = read_terragrunt_config(find_in_parent_folders("tenant.hcl"))
   subscription_vars = read_terragrunt_config(find_in_parent_folders("subscription.hcl"))
   region_vars       = read_terragrunt_config(find_in_parent_folders("region.hcl"))
+  env_vars          = read_terragrunt_config(find_in_parent_folders("env.hcl"))
 
   tenant_id       = local.tenant_vars.locals.tenant_id
   subscription_id = local.subscription_vars.locals.subscription_id
   location        = local.region_vars.locals.location
   location_short  = local.region_vars.locals.location_short
-  environment     = local.region_vars.locals.environment
+  environment     = local.env_vars.locals.environment
 
   # Changing it after the first apply moves the whole hierarchy: a migration, not an edit.
   tenant_root_id          = local.customer_vars.locals.tenant_root_id

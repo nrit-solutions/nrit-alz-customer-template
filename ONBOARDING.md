@@ -26,7 +26,7 @@ bootstrap re-run never overwrites them.
   `business_unit`, and `amba_action_group_email`. Get `tenant_root_id` right
   before the first apply. Changing it later moves the whole hierarchy, which is
   a migration, not an edit. `amba_action_group_email` must be a monitored inbox.
-- `live/_foundation/region.hcl`: `environment` defaults to `prod` and becomes
+- `live/_foundation/env.hcl`: `environment` defaults to `prod` and becomes
   the `env` tag. The tag policy allows `prod`, `staging`, and `dev`.
 - `live/_foundation/landing-zones/main.tf`: set `connectivity_subscription_id`
   when the customer has a connectivity subscription. Leave `architecture_name`

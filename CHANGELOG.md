@@ -18,6 +18,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   shared file the default branch does not read yet passes the unattributed-path
   rule when every unit planned in the same pull request, so a new `env.hcl`
   lands without a `gate_ignore` detour. No caller change.
+- `environment` moves out of `region.hcl` into its own `env.hcl`, the layer the
+  Terragrunt docs use. `root.hcl` reads the nearest `env.hcl` above a unit, so
+  a landing zone that hosts more than one environment in one subscription adds
+  a folder per environment with its own file. `live/_foundation/env.hcl` sets
+  `prod`; `region.hcl` keeps only the location. The generated `context` block
+  is unchanged.
+  Existing customer repositories backport it as one PR that adds the files
+  and trims `region.hcl`; every unit plans with no changes.
 - `AGENTS.md` taken from nrit-alz-platform-skills v1.8.1: four caller files,
   the full command list, the license variables, hooks read from main, and the
   lock-file platform hashes. The copies are byte-identical again.
