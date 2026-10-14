@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `AGENTS.md` taken from nrit-alz-platform-skills v1.9.0: `environment` comes
+  from `env.hcl`, and `region.hcl` carries only the location. The copies are
+  byte-identical again.
 - The four engine callers move to tf-pr-ops v10.2.2 (nrit-tf-pr-ops#423): a
   shared file the default branch does not read yet passes the unattributed-path
   rule when every unit planned in the same pull request, so a new `env.hcl`
