@@ -4,7 +4,8 @@
 # Analytics workspace and the AMBA resources, and the nominal region for the
 # policy managed identities (the management groups and policy themselves are
 # global). Adding more regions does not change the foundation; connectivity and
-# workloads fan out per region instead. See docs/foundation-structure.md.
+# workloads fan out per region instead. See
+# https://docs.nrit.cloud/anatomy/foundation-units/.
 
 # The region comes from customer.hcl, which the bootstrap writes once. The
 # unstamped template has none and falls back to West Europe.
@@ -16,5 +17,4 @@ locals {
 
   location       = local.customer_vars.locals.location
   location_short = local.customer_vars.locals.location_short
-  environment    = "prod"
 }

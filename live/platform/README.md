@@ -10,7 +10,7 @@ landing zone. Child management groups:
 - `management` for logging, monitoring, automation
 - `security` for security tooling
 
-Each child MG with a subscription holds `subscription.hcl` (and, per region,
-`region.hcl`) directly, for example `connectivity/subscription.hcl` and
-`connectivity/westeurope/`. A child MG with no subscription yet holds only a
+Each child MG with a subscription holds `subscription.hcl` and `env.hcl` (and,
+per region, `region.hcl`) directly, for example `connectivity/subscription.hcl`
+and `connectivity/westeurope/`. A child MG with no subscription yet holds only a
 README until one is provisioned.
