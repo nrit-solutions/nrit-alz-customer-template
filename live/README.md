@@ -8,9 +8,9 @@ the shared locals; each unit includes it and generates its own `backend.tf` and
 providers. `tenant.hcl` and `customer.hcl` sit alongside `root.hcl` so
 `find_in_parent_folders` resolves them from every scope below it. The bootstrap
 writes `customer.hcl` once, when it creates the repository; edit it here after
-that. The
-folder tree mirrors the CAF management group hierarchy, using management group IDs
-as folder names:
+that. The folder tree mirrors the CAF management group hierarchy, using
+management group IDs as folder names. See
+[The live tree](https://docs.nrit.cloud/anatomy/live-tree/).
 
 - `_foundation/` holds tenant-wide governance, deployed first, in dependency order: the
   management resources (`management-resources`), the MG hierarchy and base policy
@@ -25,4 +25,5 @@ as folder names:
 The `_foundation/` units ship wired. Everything under `platform/` and
 `landingzones/` is a README-only placeholder: the connectivity hub and the landing
 zones are onboarded per customer, as new units on public Azure Verified Modules,
-after the foundation is in place.
+after the foundation is in place. See
+[Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/).

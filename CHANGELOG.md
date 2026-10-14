@@ -14,6 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The README, ONBOARDING and the `live/**/README.md` files are cross-checked
+  against engine v10.2.1: ONBOARDING is a short checklist that links to
+  docs.nrit.cloud, the `amba` unit is described as vendoring its library, and
+  the `projects.yml` comments no longer cite an engine checkout. Existing
+  customer repositories may copy the files.
 - The four engine callers move to tf-pr-ops v10.2.1 (nrit-tf-pr-ops#199):
   an apply walk no longer stops when one unit's gate status file cannot be
   written; the unit counts as failed and the rest still run. No caller

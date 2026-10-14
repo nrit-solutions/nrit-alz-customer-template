@@ -7,7 +7,7 @@ terragrunt:
   include_dependents: true
 
 # Terraform-pattern paths that belong to no unit on purpose; without this the
-# merge gate fails a PR that changes them (v3.4.0 unattributed-path check).
+# merge gate fails a PR that changes them (the unattributed-path check).
 gate_ignore:
   - ".tflint.hcl"
   - ".claude/**"
@@ -32,7 +32,7 @@ extra_env:
 # drop `on_failure: warn` from the checkov hook.
 #
 # $TFPR_ENGINE_DIR is exported into the hook environment by the engine. It points at
-# the engine checkout, so hooks resolve the gate scripts there rather than in the
+# the installed engine runtime, so hooks resolve the gate scripts there rather than in the
 # consumer workspace.
 steps:
   post_plan:

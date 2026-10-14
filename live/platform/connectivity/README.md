@@ -2,29 +2,13 @@
 
 Management group: **Connectivity** (id `connectivity`), child of `platform`.
 
-Placeholder. No hub is provisioned in the template; onboard the connectivity hub
-here per customer.
-
-To onboard it, add `subscription.hcl` (the connectivity subscription id), a region
-folder (for example `westeurope/`) holding its own `region.hcl`, and a hub
-networking unit inside it (`westeurope/hub/`). The `region.hcl` is not optional:
-`root.hcl` reads a region unconditionally, so the file must exist. Like every
-unit here it is a `main.tf` on public Azure Verified Modules at a pinned `version`
-beside a thin `terragrunt.hcl`: `Azure/avm-res-resources-resourcegroup/azurerm` for
-the hub resource group, then
-`Azure/avm-ptn-alz-connectivity-hub-and-spoke-vnet/azurerm` for the hub itself.
-The hub deploys into the connectivity
-subscription, a different subscription from the foundation's management
-subscription, so its `subscription.hcl` sets that id explicitly; state still goes to
-the shared backend (in the management subscription) over Entra ID.
+Placeholder. The template ships no hub; onboard the connectivity hub here per
+customer: a `subscription.hcl` with the connectivity subscription id, a region
+folder with its own `region.hcl`, and a hub unit inside it. `root.hcl` reads a
+`region.hcl` from every unit, so the region file is required. See
+[Onboarding a connectivity hub](https://docs.nrit.cloud/operations/growing-the-tree/#onboarding-a-connectivity-hub).
 
 Also set `connectivity_subscription_id` in
 `live/_foundation/landing-zones/main.tf` and re-apply that unit, so the
-subscription is placed under this management group. It defaults to empty, which
-omits the placement, because a connectivity subscription is optional.
-
-Start from the minimal, low-cost hub (one virtual network, no firewall, bastion,
-gateways, private DNS, NAT gateway, or DDoS plan) and turn options on per hub as a
-workload needs them. If you enable private DNS zones, also wire the foundation
-policy default values in `live/_foundation/landing-zones/main.tf` so the ALZ policy
-assignments reference the live resources.
+subscription is placed under this management group. It defaults to empty,
+because a connectivity subscription is optional.
