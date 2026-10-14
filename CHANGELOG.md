@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The four engine callers move to tf-pr-ops v10.2.2 (nrit-tf-pr-ops#423): a
+  shared file the default branch does not read yet passes the unattributed-path
+  rule when every unit planned in the same pull request, so a new `env.hcl`
+  lands without a `gate_ignore` detour. No caller change.
 - `AGENTS.md` taken from nrit-alz-platform-skills v1.8.1: four caller files,
   the full command list, the license variables, hooks read from main, and the
   lock-file platform hashes. The copies are byte-identical again.
