@@ -7,7 +7,7 @@ commands and what to expect at each step, is
 bootstrap run itself is on
 [Bootstrap a customer](https://docs.nrit.cloud/setup/bootstrap/), and what it
 needs before it starts is on
-[Prerequisites](https://docs.nrit.cloud/setup/prerequisites/).
+[Prerequisites for a customer](https://docs.nrit.cloud/setup/customer-prerequisites/).
 
 ## 1. Run the bootstrap
 
