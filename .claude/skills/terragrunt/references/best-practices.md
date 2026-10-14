@@ -25,9 +25,10 @@ guidance from community opinion where it matters.
 - **Provider DRY:** `generate "provider"` in `root.hcl` writes `providers.tf` into
   every unit.
 - **Hierarchy vars:** `tenant.hcl` (repo root), `subscription.hcl` (or
-  `account.hcl`), `region.hcl`, and (legacy classic) `env.hcl`, loaded with
-  `read_terragrunt_config(find_in_parent_folders(...))`. The current tree folds
-  `environment` into `region.hcl`, not a separate `env.hcl` layer.
+  `account.hcl`), `region.hcl`, and `env.hcl`, loaded with
+  `read_terragrunt_config(find_in_parent_folders(...))`. `env.hcl` is its own
+  layer, as in the Terragrunt docs: `region.hcl` carries only the location, and
+  the nearest `env.hcl` above a unit sets `environment`.
 - **"Large modules are harmful."** Organize by environment + small cohesive
   components (`vnet`, `key-vault`, `app`), not monoliths — but don't go so
   granular that the dependency graph gets deep.

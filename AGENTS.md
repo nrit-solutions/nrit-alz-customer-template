@@ -125,13 +125,17 @@ nothing to gate, and it can merge green having deployed nothing.
 placeholders, and the landing-zones precondition rejects the all-zero
 `tenant_root_id`.
 
-**The hierarchy files.** `tenant.hcl` sits at `live/`, and `subscription.hcl` and
-`region.hcl` sit at the level they describe. A repository the bootstrap
+**The hierarchy files.** `tenant.hcl` sits at `live/`, and `subscription.hcl`,
+`env.hcl` and `region.hcl` sit at the level they describe. `env.hcl` holds
+`environment` and sits in `_foundation/`, in each platform subscription folder,
+and in each landing zone folder. A landing zone that hosts more than one
+environment in one subscription adds a folder per environment, each with its
+own `env.hcl`. `region.hcl` holds only `location` and `location_short`. A repository the bootstrap
 created also has `live/customer.hcl`: the bootstrap writes it once with the
 root management group, the foundation region, the business unit and the AMBA
 inbox, and the repository owns it after that. Edit it there, never in
 `root.hcl`; `tenant_root_id` in it is a migration, not an edit, once applied. `find_in_parent_folders` only walks
-ancestors, so every unit must have all three above it. A region-agnostic unit
+ancestors, so every unit must have all four above it. A region-agnostic unit
 still needs a `region.hcl`, which is why `_global/` folders carry one.
 
 **Offline by design.** Every coordinate falls back to a placeholder through
@@ -262,7 +266,7 @@ resource group destroys and recreates it and everything inside it. Expect a
 mature tenant to be mixed, and leave the old names alone.
 
 Never hardcode a region or an environment in a unit. Both come from
-`local.context`, which `region.hcl` feeds. `Azure/naming/azurerm` is available
+`local.context`, which `region.hcl` and `env.hcl` feed. `Azure/naming/azurerm` is available
 where a generated name is acceptable.
 
 Two length exceptions to know, and they are not the same exception. Storage
