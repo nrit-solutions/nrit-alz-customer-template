@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `AGENTS.md` taken from nrit-alz-platform-skills v1.8.1: four caller files,
+  the full command list, the license variables, hooks read from main, and the
+  lock-file platform hashes. The copies are byte-identical again.
 - The README, ONBOARDING and the `live/**/README.md` files are cross-checked
   against engine v10.2.1: ONBOARDING is a short checklist that links to
   docs.nrit.cloud, the `amba` unit is described as vendoring its library, and
