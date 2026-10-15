@@ -14,6 +14,6 @@ with that environment, an `_global/lz-vending/` unit that places the subscriptio
 group (`subscription_management_group_id = "corp"`), and a network unit per
 region. Set `tags` on the spoke virtual network to match its resource group,
 or the ALZ inherit-tag policy makes it drift on every plan. See
-[Onboarding a landing zone](https://docs.nrit.cloud/operations/growing-the-tree/#onboarding-a-landing-zone)
+[Landing zone on an existing subscription](https://docs.nrit.cloud/scenarios/landing-zones/adopt-subscription/)
 and
-[Adding a workload resource](https://docs.nrit.cloud/operations/growing-the-tree/#adding-a-workload-resource).
+[Add a workload unit](https://docs.nrit.cloud/scenarios/options/add-a-workload-unit/).

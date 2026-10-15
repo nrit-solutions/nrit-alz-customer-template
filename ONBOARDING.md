@@ -91,7 +91,7 @@ get the approval, and comment `/apply`. The foundation applies in dependency
 order: `management-resources`, then `landing-zones`, then `amba`. The first
 apply can take sixty to ninety minutes in a tenant with existing policy state.
 See [Plan and apply](https://docs.nrit.cloud/operations/plan-and-apply/), then
-[Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/) for
+[Scenarios](https://docs.nrit.cloud/scenarios/) for
 the connectivity hub and the first landing zones.
 
 ## License of this repository

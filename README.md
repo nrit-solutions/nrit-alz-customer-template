@@ -77,7 +77,7 @@ Each management group folder has a `README.md` describing what it holds. The
 `platform` and `landingzones` children ship as README-only placeholders. A
 customer's connectivity hub and landing zones are added into them as new units
 after the foundation is in place; see
-[Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/).
+[Scenarios](https://docs.nrit.cloud/scenarios/).
 
 ## The foundation
 
