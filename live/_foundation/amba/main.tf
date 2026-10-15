@@ -3,7 +3,7 @@ data "azapi_client_config" "current" {}
 locals {
 
   amba_resource_group_name                 = "rg-amba-${local.context.location_short}"
-  amba_user_assigned_managed_identity_name = "uami-amba-${local.context.location_short}"
+  amba_user_assigned_managed_identity_name = "id-amba-${local.context.location_short}"
   amba_action_group_email                  = local.context.amba_action_group_email
 
   # AMBA's remediation re-creates this RG with the ALZMonitorResourceGroupTags

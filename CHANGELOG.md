@@ -28,6 +28,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The foundation units name the Log Analytics workspace `log-management-<region>`
+  and the managed identities `id-management-ama-<region>` and
+  `id-amba-<region>`, the CAF abbreviations, instead of `law-` and `uami-`.
+  `AGENTS.md` names the CAF abbreviation list as the reference. Backport: no.
+  On an applied repository these renames replace the workspace and both
+  identities; keep the existing names there.
 - The four engine callers move to tf-pr-ops v10.2.3 (nrit-tf-pr-ops#425): a
   path `gate_ignore` names no longer counts as a Terraform change on its own,
   so a pull request that only adds such files merges. No caller change.

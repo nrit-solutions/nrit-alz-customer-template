@@ -233,8 +233,12 @@ manage Event Grid event subscriptions with `azapi_resource`, not the
 `getFullUrl` action, which the read-only plan identity cannot call, so every
 plan after the first apply fails with 403. azapi reads with a plain GET.
 
-**Naming.** Follow the Cloud Adoption Framework component order. Whether the name
-carries an environment depends on where the unit sits in the tree.
+**Naming.** Follow the Cloud Adoption Framework component order, with the type
+abbreviation from the CAF
+[abbreviation list](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations)
+(`afw`, `log`, `id`, `rsv`, `rt`; not the `Azure/naming` module's `fw`, `uai`
+and `route`). Whether the name carries an environment depends on where the
+unit sits in the tree.
 
 ```
 Platform, under _foundation/ and platform/
@@ -248,13 +252,13 @@ Landing zones, under landingzones/
 
 | Unit lives under | Name | Why |
 | --- | --- | --- |
-| `_foundation/` | `rg-management-weu`, `law-management-weu`, `uami-management-ama-weu`, `dcr-change-tracking-weu`, `rg-amba-weu` | Tenant singletons. One hierarchy, one workspace, one AMBA deployment, serving every environment in the tenant |
+| `_foundation/` | `rg-management-weu`, `log-management-weu`, `id-management-ama-weu`, `dcr-change-tracking-weu`, `rg-amba-weu` | Tenant singletons. One hierarchy, one workspace, one AMBA deployment, serving every environment in the tenant |
 | `platform/` | `rg-hub-weu`, `vnet-hub-weu` | Platform shared services. The hub carries traffic for prod, dev, and sandbox spokes alike |
 | `landingzones/` | `rg-corp-network-prod-weu`, `vnet-corp-prod-weu`, `snet-workload-prod-weu`, `nsg-corp-workload-prod-weu` | A landing zone belongs to exactly one environment |
 
 The rule behind the split: environment is a property of the workload, not of the
 platform. There will never be a non-production management workspace, so
-`law-management-prod-weu` would imply a sibling that cannot exist. CAF names its
+`log-management-prod-weu` would imply a sibling that cannot exist. CAF names its
 shared resources the same way, for example `vnet-shared-eastus2-001`.
 
 The instance suffix (`001`) is optional everywhere: add it when a second resource

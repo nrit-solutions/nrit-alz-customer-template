@@ -168,7 +168,7 @@ CAF's component order is
 `<type>-<purpose>-<environment>-<region>[-<instance>]` — and the environment
 component belongs on **workload** resources, not on shared platform ones.
 Environment is a property of the workload: a tenant has one management
-workspace and one hub serving every environment, so `law-management-prod-weu`
+workspace and one hub serving every environment, so `log-management-prod-weu`
 would imply a sibling that cannot exist. CAF's own shared examples omit it
 (`vnet-shared-eastus2-001`). In an ALZ tree that typically means:
 
