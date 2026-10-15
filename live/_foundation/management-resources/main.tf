@@ -18,7 +18,7 @@ module "management_resources" {
   automation_account_name                   = null
   location                                  = local.context.location
   resource_group_name                       = "rg-management-${local.context.location_short}"
-  log_analytics_workspace_name              = "law-management-${local.context.location_short}"
+  log_analytics_workspace_name              = "log-management-${local.context.location_short}"
   log_analytics_workspace_retention_in_days = 30
 
   data_collection_rules = {
@@ -28,7 +28,7 @@ module "management_resources" {
   }
 
   user_assigned_managed_identities = {
-    ama = { name = "uami-management-ama-${local.context.location_short}" }
+    ama = { name = "id-management-ama-${local.context.location_short}" }
   }
 
   enable_telemetry = false
