@@ -1,4 +1,4 @@
-# nrit-tf-pr-ops project discovery for this infrastructure-live repository.
+# tf-pr-ops project discovery for this infrastructure-live repository.
 # Terragrunt monorepo: units (folders with terragrunt.hcl) live under live/.
 # Foundation is treated like any other unit (governance is plan review +
 # approvals + the merge-gate), so no exclude.
@@ -27,7 +27,7 @@ extra_env:
 # by default (policy/tags.rego.example is a starter; drop the suffix to turn it
 # on, and read what it denies first), checkov warns without blocking, and infracost
 # always exits 0. The runner image carries conftest and
-# checkov (see nrit-alz-bootstrap runner-image); infracost is a static
+# checkov (see the bootstrap runner-image folder); infracost is a static
 # binary installed per run via the TFPR_EXTRA_TOOLS repo variable (add "infracost"),
 # and it needs the INFRACOST_API_KEY secret for the hosted pricing API (until set,
 # it notes it and skips). To enforce policy/scan: add `deny` rules to the policy and

@@ -7,31 +7,31 @@ library (the tooling also accepts YAML if you ever need inline comments).
 
 ## Contents
 
-- `architecture_definitions/nrit`: the management group hierarchy the module deploys.
-- `archetype_definitions/nrit_tags`: the tag-governance archetype, attached to the root.
+- `architecture_definitions/baseline`: the management group hierarchy the module deploys.
+- `archetype_definitions/baseline_tags`: the tag-governance archetype, attached to the root.
 - `policy_set_definitions/Enforce-Tag-Governance`: the tag-governance initiative.
 - `policy_definitions/Deny-Tag-NotAllowedValues`: a custom deny-on-tag-value policy.
-- `policy_assignments/Enforce-Tag-Gov`: the assignment placed by `nrit_tags`.
+- `policy_assignments/Enforce-Tag-Gov`: the assignment placed by `baseline_tags`.
 
-## The nrit architecture
+## The baseline architecture
 
-This library defines exactly one architecture, named `nrit`. That name is the only
+This library defines exactly one architecture, named `baseline`. That name is the only
 valid value for `architecture_name` in `../main.tf`, which is where it is set. You
 would change it only if you add a second architecture definition here, or point the
 unit at a different library whose architecture is named something else. Adding one
 means copying a complete hierarchy: see "stock architecture, unchanged, plus one
 line" below.
 
-`nrit.alz_architecture_definition.json` is the **stock `alz` architecture, unchanged,
-plus one line**: the `nrit_tags` archetype on the intermediate root (`alz`). The ALZ
+`baseline.alz_architecture_definition.json` is the **stock `alz` architecture, unchanged,
+plus one line**: the `baseline_tags` archetype on the intermediate root (`alz`). The ALZ
 module requires a *complete* architecture to deploy any customization, so the whole
 hierarchy is duplicated here. There is no "extend the stock architecture in place"
 option.
 
 **On a library upgrade:** when you bump the `platform/alz` ref in `../terragrunt.hcl`,
 re-sync this file against the stock `alz` architecture at the new version (diff it,
-apply any hierarchy changes, keep `nrit_tags` on the root). Nothing here tracks the
-stock hierarchy automatically. The only intended platform delta is `nrit_tags` on the root.
+apply any hierarchy changes, keep `baseline_tags` on the root). Nothing here tracks the
+stock hierarchy automatically. The only intended platform delta is `baseline_tags` on the root.
 
 ## Placeholder resource IDs
 

@@ -55,7 +55,7 @@ jobs:
 
       # The probe above says whether the endpoint answers. This says whether
       # checkov actually ended up with the mapping, which is the question the
-      # rendering work in nrit-tf-pr-ops#116 turns on.
+      # guideline-URL rendering in the engine turns on.
       - name: Ask checkov whether its findings carry guideline URLs
         run: |
           if ! command -v checkov >/dev/null 2>&1; then
