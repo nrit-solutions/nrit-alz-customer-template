@@ -10,6 +10,8 @@ terragrunt:
 # merge gate fails a PR that changes them (the unattributed-path check).
 gate_ignore:
   - ".tflint.hcl"
+  # Copyable scenario trees, outside live/ on purpose: never a unit until copied.
+  - "examples/**"
   - ".claude/**"
 
 

@@ -12,6 +12,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- `examples/`: copyable `live/` subtrees for the scenarios on the docs site:
+  three connectivity hubs (minimal hub and spoke, hub and spoke with Azure
+  Firewall, Virtual WAN with Azure Firewall), two landing zones (existing
+  subscription, new subscription), several environments in one subscription,
+  and a workload unit. Pinned to hub-and-spoke 0.17.7, virtual-wan 0.18.0,
+  sub-vending 0.3.4, storage 0.10.0. `projects.yml` ignores the folder in the
+  merge gate. Backport: optional; existing repositories can copy the folder or
+  read the examples on GitHub.
+- The README, `AGENTS.md`, `ONBOARDING.md` and the placeholder READMEs link to
+  the Scenarios section of the docs site instead of the old Growing the tree
+  page.
+
 ### Changed
 
 - The four engine callers move to tf-pr-ops v10.2.3 (nrit-tf-pr-ops#425): a

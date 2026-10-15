@@ -44,7 +44,7 @@ Everything else lives in the public platform documentation
 | Page | Use it for |
 | --- | --- |
 | [Repository anatomy](https://docs.nrit.cloud/anatomy/) | The live tree, the root contract, the foundation units (including the multi-region decision and deploy order), the policy library |
-| [Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/) | Adding a connectivity hub, a landing zone, or a unit. The flattening rule |
+| [Scenarios](https://docs.nrit.cloud/scenarios/) | Adding a connectivity hub, a landing zone, or a unit, each with a copyable tree under `examples/`. The flattening rule |
 | [Sharing data between units](https://docs.nrit.cloud/operations/sharing-data-between-units/) | How units share values and ordering. Read before adding any cross-unit reference |
 | [Plan and apply](https://docs.nrit.cloud/operations/plan-and-apply/) | The run flow, dependency-ordered apply, cross-PR unit locks |
 | [Gates](https://docs.nrit.cloud/operations/gates/) | The commit-time hooks and the plan-time policy, security, and cost gates |
@@ -94,7 +94,7 @@ then units.
 A management group folder with no `terragrunt.hcl` beneath it is a placeholder.
 It documents the shape of the estate before the resources exist, costs nothing
 at plan time, and is filled in when the tenant needs it. Follow
-[Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/), and
+[Scenarios](https://docs.nrit.cloud/scenarios/), and
 keep the folder's README accurate afterwards.
 
 ## Core concepts

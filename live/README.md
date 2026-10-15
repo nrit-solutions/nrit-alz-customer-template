@@ -26,4 +26,4 @@ The `_foundation/` units ship wired. Everything under `platform/` and
 `landingzones/` is a README-only placeholder: the connectivity hub and the landing
 zones are onboarded per customer, as new units on public Azure Verified Modules,
 after the foundation is in place. See
-[Growing the tree](https://docs.nrit.cloud/operations/growing-the-tree/).
+[Scenarios](https://docs.nrit.cloud/scenarios/).
