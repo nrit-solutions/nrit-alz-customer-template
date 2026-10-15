@@ -36,4 +36,4 @@ your repository or delete it; neither affects a plan.
 Module versions in the examples are pinned exactly, like every unit. When a
 pin moves in the examples, the scenario page says so. The examples are
 validated by `terraform validate` against the module schemas and by a plan on
-NRIT's sandbox tenant before they are published; they are not applied there.
+a sandbox tenant before they are published; they are not applied there.

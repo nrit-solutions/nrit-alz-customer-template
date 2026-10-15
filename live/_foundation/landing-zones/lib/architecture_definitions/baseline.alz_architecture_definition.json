@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/Azure/Azure-Landing-Zones-Library/main/schemas/architecture_definition.json",
-  "name": "nrit",
+  "name": "baseline",
   "management_groups": [
     {
       "archetypes": [
         "root",
-        "nrit_tags"
+        "baseline_tags"
       ],
       "display_name": "Azure Landing Zones",
       "exists": false,

@@ -244,8 +244,8 @@ module "management_groups" {
   version = "0.21.0"
 
   # Must match an architecture defined in the alz library referenced by
-  # terragrunt.hcl. The vendored lib/ defines one: nrit.
-  architecture_name  = "nrit"
+  # terragrunt.hcl. The vendored lib/ defines one: baseline.
+  architecture_name  = "baseline"
   parent_resource_id = local.context.tenant_root_id
   location           = local.context.location
   enable_telemetry   = false

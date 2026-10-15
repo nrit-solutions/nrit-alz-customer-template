@@ -30,7 +30,7 @@ bootstrap re-run never overwrites them.
   the `env` tag. The tag policy allows `prod`, `staging`, and `dev`.
 - `live/_foundation/landing-zones/main.tf`: set `connectivity_subscription_id`
   when the customer has a connectivity subscription. Leave `architecture_name`
-  as `nrit` unless you add a second architecture to the vendored library.
+  as `baseline` unless you add a second architecture to the vendored library.
 
 The tenant id, subscription ids, and backend names come from repository
 variables the bootstrap wrote. The placeholders in `live/tenant.hcl` and

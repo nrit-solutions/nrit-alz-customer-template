@@ -73,7 +73,7 @@ jobs:
               echo "Where to look, in order:"
               echo
               echo "1. Container App Job executions: \`az containerapp job execution list -g <runners-rg> -n <job-name>\` — no recent executions means the KEDA scaler is not firing (check the runners GitHub App key and ids in the job's scale rule); executions that start and fail point at the image pull or runner registration instead."
-              echo "2. The runner registration auth and its rotation procedure: the runner section of the nrit-alz-bootstrap README."
+              echo "2. The runner registration auth and its rotation procedure: the runner section of the bootstrap README."
               echo "3. The 2026-08-23 incident record in the bootstrap changelog, which walks this exact failure."
               echo
               echo "This issue closes itself on the canary's first healthy pass."

@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/Azure/Azure-Landing-Zones-Library/main/schemas/archetype_definition.json",
-  "name": "nrit_tags",
+  "name": "baseline_tags",
   "policy_assignments": [
     "Enforce-Tag-Gov"
   ],

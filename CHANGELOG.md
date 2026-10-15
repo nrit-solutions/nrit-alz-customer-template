@@ -28,6 +28,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The vendored policy library is named `baseline` (architecture `baseline`,
+  archetype `baseline_tags`, path `platform/baseline`) instead of `nrit`, and
+  `architecture_name` in the landing-zones unit follows. Comments in the
+  caller workflows and `projects.yml` no longer name the engine or bootstrap
+  repositories. Backport: optional. The architecture name is a plan-time
+  label: on an applied repository the rename plans no changes.
+
 - The foundation units name the Log Analytics workspace `log-management-<region>`
   and the managed identities `id-management-ama-<region>` and
   `id-amba-<region>`, the CAF abbreviations, instead of `law-` and `uami-`.
