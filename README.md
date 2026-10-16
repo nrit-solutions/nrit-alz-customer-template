@@ -31,10 +31,10 @@ Review the plan and the gate output, get the required reviews, and comment
 
 ## Workflows
 
-Four caller workflows in `.github/workflows/` (`tf-pr-ops-pr.yml`,
-`tf-pr-ops-unlock.yml`, `tf-pr-ops.yml`, `drift.yml`) call the dispatch action
-and the reusable workflows in `nrit-solutions/tf-pr-ops` at one pinned tag. The
-`uses:` ref is the whole pin. Read the current version from those files. Once
+Five caller workflows in `.github/workflows/` (`tf-pr-ops-pr.yml`,
+`tf-pr-ops-unlock.yml`, `tf-pr-ops-review.yml`, `tf-pr-ops.yml`, `drift.yml`)
+call the dispatch action and the reusable workflows in
+`nrit-solutions/tf-pr-ops` at one pinned tag. The `uses:` ref is the whole pin. Read the current version from those files. Once
 the Renovate GitHub App is installed, `.github/renovate.json` opens the bump
 pull requests, and the invariants check fails a mix of releases. See
 [Versions and upgrades](https://docs.nrit.cloud/reference/versions/).

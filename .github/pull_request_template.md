@@ -10,8 +10,8 @@
 - Subscription / landing zone:
 - Version pins moved (AVM `version` in `main.tf`, policy library `ref`, engine pins):
   <!-- Write "none" if no pin moved. Engine pins are the uses: refs in the
-       four caller workflows: tf-pr-ops-pr.yml, tf-pr-ops-unlock.yml,
-       tf-pr-ops.yml, and drift.yml. All must match. -->
+       five caller workflows: tf-pr-ops-pr.yml, tf-pr-ops-unlock.yml,
+       tf-pr-ops-review.yml, tf-pr-ops.yml, and drift.yml. All must match. -->
 
 ## Checklist
 

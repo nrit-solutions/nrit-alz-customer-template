@@ -10,7 +10,7 @@ on:
     inputs:
       command:
         type: choice
-        options: [plan, apply, unlock]
+        options: [plan, apply, unlock, review]
         default: plan
       project:
         required: false
@@ -32,7 +32,7 @@ permissions:
 
 jobs:
   engine:
-    uses: nrit-solutions/tf-pr-ops/.github/workflows/terraform-pr-ops.yml@v10.2.3
+    uses: nrit-solutions/tf-pr-ops/.github/workflows/terraform-pr-ops.yml@v11.0.0
     with:
       command: ${{ inputs.command || 'plan' }}
       project: ${{ inputs.project || '' }}

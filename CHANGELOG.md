@@ -41,6 +41,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `AGENTS.md` names the CAF abbreviation list as the reference. Backport: no.
   On an applied repository these renames replace the workspace and both
   identities; keep the existing names there.
+- The engine callers move to tf-pr-ops v11.0.0 (nrit-tf-pr-ops#431, #412),
+  and the new review caller `tf-pr-ops-review.yml` is added. A submitted or
+  dismissed review now refreshes the `tf-pr-ops / approval` row, and a
+  refused run fails the merge gate with the reason. Caller change: the ops
+  caller's `command` input gains `review`. Existing customer repositories
+  need the backport: Renovate's two-PR major bump moves the pins, and step
+  1 must also add the `review` option, step 2 the review caller. Renovate's
+  step-2 rule now names the review caller.
 - The four engine callers move to tf-pr-ops v10.2.3 (nrit-tf-pr-ops#425): a
   path `gate_ignore` names no longer counts as a Terraform change on its own,
   so a pull request that only adds such files merges. No caller change.
