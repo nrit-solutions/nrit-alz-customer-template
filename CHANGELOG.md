@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- `AGENTS.md` and `.github/scripts/check-repo-invariants.sh` taken from
+  nrit-alz-platform-skills v1.9.1: five engine callers, and the review caller
+  moves with the PR and unlock callers in a two-PR bump.
 ### Added
 
 - `examples/`: copyable `live/` subtrees for the scenarios on the docs site:

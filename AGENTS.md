@@ -13,10 +13,10 @@ Anything specific to this repository lives in the files it points at:
 
 An infrastructure-live repository for one Azure tenant. It holds Terragrunt
 configuration for a Cloud Adoption Framework (CAF) landing zone under `live/`,
-and it is operated by the `nrit-tf-pr-ops` comment-ops engine. Four caller files
+and it is operated by the `nrit-tf-pr-ops` comment-ops engine. Five caller files
 in `.github/workflows/` consume it at a pinned release from the public
-`nrit-solutions/tf-pr-ops` repository: two reusable workflows and a dispatch
-action.
+`nrit-solutions/tf-pr-ops` repository: two reusable workflows and three that run
+the dispatch action.
 
 Two things drive most of the rules below:
 
@@ -409,7 +409,7 @@ deploys to, and `gh` must be the account that should be acting here.
 | What | Pinned in | Rule |
 | --- | --- | --- |
 | Terraform, Terragrunt | `mise.toml` | The engine auto-detects it. No workflow edit needed |
-| The engine | the four caller files in `.github/workflows/` | Every `uses:` ref at the same tag, except during a two-PR bump. The `uses:` ref is the only engine pin |
+| The engine | the five caller files in `.github/workflows/` | Every `uses:` ref at the same tag, except during a two-PR bump. The `uses:` ref is the only engine pin |
 | AVM modules | each unit's `main.tf` | Exact `version` |
 | ALZ and AMBA libraries | `library_references` in the two foundation `terragrunt.hcl` files | Keep the `platform/alz` ref identical in both |
 | Providers | the `generate "provider"` blocks, then each unit's `.terraform.lock.hcl` | `~>` constraints in the generate block; the lock file is what actually pins |
@@ -441,9 +441,9 @@ Onboarding generates them once, against that customer's own tree. Until then the
 invariants check warns on every run.
 
 Engine tags are immutable `vX.Y.Z`. There is no moving `v1` tag, so an upgrade is
-always a commit here. Bump the `uses:` ref in all four callers in one commit. A
+always a commit here. Bump the `uses:` ref in all five callers in one commit. A
 release that changes the ops caller's inputs takes two PRs: the ops and drift
-callers first, then the PR and unlock callers, because a dispatched run uses the
+callers first, then the PR, unlock and review callers, because a dispatched run uses the
 ops caller on `main`. The invariants check allows exactly that intermediate
 state. The release notes say which kind a release is. The `uses:` ref is the
 whole pin: each job installs the engine runtime (the `tfpr` binary and the gate
