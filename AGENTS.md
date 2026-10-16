@@ -44,7 +44,7 @@ Everything else lives in the public platform documentation
 | Page | Use it for |
 | --- | --- |
 | [Repository anatomy](https://docs.nrit.cloud/anatomy/) | The live tree, the root contract, the foundation units (including the multi-region decision and deploy order), the policy library |
-| [Scenarios](https://docs.nrit.cloud/scenarios/) | Adding a connectivity hub, a landing zone, or a unit, each with a copyable tree under `examples/`. The flattening rule |
+| [Scenarios](https://docs.nrit.cloud/scenarios/) | Adding a connectivity hub, a landing zone, or a unit, each with a copyable example tree. The flattening rule |
 | [Sharing data between units](https://docs.nrit.cloud/operations/sharing-data-between-units/) | How units share values and ordering. Read before adding any cross-unit reference |
 | [Plan and apply](https://docs.nrit.cloud/operations/plan-and-apply/) | The run flow, dependency-ordered apply, cross-PR unit locks |
 | [Gates](https://docs.nrit.cloud/operations/gates/) | The commit-time hooks and the plan-time policy, security, and cost gates |
@@ -255,6 +255,9 @@ Landing zones, under landingzones/
 | `_foundation/` | `rg-management-weu`, `log-management-weu`, `id-management-ama-weu`, `dcr-change-tracking-weu`, `rg-amba-weu` | Tenant singletons. One hierarchy, one workspace, one AMBA deployment, serving every environment in the tenant |
 | `platform/` | `rg-hub-weu`, `vnet-hub-weu` | Platform shared services. The hub carries traffic for prod, dev, and sandbox spokes alike |
 | `landingzones/` | `rg-corp-network-prod-weu`, `vnet-corp-prod-weu`, `snet-workload-prod-weu`, `nsg-corp-workload-prod-weu` | A landing zone belongs to exactly one environment |
+
+A repository stamped before 2026-10-15 names the workspace and the AMA identity
+`law-` and `uami-`. Keep those names there: renaming replaces the resources.
 
 The rule behind the split: environment is a property of the workload, not of the
 platform. There will never be a non-production management workspace, so
