@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `AGENTS.md` taken from nrit-alz-platform-skills v1.9.2: the Scenarios
+  link, the CAF abbreviation rule, and a note that repositories stamped before
+  2026-10-15 keep the `law-` and `uami-` foundation names. One copy now fits
+  every consumer.
 - `AGENTS.md` and `.github/scripts/check-repo-invariants.sh` taken from
   nrit-alz-platform-skills v1.9.1: five engine callers, and the review caller
   moves with the PR and unlock callers in a two-PR bump.
