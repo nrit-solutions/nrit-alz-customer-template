@@ -1,0 +1,29 @@
+# Runs only in the template repository: every file here ships into the
+# repositories generated from it. The pattern is a repository variable so this
+# file stays neutral, and the job skips wherever the variable is unset.
+name: shipped-text
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    if: github.event.repository.is_template && vars.SHIPPED_TEXT_DENYLIST != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Fail on denied text in shipped files
+        env:
+          DENYLIST: ${{ vars.SHIPPED_TEXT_DENYLIST }}
+        run: |
+          if git grep -n -I -E -e "$DENYLIST"; then
+            echo "::error::Shipped files match SHIPPED_TEXT_DENYLIST. Customers receive every file in this repository."
+            exit 1
+          fi

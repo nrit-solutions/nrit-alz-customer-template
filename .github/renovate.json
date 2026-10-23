@@ -1,0 +1,57 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["custom.regex"],
+  "prHourlyLimit": 0,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Engine pins: the tfpr uses: ref in every caller workflow",
+      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      "matchStrings": [
+        "uses:\\s*(?<depName>[^\\s/]+/tfpr)/[^@\\s]+@(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-tags"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "A minor or patch engine release: one pull request for all five callers",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["/\\/tfpr$/"],
+      "groupName": "tfpr engine",
+      "commitMessageTopic": "the tfpr engine",
+      "labels": ["engine-bump"],
+      "prBodyNotes": [
+        "Read the engine release notes before merging."
+      ]
+    },
+    {
+      "description": "A major engine release, step 1: the ops and drift callers, because a dispatched run uses the ops caller on main",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["/\\/tfpr$/"],
+      "matchUpdateTypes": ["major"],
+      "matchFileNames": [".github/workflows/tfpr.yml", ".github/workflows/drift.yml"],
+      "groupName": "tfpr engine major (1 of 2, ops and drift callers)",
+      "groupSlug": "tfpr-engine-major-1-ops-drift",
+      "commitMessageTopic": "the tfpr engine ops and drift callers",
+      "prBodyNotes": [
+        "Step 1 of 2 of a major engine bump. Read the release notes: a major can need caller edits beyond the version, and they go in this pull request. Merge this one first; step 2 moves the PR, unlock and review callers."
+      ]
+    },
+    {
+      "description": "A major engine release, step 2: the PR, unlock and review callers, after step 1 is on main",
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["/\\/tfpr$/"],
+      "matchUpdateTypes": ["major"],
+      "matchFileNames": [".github/workflows/tfpr-pr.yml", ".github/workflows/tfpr-unlock.yml", ".github/workflows/tfpr-review.yml"],
+      "groupName": "tfpr engine major (2 of 2, PR, unlock and review callers)",
+      "groupSlug": "tfpr-engine-major-2-pr-unlock",
+      "commitMessageTopic": "the tfpr engine PR, unlock and review callers",
+      "rebaseWhen": "behind-base-branch",
+      "prBodyNotes": [
+        "Step 2 of 2 of a major engine bump. Merge step 1 (the ops and drift callers) first. Until it is on main, the pre-commit job here fails the engine pin check on purpose; Renovate rebases this branch once step 1 merges, and the check passes."
+      ]
+    }
+  ]
+}

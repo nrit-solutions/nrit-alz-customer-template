@@ -1,0 +1,46 @@
+# Ops caller for tfpr: comment commands and dispatched work. This file
+# is stable: engine changes rarely need a caller edit. Bump the uses: ref to
+# move to a new engine release; the jobs install the runtime of that release.
+name: tfpr ops
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      command:
+        type: choice
+        options: [plan, apply, unlock, review]
+        default: plan
+      project:
+        required: false
+      pr_number:
+        required: false
+      # Set by the PR caller's dispatch action on a push. Hints for wording
+      # only; the engine resolves everything it decides from the API.
+      before_sha:
+        required: false
+      trigger_actor:
+        required: false
+
+# The caller grants the ceiling of permissions the reusable workflow's jobs use.
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+  id-token: write
+
+jobs:
+  engine:
+    uses: nrit-solutions/tfpr/.github/workflows/terraform-pr-ops.yml@v12.1.0
+    with:
+      command: ${{ inputs.command || 'plan' }}
+      project: ${{ inputs.project || '' }}
+      pr_number: ${{ inputs.pr_number || '' }}
+      before_sha: ${{ inputs.before_sha || '' }}
+      trigger_actor: ${{ inputs.trigger_actor || '' }}
+    # Pass the secrets by name. GitHub drops secrets: inherit when the caller
+    # is in another organization than the reusable workflow.
+    secrets:
+      TFPR_CHECKS_APP_PRIVATE_KEY: ${{ secrets.TFPR_CHECKS_APP_PRIVATE_KEY }}
+      INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}

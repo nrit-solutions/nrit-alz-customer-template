@@ -1,0 +1,22 @@
+# Review caller for tfpr. A submitted or dismissed review starts no
+# plan, so this dispatches a review refresh: the ops run rewrites the
+# "tfpr / approval" row on the head and nothing else. Its own workflow,
+# like the unlock caller, so a review adds no skipped rows to the PR. The
+# dispatch action only dispatches, so no credentials are needed here.
+# Named like the PR caller so the row reads "tfpr / review", like every other row.
+name: tfpr
+
+on:
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions:
+  contents: read
+  actions: write         # dispatch the ops workflow
+
+jobs:
+  review:
+    if: github.event.repository.is_template != true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: nrit-solutions/tfpr/.github/actions/dispatch@v12.1.0

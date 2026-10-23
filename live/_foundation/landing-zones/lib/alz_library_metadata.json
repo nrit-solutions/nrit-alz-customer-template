@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/Azure-Landing-Zones-Library/main/schemas/library_metadata.json",
+  "name": "baseline",
+  "display_name": "Platform policy library",
+  "description": "Platform additions layered on the stock ALZ library. The baseline architecture mirrors the stock alz hierarchy exactly, plus the baseline_tags archetype on the intermediate root (baseline tag governance). Because the ALZ module needs a complete architecture, re-sync architecture_definitions/baseline against the stock alz architecture whenever the platform/alz library ref is bumped. See README.md.",
+  "path": "platform/baseline",
+  "dependencies": []
+}

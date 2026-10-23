@@ -1,0 +1,23 @@
+# Caller for the reusable drift workflow. Bump the uses: ref to move to a new
+# engine release.
+name: drift
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  id-token: write
+  pull-requests: read    # the lock sweep reads holder PR state
+
+jobs:
+  engine:
+    uses: nrit-solutions/tfpr/.github/workflows/drift.yml@v12.1.0
+    # Pass the secrets by name. GitHub drops secrets: inherit when the caller
+    # is in another organization than the reusable workflow.
+    secrets:
+      TFPR_CHECKS_APP_PRIVATE_KEY: ${{ secrets.TFPR_CHECKS_APP_PRIVATE_KEY }}
+      INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
