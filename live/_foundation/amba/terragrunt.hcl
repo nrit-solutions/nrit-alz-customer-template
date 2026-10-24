@@ -1,7 +1,7 @@
 # AMBA leaf: the AMBA resources (resource group + remediation identity) and the
 # AMBA policy on the amba architecture, in one state. The AVM modules own the
 # schema (main.tf). Terragrunt generates the backend and the azurerm + azapi +
-# alz providers; alz carries platform/alz plus platform/amba. Isolated from the
+# alz providers; alz carries platform/amba only. Isolated from the
 # base policy leaf, so an AMBA change re-plans only this leaf.
 
 # deep merge so this unit's generate "provider" overrides root's default block.
@@ -50,7 +50,6 @@ generate "provider" {
 
     provider "alz" {
       library_references = [
-        { path = "platform/alz", ref = "2026.04.2" },
         { path = "platform/amba", ref = "2026.10.0" },
       ]
     }
