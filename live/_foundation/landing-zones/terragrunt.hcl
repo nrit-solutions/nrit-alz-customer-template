@@ -39,7 +39,7 @@ generate "provider" {
     provider "alz" {
       library_overwrite_enabled = true
       library_references = [
-        { path = "platform/alz", ref = "2026.04.2" },
+        { path = "platform/alz", ref = "2026.10.0" },
         { custom_url = "${get_terragrunt_dir()}/lib" },
       ]
     }

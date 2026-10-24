@@ -4,7 +4,7 @@
   "management_groups": [
     {
       "archetypes": [
-        "root",
+        "baseline_root",
         "baseline_tags"
       ],
       "display_name": "Azure Landing Zones",
