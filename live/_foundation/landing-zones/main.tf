@@ -241,7 +241,7 @@ locals {
 
 module "management_groups" {
   source  = "Azure/avm-ptn-alz/azurerm"
-  version = "0.21.0"
+  version = "0.22.0"
 
   # Must match an architecture defined in the alz library referenced by
   # terragrunt.hcl. The vendored lib/ defines one: baseline.
