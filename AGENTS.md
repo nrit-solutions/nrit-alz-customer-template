@@ -418,7 +418,7 @@ deploys to, and `gh` must be the account that should be acting here.
 | Terraform, Terragrunt | `mise.toml` | The engine auto-detects it. No workflow edit needed |
 | The engine | the five caller files in `.github/workflows/` | Every `uses:` ref at the same tag, except during a two-PR bump. The `uses:` ref is the only engine pin |
 | AVM modules | each unit's `main.tf` | Exact `version` |
-| ALZ and AMBA libraries | `library_references` in the two foundation `terragrunt.hcl` files | Keep the `platform/alz` ref identical in both |
+| ALZ and AMBA libraries | `library_references` in the two foundation `terragrunt.hcl` files | `platform/alz` in `landing-zones` only, `platform/amba` in `amba` only. AMBA does not depend on the ALZ library |
 | Providers | the `generate "provider"` blocks, then each unit's `.terraform.lock.hcl` | `~>` constraints in the generate block; the lock file is what actually pins |
 
 Provider versions are settled by the committed `.terraform.lock.hcl` in each
