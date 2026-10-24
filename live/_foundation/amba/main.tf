@@ -48,7 +48,7 @@ module "amba_resources" {
 
 module "amba_policy" {
   source  = "Azure/avm-ptn-alz/azurerm"
-  version = "0.21.0"
+  version = "0.22.0"
 
   architecture_name  = "amba"
   parent_resource_id = data.azapi_client_config.current.tenant_id
