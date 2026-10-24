@@ -93,8 +93,8 @@ Read `AGENTS.md` before you start. Where this list and `AGENTS.md` differ,
 - [ ] A new unit ships `.terraform.lock.hcl` with `linux_amd64` hashes.
 - [ ] One pin moves per PR, and the PR declares it.
 - [ ] No lock file was deleted to make an error go away.
-- [ ] Any `platform/alz` ref bump keeps both foundation units on the same ref
-      and re-syncs the vendored architecture definition.
+- [ ] Any `platform/alz` ref bump re-syncs the vendored architecture
+      definition, and `amba` does not load `platform/alz`.
 
 ## Terragrunt and tooling
 
