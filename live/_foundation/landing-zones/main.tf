@@ -253,4 +253,16 @@ module "management_groups" {
   subscription_placement       = local.subscription_placement
   policy_assignments_to_modify = local.policy_assignments_to_modify
   policy_default_values        = local.policy_default_values
+
+  # On a fresh stamp Entra has not replicated the new identities yet, so the role assignments can fail or time out.
+  retries = {
+    policy_role_assignments = {
+      error_message_regex = [
+        "AuthorizationFailed",
+        "ResourceNotFound",
+        "RoleAssignmentNotFound",
+        "context deadline exceeded",
+      ]
+    }
+  }
 }
