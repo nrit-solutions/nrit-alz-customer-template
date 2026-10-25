@@ -22,11 +22,11 @@ generate "provider" {
       required_providers {
         alz = {
           source  = "Azure/alz"
-          version = "~> 0.21"
+          version = "~> 0.22"
         }
         azapi = {
           source  = "Azure/azapi"
-          version = "~> 2.4"
+          version = "~> 2.12"
         }
         azurerm = {
           source  = "hashicorp/azurerm"
