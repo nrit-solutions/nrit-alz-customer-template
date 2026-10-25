@@ -10,7 +10,9 @@ locals {
   # identity needs the subscription creator role on it; see the scenario page.
   subscription_billing_scope = "/providers/Microsoft.Billing/billingAccounts/00000000/enrollmentAccounts/000000"
 
+  # Microsoft.AlertsManagement and microsoft.insights are what AMBA needs on every subscription.
   resource_providers = {
+    "Microsoft.AlertsManagement"    = []
     "Microsoft.KeyVault"            = []
     "Microsoft.ManagedIdentity"     = []
     "Microsoft.OperationalInsights" = []

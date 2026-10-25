@@ -8,7 +8,9 @@ locals {
   # <archetype>-<purpose>-<environment>, the same as the folder name.
   subscription_display_name = "corp-shared-nonprod"
 
+  # Microsoft.AlertsManagement and microsoft.insights are what AMBA needs on every subscription.
   resource_providers = {
+    "Microsoft.AlertsManagement"    = []
     "Microsoft.KeyVault"            = []
     "Microsoft.ManagedIdentity"     = []
     "Microsoft.OperationalInsights" = []

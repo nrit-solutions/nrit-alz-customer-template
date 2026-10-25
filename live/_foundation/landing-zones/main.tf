@@ -46,6 +46,16 @@ locals {
     },
   )
 
+  # AMBA needs both on every subscription it covers, and registration is an idempotent POST.
+  amba_resource_providers = ["Microsoft.AlertsManagement", "microsoft.insights"]
+  resource_provider_registrations = {
+    for pair in setproduct(keys(local.subscription_placement), local.amba_resource_providers) :
+    "${pair[0]}-${pair[1]}" => {
+      subscription_id   = local.subscription_placement[pair[0]].subscription_id
+      resource_provider = pair[1]
+    }
+  }
+
   # Tag governance stays in Audit while resource groups are reconciled; the
   # placeholder DDoS assignment is disabled so VNet creates work.
   policy_assignments_to_modify = {
@@ -253,4 +263,13 @@ module "management_groups" {
   subscription_placement       = local.subscription_placement
   policy_assignments_to_modify = local.policy_assignments_to_modify
   policy_default_values        = local.policy_default_values
+}
+
+resource "azapi_resource_action" "resource_provider_registration" {
+  for_each = local.resource_provider_registrations
+
+  type        = "Microsoft.Resources/subscriptions@2021-04-01"
+  resource_id = "/subscriptions/${each.value.subscription_id}"
+  action      = "providers/${each.value.resource_provider}/register"
+  method      = "POST"
 }
