@@ -47,7 +47,8 @@ locals {
   )
 
   # Tag governance stays in Audit while resource groups are reconciled; the
-  # placeholder DDoS assignment is disabled so VNet creates work.
+  # placeholder DDoS assignment is disabled so VNet creates work. Defender for
+  # AI is the one Defender plan the stock assignment leaves on, so it is turned off.
   policy_assignments_to_modify = {
     alz = {
       policy_assignments = {
@@ -57,6 +58,11 @@ locals {
             criticalityEffect     = jsonencode({ value = "Audit" })
             confidentialityEffect = jsonencode({ value = "Audit" })
             environmentEffect     = jsonencode({ value = "Audit" })
+          }
+        }
+        Deploy-MDFC-Config-H224 = {
+          parameters = {
+            enableAscForAI = jsonencode({ value = "Disabled" })
           }
         }
       }
@@ -87,7 +93,9 @@ locals {
   #     policy_assignments = {
   #       # Microsoft Defender for Cloud. Set your real security contact email
   #       # (it ships as a placeholder), and enable the plans you want: each plan
-  #       # ships "Disabled"; "DeployIfNotExists" turns it on. Enabled plans cost.
+  #       # is "Disabled" (AI by the active entry above, the rest by the stock
+  #       # assignment); "DeployIfNotExists" turns it on. Enabled plans cost.
+  #       # Merge these parameters into the active Deploy-MDFC-Config-H224 entry.
   #       Deploy-MDFC-Config-H224 = {
   #         parameters = {
   #           emailSecurityContact    = jsonencode({ value = "soc@your-domain.com" })
@@ -98,6 +106,7 @@ locals {
   #           enableAscForAppServices = jsonencode({ value = "DeployIfNotExists" })
   #           enableAscForSql         = jsonencode({ value = "DeployIfNotExists" })
   #           enableAscForArm         = jsonencode({ value = "DeployIfNotExists" })
+  #           enableAscForAI          = jsonencode({ value = "DeployIfNotExists" })
   #           # ...enableAscForOssDb, enableAscForCosmosDbs, enableAscForCspm,
   #           #    enableAscForSqlOnVm, enableAscForServersVulnerabilityAssessments
   #         }
