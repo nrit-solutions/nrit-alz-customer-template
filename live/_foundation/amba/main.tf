@@ -30,6 +30,16 @@ locals {
     amba_alz_user_assigned_managed_identity_name = local.amba_user_assigned_managed_identity_name
     amba_alz_action_group_email                  = [local.amba_action_group_email]
     amba_alz_resource_group_tags                 = local.amba_resource_group_tags
+    # Service Health alerts use their own action group, which stays empty unless this is set.
+    amba_alz_sha_action_group_resources = {
+      actionGroupEmail    = [local.amba_action_group_email]
+      logicappResourceId  = ""
+      logicappCallbackUrl = ""
+      eventHubResourceId  = []
+      webhookServiceUri   = []
+      functionResourceId  = ""
+      functionTriggerUrl  = ""
+    }
   }
   amba_policy_default_values = { for key, value in local.amba_policy_default_values_raw : key => jsonencode({ value = value }) }
 }
