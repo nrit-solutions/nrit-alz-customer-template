@@ -61,4 +61,16 @@ module "amba_policy" {
   # remediation roles.
   policy_assignments_dependencies      = [module.amba_resources]
   policy_role_assignments_dependencies = [module.amba_resources]
+
+  # On a fresh stamp Entra has not replicated the new identities yet, so the role assignments can fail or time out.
+  retries = {
+    policy_role_assignments = {
+      error_message_regex = [
+        "AuthorizationFailed",
+        "ResourceNotFound",
+        "RoleAssignmentNotFound",
+        "context deadline exceeded",
+      ]
+    }
+  }
 }
