@@ -20,4 +20,4 @@ jobs:
     if: github.event.repository.is_template != true
     runs-on: ubuntu-latest
     steps:
-      - uses: nrit-solutions/tfpr/.github/actions/dispatch@v12.2.0
+      - uses: nrit-solutions/tfpr/.github/actions/dispatch@v12.3.0
