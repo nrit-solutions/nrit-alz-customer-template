@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- The engine callers move to tfpr v12.3.0. Each release now carries an SPDX
+  software bill of materials for the tfpr binaries, `tfpr.spdx.json`, with a
+  keyless signature in `tfpr.spdx.json.bundle`. No caller change.
 - The engine callers move to tfpr v12.2.0. Releases now also trust the
   license portal's standby signing key, so a later rotation of the license
   signing key needs no engine bump. No caller change.
