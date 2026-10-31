@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- checkov 3.3.8 to 3.4.0 in `mise.toml`, matching the runner image 2.1.0. No
+  caller or unit change.
 - The engine callers move to tfpr v12.3.0. Each release now carries an SPDX
   software bill of materials for the tfpr binaries, `tfpr.spdx.json`, with a
   keyless signature in `tfpr.spdx.json.bundle`. No caller change.
