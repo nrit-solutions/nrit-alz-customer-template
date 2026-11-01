@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Renovate now tracks the Terraform registry modules in `live/`: every module
+  bump arrives in one grouped pull request. A provider version outside its
+  range in `root.hcl` or a unit override is listed on the dependency dashboard,
+  with no pull request until it is approved there. Renovate only scans `live/`
+  and `.github/`, so `examples/` is not tracked. Lock files stay manual.
+
 ### Changed
 
 - `examples/connectivity/hub-spoke-minimal` and `hub-spoke-firewall`:
