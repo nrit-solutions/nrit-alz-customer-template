@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `management-resources`: `Azure/avm-ptn-alz-management/azurerm` 0.9.0 to 0.10.0,
+  matching the reference environment. 0.10.0 raises the azapi minimum to
+  `~> 2.12`, which `root.hcl` already requires; telemetry stays off, so its
+  new deployment permission does not apply. No other input or output change.
 - `examples/connectivity/hub-spoke-minimal` and `hub-spoke-firewall`:
   `Azure/avm-ptn-alz-connectivity-hub-and-spoke-vnet/azurerm` 0.17.7 to 0.18.1,
   matching the reference environment. 0.18.0 stops imported subnets and peerings
