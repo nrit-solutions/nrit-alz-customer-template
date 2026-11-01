@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `examples/connectivity/hub-spoke-minimal` and `hub-spoke-firewall`:
+  `Azure/avm-ptn-alz-connectivity-hub-and-spoke-vnet/azurerm` 0.17.7 to 0.18.1,
+  matching the reference environment. 0.18.0 stops imported subnets and peerings
+  from dropping out of plans. 0.18.1 adds private-only Bastion; both examples
+  keep Bastion off, so its state migration does not apply.
 - checkov 3.3.8 to 3.4.0 in `mise.toml`, matching the runner image 2.1.0. No
   caller or unit change.
 - The engine callers move to tfpr v12.3.0. Each release now carries an SPDX

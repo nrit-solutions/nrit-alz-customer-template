@@ -32,7 +32,7 @@ module "resource_group" {
 # for the DDoS plan. Opt a resource in by flipping its flag and adding its block.
 module "hub_vnet" {
   source  = "Azure/avm-ptn-alz-connectivity-hub-and-spoke-vnet/azurerm"
-  version = "0.17.7"
+  version = "0.18.1"
 
   enable_telemetry = false
   tags             = local.tags
