@@ -13,7 +13,7 @@ locals {
 
 module "management_resources" {
   source  = "Azure/avm-ptn-alz-management/azurerm"
-  version = "0.9.0"
+  version = "0.10.0"
 
   automation_account_name                   = null
   location                                  = local.context.location
