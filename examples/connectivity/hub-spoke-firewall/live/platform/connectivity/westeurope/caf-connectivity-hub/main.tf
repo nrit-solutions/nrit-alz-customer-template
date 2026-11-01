@@ -37,7 +37,7 @@ module "resource_group" {
 # defaults them to ON, so each is set false explicitly.
 module "hub_vnet" {
   source  = "Azure/avm-ptn-alz-connectivity-hub-and-spoke-vnet/azurerm"
-  version = "0.17.7"
+  version = "0.18.1"
 
   enable_telemetry = false
   tags             = local.tags
