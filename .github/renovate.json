@@ -1,8 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "enabledManagers": ["custom.regex"],
+  "enabledManagers": ["custom.regex", "terraform"],
   "prHourlyLimit": 0,
+  "includePaths": [".github/**", "live/**"],
   "customManagers": [
     {
       "customType": "regex",
@@ -12,9 +13,37 @@
         "uses:\\s*(?<depName>[^\\s/]+/tfpr)/[^@\\s]+@(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
       ],
       "datasourceTemplate": "github-tags"
+    },
+    {
+      "customType": "regex",
+      "description": "Provider constraints inside the Terragrunt generate blocks (root.hcl and unit overrides)",
+      "managerFilePatterns": ["/^live/root\\.hcl$/", "/^live/.+/terragrunt\\.hcl$/"],
+      "matchStrings": [
+        "source\\s*=\\s*\"(?<depName>[A-Za-z0-9-]+/[A-Za-z0-9-]+)\"\\s*\\n\\s*version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "terraform-provider",
+      "versioningTemplate": "hashicorp"
     }
   ],
   "packageRules": [
+    {
+      "description": "Registry modules (AVM and Azure/naming): one pull request for every module bump",
+      "matchManagers": ["terraform"],
+      "matchDatasources": ["terraform-module"],
+      "groupName": "Terraform modules",
+      "commitMessageTopic": "the Terraform modules",
+      "prBodyNotes": [
+        "AVM modules can break on 0.x minors. Read each module's release notes and every unit's plan before applying. A module that needs a newer provider than a unit's lock file fails init: refresh that lock file with `terragrunt run -- providers lock -platform=linux_amd64` in this pull request."
+      ]
+    },
+    {
+      "description": "Provider constraints: a version outside the range is listed on the dashboard, with no pull request until approved there, because a new major needs the AVM modules to support it first",
+      "matchManagers": ["custom.regex"],
+      "matchDatasources": ["terraform-provider"],
+      "rangeStrategy": "replace",
+      "dependencyDashboardApproval": true,
+      "commitMessageTopic": "the {{depName}} provider constraint"
+    },
     {
       "description": "A minor or patch engine release: one pull request for all five callers",
       "matchManagers": ["custom.regex"],
