@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- tfpr v12.3.0 to v12.3.1 in all five callers: report headings count imports
+  (`1 to import, 0 to add, ...`), and the removed-unit comment and merge-gate
+  title say the pull request destroys nothing instead of claiming resources
+  keep running.
 - `management-resources`: `Azure/avm-ptn-alz-management/azurerm` 0.9.0 to 0.10.0,
   matching the reference environment. 0.10.0 raises the azapi minimum to
   `~> 2.12`, which `root.hcl` already requires; telemetry stays off, so its
