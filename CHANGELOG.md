@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- tfpr v12.3.1 to v12.4.0 in all five callers: a pull request that deletes a
+  unit folder plans the unit's destroy from the default branch.
+  `tfpr apply -p <unit>` destroys it, merging without applying keeps it; a
+  plain `tfpr apply` never destroys a removed unit.
 - tfpr v12.3.0 to v12.3.1 in all five callers: report headings count imports
   (`1 to import, 0 to add, ...`), and the removed-unit comment and merge-gate
   title say the pull request destroys nothing instead of claiming resources
