@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- tfpr v12.4.0 to v12.5.0 in all five callers. v12.4.1 stops a deleted shared
+  `.hcl` that no unit reads from blocking a folder move; v12.5.0 warns when a
+  caller drifts from the canonical example.
 - tfpr v12.3.1 to v12.4.0 in all five callers: a pull request that deletes a
   unit folder plans the unit's destroy from the default branch.
   `tfpr apply -p <unit>` destroys it, merging without applying keeps it; a
