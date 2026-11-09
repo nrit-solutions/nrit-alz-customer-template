@@ -17,9 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- tfpr v12.5.0 to v12.5.2 in all five callers. v12.5.1 names stale dismissed
-  approvals, forgotten actions and released locks in the reports; v12.5.2 makes
-  a `tfpr unlock` comment release the locks again.
+- tfpr v12.5.0 to v12.5.2 in all five callers. v12.5.1 refuses an apply whose
+  only approval a ruleset dismissed after a later push, names the forget action
+  in the check row, and no longer fails a run when another run already released
+  a lock; v12.5.2 makes a `tfpr unlock` comment release the locks again.
 - tfpr v12.4.0 to v12.5.0 in all five callers. v12.4.1 stops a deleted shared
   `.hcl` that no unit reads from blocking a folder move; v12.5.0 warns when a
   caller drifts from the canonical example.
