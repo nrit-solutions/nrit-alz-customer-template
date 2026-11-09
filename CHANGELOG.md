@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- tfpr v12.5.2 to v12.5.3 in all five callers: runtime downloads retry for
+  two minutes and GitHub reads for about a minute, so a short GitHub 5xx no
+  longer stops a run or leaves its check rows in progress.
 - tfpr v12.5.0 to v12.5.2 in all five callers. v12.5.1 refuses an apply whose
   only approval a ruleset dismissed after a later push, names the forget action
   in the check row, and no longer fails a run when another run already released
