@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- AVM modules in `examples/`: Resource Group 0.4.0 to 0.5.0 and Storage Account
+  0.10.0 to 0.11.0.
 - tfpr v12.5.2 to v12.5.3 in all five callers: runtime downloads and GitHub
   reads retry for about 50 seconds, so a short GitHub 5xx no
   longer stops a run or leaves its check rows in progress.

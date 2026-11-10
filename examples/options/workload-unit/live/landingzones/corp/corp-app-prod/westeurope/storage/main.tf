@@ -36,7 +36,7 @@ module "naming" {
 
 module "resource_group" {
   source  = "Azure/avm-res-resources-resourcegroup/azurerm"
-  version = "0.4.0"
+  version = "0.5.0"
 
   name             = "rg-${local.purpose}-storage-${local.context.environment}-${local.context.location_short}"
   location         = local.context.location
@@ -48,7 +48,7 @@ module "resource_group" {
 # only over the private endpoint in the spoke, resolved through the hub zone.
 module "storage" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.10.0"
+  version = "0.11.0"
 
   name             = module.naming.storage_account.name_unique
   location         = local.context.location

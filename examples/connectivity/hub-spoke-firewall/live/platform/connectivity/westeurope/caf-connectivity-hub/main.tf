@@ -22,7 +22,7 @@ locals {
 
 module "resource_group" {
   source  = "Azure/avm-res-resources-resourcegroup/azurerm"
-  version = "0.4.0"
+  version = "0.5.0"
 
   name             = local.hub_resource_group_name
   location         = local.context.location
