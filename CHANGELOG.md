@@ -25,6 +25,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `AGENTS.md` taken from nrit-alz-platform-skills v2.0.4: the plan gates table
+  lists the avmsec and APRL rows, and the text says how to exempt a library
+  rule under `avm-policy-exceptions/<bundle>/`.
+
 - AVM modules in `examples/`: Resource Group 0.4.0 to 0.5.0 and Storage Account
   0.10.0 to 0.11.0.
 - tfpr v12.5.3 to v12.8.0 in all five callers. v12.6.0 lets the conftest gate

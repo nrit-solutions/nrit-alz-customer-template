@@ -491,8 +491,8 @@ Modules expand to. `CKV_TF_1` is skipped in `.checkov.yaml`: registry sources
 cannot carry a commit hash, and the exact `version` on every module call is what
 `CKV_TF_2` checks instead. The scan that matters is the plan-time one below.
 
-**On plan,** against the generated plan. Three checks run as `post_plan` hooks
-on every plan and every drift plan, where checkov can see inside the modules. They
+**On plan,** against the generated plan. Five checks run as `post_plan` hooks
+on every plan and every drift plan, where the modules are expanded. They
 are configured in `projects.yml` and their scripts live in the engine, resolved
 through `$TFPR_ENGINE_DIR`. The engine reads hooks and `extra_env` from
 `projects.yml` on `main`, so a PR that changes a hook does not run the change;
@@ -501,6 +501,8 @@ the next PR does.
 | Gate | Tool | Config | Default |
 | --- | --- | --- | --- |
 | Policy | conftest | `policy/*.rego` | None active until you add one |
+| Security | conftest, Azure/policy-library-avm `avmsec` (`avm-policy-gate.sh avmsec`) | `on_failure: warn`; high-severity rules only | Advisory |
+| Reliability | conftest, Azure/policy-library-avm APRL (`avm-policy-gate.sh aprl`) | `on_failure: warn`; every rule | Advisory |
 | Security | checkov | `on_failure: warn` in `projects.yml` | Advisory |
 | Cost | infracost | engine script, needs the `INFRACOST_API_KEY` secret, the key under `extra_env`, and `infracost` in `TFPR_EXTRA_TOOLS` | Informational, always exits 0 |
 
@@ -508,6 +510,15 @@ The policy gate ships with nothing active. `policy/tags.rego.example` is a
 starter, not a running rule: the gate globs `policy/*.rego`, and that name does
 not match, so it reports "no policies found" and passes. Drop the `.example`
 suffix to turn it on, after reading what it denies.
+
+The AVM modules create many resources as `azapi_resource`, which checkov does
+not check, so on an AVM plan the checkov row often reads "nothing checked". The
+avmsec and APRL rows cover part of that gap; the library has no Key Vault
+rules, so a clean row is not a full review. To skip a library rule, commit a
+`.rego` file with an `exception` rule naming it under
+`avm-policy-exceptions/avmsec/` or `avm-policy-exceptions/aprl/`, with the
+reason in a comment, and only when the finding is a deliberate choice. Never
+write custom Rego to replace or extend the library.
 
 To enforce policy, add a `deny` rule. To enforce security, drop
 `on_failure: warn` from the checkov hook. Do that deliberately, after triaging the report-only
