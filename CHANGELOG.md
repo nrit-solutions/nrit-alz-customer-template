@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Azure/policy-library-avm `v1.0.0` as two report-only conftest rows:
+  "Security scan (avmsec)" (high-severity rules only) and "Reliability check
+  (APRL)" (every rule), through tfpr's `avm-policy-gate.sh`, which fetches
+  the pinned release and checks its SHA256, as AVM's own module CI does. They
+  check azapi resources, which checkov does not inspect. The library has no
+  Key Vault rules. Rule exemptions go under
+  `avm-policy-exceptions/<avmsec|aprl>/`.
+
 - Renovate now tracks the Terraform registry modules in `live/`: every module
   bump arrives in one grouped pull request. A provider version outside its
   range in `root.hcl` or a unit override is listed on the dependency dashboard,
@@ -19,6 +27,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - AVM modules in `examples/`: Resource Group 0.4.0 to 0.5.0 and Storage Account
   0.10.0 to 0.11.0.
+- tfpr v12.5.3 to v12.8.0 in all five callers. v12.6.0 lets the conftest gate
+  test every rego namespace (`CONFTEST_ALL_NAMESPACES=1`) and find policies in
+  subdirectories, and builds the runtime with Go 1.26.11 for a `net/http`
+  security fix. v12.7.0 groups policy findings by resource, words a warn
+  hook's report as report-only without the command block, reports how many
+  changed resources checkov checked, and logs conftest's summary and each
+  failed hook's exit code. v12.8.0 ships `avm-policy-gate.sh`.
 - tfpr v12.5.2 to v12.5.3 in all five callers: runtime downloads and GitHub
   reads retry for about 50 seconds, so a short GitHub 5xx no
   longer stops a run or leaves its check rows in progress.

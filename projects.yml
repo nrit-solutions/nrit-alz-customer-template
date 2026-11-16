@@ -32,6 +32,13 @@ extra_env:
 # it notes it and skips). To enforce policy/scan: add `deny` rules to the policy and
 # drop `on_failure: warn` from the checkov hook.
 #
+# Two more conftest rows run Azure/policy-library-avm, report-only, through the
+# engine's avm-policy-gate.sh, the way AVM's own module CI does: the pinned
+# release, checked against its SHA256, high-severity avmsec rules only, every
+# APRL rule. They check azapi resources, which checkov does not. To skip a
+# rule, commit a .rego file with an `exception` rule under
+# avm-policy-exceptions/<avmsec|aprl>/.
+#
 # $TFPR_ENGINE_DIR is exported into the hook environment by the engine. It points at
 # the installed engine runtime, so hooks resolve the gate scripts there rather than in the
 # consumer workspace.
@@ -39,6 +46,12 @@ steps:
   post_plan:
     - name: Policy check (conftest)
       run: bash "$TFPR_ENGINE_DIR/scripts/conftest-gate.sh"
+    - name: Security scan (avmsec)
+      run: bash "$TFPR_ENGINE_DIR/scripts/avm-policy-gate.sh" avmsec
+      on_failure: warn
+    - name: Reliability check (APRL)
+      run: bash "$TFPR_ENGINE_DIR/scripts/avm-policy-gate.sh" aprl
+      on_failure: warn
     - name: Security scan (checkov)
       run: bash "$TFPR_ENGINE_DIR/scripts/checkov-gate.sh"
       on_failure: warn
