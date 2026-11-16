@@ -32,6 +32,15 @@ extra_env:
 # it notes it and skips). To enforce policy/scan: add `deny` rules to the policy and
 # drop `on_failure: warn` from the checkov hook.
 #
+# Two more conftest rows run Azure/policy-library-avm, report-only, the way
+# AVM's own module CI does: each fetches the pinned release tarball, checks its
+# SHA256 (the same pin as Azure/azure-verified-modules-tools avm.pins.jsonc)
+# and runs one bundle with every namespace. "Security scan (avmsec)" adds
+# upstream's default exemption file, so only high-severity rules run;
+# "Reliability check (APRL)" runs every rule. They check azapi resources,
+# which checkov does not. To bump the library, change the tag and the hash in
+# both hooks together.
+#
 # $TFPR_ENGINE_DIR is exported into the hook environment by the engine. It points at
 # the installed engine runtime, so hooks resolve the gate scripts there rather than in the
 # consumer workspace.
@@ -39,6 +48,23 @@ steps:
   post_plan:
     - name: Policy check (conftest)
       run: bash "$TFPR_ENGINE_DIR/scripts/conftest-gate.sh"
+    - name: Security scan (avmsec)
+      run: |
+        lib="$(mktemp -d)"
+        curl -fsSL --retry 3 -o "$lib/lib.tar.gz" https://github.com/Azure/policy-library-avm/archive/refs/tags/v1.0.0.tar.gz
+        echo "b1a044e47af535f90c9cc735261327cb31971196847ac1ae9d57939da16e3362  $lib/lib.tar.gz" | sha256sum -c --quiet -
+        tar -xzf "$lib/lib.tar.gz" -C "$lib" --strip-components=1 policy-library-avm-1.0.0/policy
+        cp "$lib/policy/avmsec/avm_exceptions.rego.bak" "$lib/policy/avmsec/avm_exceptions.rego"
+        CONFTEST_ALL_NAMESPACES=1 CONFTEST_POLICY_DIR="$lib/policy/avmsec" bash "$TFPR_ENGINE_DIR/scripts/conftest-gate.sh"
+      on_failure: warn
+    - name: Reliability check (APRL)
+      run: |
+        lib="$(mktemp -d)"
+        curl -fsSL --retry 3 -o "$lib/lib.tar.gz" https://github.com/Azure/policy-library-avm/archive/refs/tags/v1.0.0.tar.gz
+        echo "b1a044e47af535f90c9cc735261327cb31971196847ac1ae9d57939da16e3362  $lib/lib.tar.gz" | sha256sum -c --quiet -
+        tar -xzf "$lib/lib.tar.gz" -C "$lib" --strip-components=1 policy-library-avm-1.0.0/policy
+        CONFTEST_ALL_NAMESPACES=1 CONFTEST_POLICY_DIR="$lib/policy/Azure-Proactive-Resiliency-Library-v2" bash "$TFPR_ENGINE_DIR/scripts/conftest-gate.sh"
+      on_failure: warn
     - name: Security scan (checkov)
       run: bash "$TFPR_ENGINE_DIR/scripts/checkov-gate.sh"
       on_failure: warn
