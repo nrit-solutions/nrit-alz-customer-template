@@ -27,6 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - AVM modules in `examples/`: Resource Group 0.4.0 to 0.5.0 and Storage Account
   0.10.0 to 0.11.0.
+- tfpr v12.8.1 to v12.9.0 in all five callers: `tfpr apply` applies units with
+  no dependency between them side by side, two at once. The optional
+  repository variable `TFPR_APPLY_PARALLELISM` changes the cap; `1` applies
+  one unit at a time. No caller change besides the pin.
 - tfpr v12.8.0 to v12.8.1 in all five callers: `resolve` starts with the run
   and waits for `discover` only where it reads the selection, the `floor` job
   is gone (its steps run inside `resolve`), the checkov gate reads only the
