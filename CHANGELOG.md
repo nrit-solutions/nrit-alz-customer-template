@@ -27,6 +27,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - AVM modules in `examples/`: Resource Group 0.4.0 to 0.5.0 and Storage Account
   0.10.0 to 0.11.0.
+- tfpr v12.8.0 to v12.8.1 in all five callers: `resolve` starts with the run
+  and waits for `discover` only where it reads the selection, the `floor` job
+  is gone (its steps run inside `resolve`), the checkov gate reads only the
+  unit's own files, and the tool setup no longer starts checkov to print its
+  version. No caller change besides the pin.
 - tfpr v12.5.3 to v12.8.0 in all five callers. v12.6.0 lets the conftest gate
   test every rego namespace (`CONFTEST_ALL_NAMESPACES=1`) and find policies in
   subdirectories, and builds the runtime with Go 1.26.11 for a `net/http`
