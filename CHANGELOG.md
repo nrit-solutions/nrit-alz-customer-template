@@ -25,6 +25,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- AVM module in the `vwan-firewall` example: virtual WAN connectivity 0.18.0
+  to 0.18.2. No input changes: 0.18.1 adds static routes on hub connections,
+  0.18.2 fixes a firewall replacement trigger and adds an optional `location`
+  input, which the example does not set. Not planned or applied anywhere: no
+  running environment uses this example.
 - AVM modules: ALZ pattern 0.22.0 to 0.23.0 in `_foundation/amba` and
   `_foundation/landing-zones` (Renovate), and hub and spoke connectivity
   0.18.1 to 0.18.2 in the two hub examples under `examples/connectivity/`.
