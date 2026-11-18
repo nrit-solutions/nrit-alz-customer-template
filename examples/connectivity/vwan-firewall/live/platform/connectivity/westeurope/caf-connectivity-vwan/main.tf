@@ -37,7 +37,7 @@ module "resource_group" {
 # false; virtual_wan_settings does the same for the DDoS plan.
 module "vwan" {
   source  = "Azure/avm-ptn-alz-connectivity-virtual-wan/azurerm"
-  version = "0.18.0"
+  version = "0.18.2"
 
   enable_telemetry = false
   tags             = local.tags
