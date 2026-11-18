@@ -27,6 +27,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - AVM modules in `examples/`: Resource Group 0.4.0 to 0.5.0 and Storage Account
   0.10.0 to 0.11.0.
+- tfpr v12.9.2 to v12.9.3 in all five callers: plan, apply and drift jobs
+  only restore the provider cache. When the lock files changed, a separate
+  `provider-cache` job in the ops run saves a fresh cache from the lock files;
+  the merge gate no longer waits for that save. No caller change besides the
+  pin.
 - tfpr v12.9.0 to v12.9.2 in all five callers. The PR caller `tfpr-pr.yml`
   now dispatches the ops run as the last step of the `pre-commit` job. The
   separate `dispatch` job waited for its own runner on every push, about 10
