@@ -25,6 +25,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- AVM modules: ALZ pattern 0.22.0 to 0.23.0 in `_foundation/amba` and
+  `_foundation/landing-zones` (Renovate), and hub and spoke connectivity
+  0.18.1 to 0.18.2 in the two hub examples under `examples/connectivity/`.
+  The hub module 0.18.2 has a new required `location` input that its release
+  notes do not mention; the examples pass `local.context.location`. On the
+  reference repository the ALZ pattern bump planned an in-place metadata
+  update of every policy definition and policy set definition, with no change
+  to a rule, and the next plan was clean. An existing repository that takes
+  hub and spoke 0.18.2 needs the same `location` line.
 - AVM modules in `examples/`: Resource Group 0.4.0 to 0.5.0 and Storage Account
   0.10.0 to 0.11.0.
 - tfpr v12.9.2 to v12.9.3 in all five callers: plan, apply and drift jobs
