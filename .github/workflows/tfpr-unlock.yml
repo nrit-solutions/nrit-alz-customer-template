@@ -1,7 +1,7 @@
 # Unlock caller for tfpr. Releases the PR's cross-PR unit locks when it
 # closes. Its own workflow so a merged PR's checks list shows one row that
-# reads as lock release, instead of a skipped pre-commit row and a second
-# dispatch row stacked on the last real run. The dispatch action's closed
+# reads as lock release, instead of a second pre-commit row stacked on the
+# last real run. The dispatch action's closed
 # path only parses the event and dispatches the unlock, so no checks App
 # credentials are needed here.
 # Named like the PR caller so the row reads "tfpr / unlock", like every other row.
@@ -20,4 +20,4 @@ jobs:
     if: github.event.repository.is_template != true
     runs-on: ubuntu-latest
     steps:
-      - uses: nrit-solutions/tfpr/.github/actions/dispatch@v12.9.0
+      - uses: nrit-solutions/tfpr/.github/actions/dispatch@v12.9.1

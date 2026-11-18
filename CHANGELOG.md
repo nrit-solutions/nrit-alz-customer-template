@@ -27,6 +27,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - AVM modules in `examples/`: Resource Group 0.4.0 to 0.5.0 and Storage Account
   0.10.0 to 0.11.0.
+- tfpr v12.9.0 to v12.9.1 in all five callers. The PR caller `tfpr-pr.yml`
+  now dispatches the ops run as the last step of the `pre-commit` job. The
+  separate `dispatch` job waited for its own runner on every push, about 10
+  seconds. A pull request shows one caller row, `tfpr / pre-commit`. The
+  `actions: write` permission moved from the dispatch job to the workflow.
+  Copy the new `tfpr-pr.yml` when you bump; the old two-job file keeps
+  working and shows a caller drift note.
 - tfpr v12.8.1 to v12.9.0 in all five callers: `tfpr apply` applies units with
   no dependency between them side by side, two at once. The optional
   repository variable `TFPR_APPLY_PARALLELISM` changes the cap; `1` applies

@@ -1,11 +1,11 @@
-# PR caller for tfpr: the pull_request path in one dispatch job, gated
-# by this repository's own pre-commit hooks. One version pin: the dispatch
+# PR caller for tfpr: the pull_request path in one job, this repository's
+# own pre-commit hooks and then the dispatch. One version pin: the dispatch
 # action knows its own ref.
 name: tfpr
 
 # The closed event lives in tfpr-unlock.yml: splitting it out keeps a
-# merged PR's checks list free of a skipped pre-commit row and a duplicate
-# dispatch row from the unlock run.
+# merged PR's checks list free of a second pre-commit row from the unlock
+# run.
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -14,10 +14,11 @@ on:
 # which any writer can edit, so the ops run on the default branch does both.
 permissions:
   contents: read
+  actions: write         # dispatch the ops workflow
 
 jobs:
-  # First and gating: a failed lint stops dispatch, so no plan runs and no
-  # report lands on a PR that fails its own hooks; merge stays blocked
+  # The hooks gate the dispatch step: a failed lint stops it, so no plan
+  # runs and no report lands on a PR that fails its own hooks; merge stays blocked
   # because the required merge gate is never created. Runs the same hooks as
   # the local pre-commit install, so a commit made without them (or with
   # --no-verify) is caught before it reaches main. The changelog reminder
@@ -59,15 +60,9 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
 
-  # The template repository itself never dispatches: it holds no
-  # infrastructure and no engine credentials. Stamped repositories are not
-  # templates, so this never skips a customer repo.
-  dispatch:
-    needs: pre-commit
-    if: github.event.repository.is_template != true
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: write         # dispatch the ops workflow
-    steps:
-      - uses: nrit-solutions/tfpr/.github/actions/dispatch@v12.9.0
+      # A step, not a job: a second job waits for its own runner on every
+      # push. The template repository itself never dispatches: it holds no
+      # infrastructure and no engine credentials. Stamped repositories are not
+      # templates, so this never skips a customer repo.
+      - if: github.event.repository.is_template != true
+        uses: nrit-solutions/tfpr/.github/actions/dispatch@v12.9.1
