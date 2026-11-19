@@ -65,4 +65,4 @@ jobs:
       # infrastructure and no engine credentials. Stamped repositories are not
       # templates, so this never skips a customer repo.
       - if: github.event.repository.is_template != true
-        uses: nrit-solutions/tfpr/.github/actions/dispatch@v12.9.3
+        uses: nrit-solutions/tfpr/.github/actions/dispatch@v12.9.4
