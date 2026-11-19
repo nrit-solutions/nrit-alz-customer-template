@@ -46,7 +46,7 @@ locals {
 
 module "amba_resources" {
   source  = "Azure/avm-ptn-monitoring-amba-alz/azurerm"
-  version = "0.4.0"
+  version = "0.5.0"
 
   location                            = local.context.location
   root_management_group_name          = "alz"
