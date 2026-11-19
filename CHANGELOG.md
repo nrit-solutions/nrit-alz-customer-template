@@ -41,6 +41,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   hub and spoke 0.18.2 needs the same `location` line.
 - AVM modules in `examples/`: Resource Group 0.4.0 to 0.5.0 and Storage Account
   0.10.0 to 0.11.0.
+- tfpr v12.9.3 to v12.9.4 in all five callers: a plan whose only change is
+  a moved address now applies instead of being skipped as "no changes", so a
+  module bump that moves a resource reaches state and does not show up as
+  drift the next day. Report headlines and check titles count moves
+  ("1 to move", "1 moved"). No caller change besides the pin.
 - tfpr v12.9.2 to v12.9.3 in all five callers: plan, apply and drift jobs
   only restore the provider cache. When the lock files changed, a separate
   `provider-cache` job in the ops run saves a fresh cache from the lock files;
